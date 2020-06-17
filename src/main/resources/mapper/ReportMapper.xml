@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ReportMapper">
+
+    <!--
+
+        SELECT
+
+    -->
+
+    <!-- 월간보고서리스트 조회-->
+    <select id="Select_reportList"
+            parameterType="com.ibiz.api.model.ReportVO"
+            resultType="com.ibiz.api.model.ReportVO">
+
+        SELECT CRIT_YAM,SLS_DEPT_ID, SLS_DEPT_NM, REG_EMP_ID, REG_EMP_NM,REG_DT,
+            CHG_EMP_ID, CHG_EMP_NM, CHG_DT, DEPT_SORT_ROWNUM,TOTAL_CNT,  ROWNUMBER
+        FROM
+        (
+            SELECT  CRIT_YAM,SLS_DEPT_ID, SLS_DEPT_NM, REG_EMP_ID, REG_EMP_NM,REG_DT,
+                    CHG_EMP_ID, CHG_EMP_NM, CHG_DT, DEPT_SORT_ROWNUM,TOTAL_CNT,
+                    ROWNUM AS ROWNUMBER
+            FROM (
+                    SELECT
+                        BPIP.CRIT_YAM, BPIP.SLS_DEPT_ID,HMST.DEPT_NM AS SLS_DEPT_NM,
+                        BPIP.REG_EMP_ID, IBIZ_EMP_NM(BPIP.REG_EMP_ID) AS REG_EMP_NM,
+                        BPIP.REG_DT, BPIP.CHG_EMP_ID,IBIZ_EMP_NM(BPIP.CHG_EMP_ID) AS CHG_EMP_NM,
+                        BPIP.CHG_DT, HMST.DEPT_SORT_ROWNUM,
+                        COUNT(1) OVER() AS TOTAL_CNT
+                    FROM BPIP260T BPIP
+                    JOIN
+                    (
+                        SELECT DEPT_ID, DEPT_NM, HGRK_DEPT_ID,  ROWNUM AS DEPT_SORT_ROWNUM
+                        FROM HMST100T
+                        START WITH
+                        HGRK_DEPT_ID IS NULL
+                        CONNECT BY
+                        PRIOR DEPT_ID = HGRK_DEPT_ID
+                        ORDER SIBLINGS BY
+                        DEPT_SORT_SEQC ASC
+                    ) HMST
+                    ON BPIP.SLS_DEPT_ID = HMST.DEPT_ID
+                    WHERE
+                    1 = 1
+                    <if test="slsDeptId != null and slsDeptId != ''">
+                        AND   (
+                                BPIP.SLS_DEPT_ID IN (
+                                                        SELECT DEPT_ID
+                                                        FROM HMST100T
+                                                        START WITH
+                                                        HGRK_DEPT_ID = #{slsDeptId}
+                                                        CONNECT BY
+                                                        PRIOR DEPT_ID = HGRK_DEPT_ID
+                                                    )
+                                OR    BPIP.SLS_DEPT_ID =  #{slsDeptId}
+                        )
+                    </if>
+                    <if test="critYear != null and critYear != ''">
+                        AND   SUBSTR(BPIP.CRIT_YAM,0,4) = #{critYear}
+                    </if>
+                    ORDER BY CRIT_YAM DESC, DEPT_SORT_ROWNUM ASC
+                ) TF
+        )
+        WHERE
+        ROWNUMBER BETWEEN #{pageSize} * (#{pageNumber} - 1) + 1
+        AND #{pageSize} * (#{pageNumber} - 1) + #{pageSize}
+
+    </select>
+
+    <!-- 월간보고서 기준연도 리스트 조회-->
+    <select id="Select_critYearList"
+            resultType="com.ibiz.api.model.ReportVO">
+			<![CDATA[
+			SELECT ( SELECT
+			            MIN(SUBSTR(CRIT_YAM,0,4) )
+			        FROM BPIP260T
+            ) +LEVEL-1 AS CRIT_YEAR
+            FROM DUAL
+            CONNECT BY LEVEL <= (
+			        SELECT
+			            MAX(SUBSTR(CRIT_YAM,0,4) ) - MIN(SUBSTR(CRIT_YAM,0,4) )
+			        FROM
+			            BPIP260T
+			    ) + 1
+			 ]]>
+	</select>
+
+    <!-- 월간보고서상세내역 조회-->
+    <select id="Select_reporDetail"
+            parameterType="com.ibiz.api.model.ReportVO"
+            resultType="com.ibiz.api.model.ReportVO">
+
+			SELECT
+			    CRIT_YAM, SLS_DEPT_ID, IBIZ_DEPT_NM(BPIP260T.SLS_DEPT_ID) AS SLS_DEPT_NM,
+			    BDCT_CONT, REG_EMP_ID, IBIZ_EMP_NM(BPIP260T.REG_EMP_ID) AS REG_EMP_NM,
+			    REG_DT, CHG_EMP_ID, IBIZ_EMP_NM(BPIP260T.CHG_EMP_ID) AS CHG_EMP_NM, CHG_DT
+			FROM
+			    BPIP260T
+			WHERE
+			    SLS_DEPT_ID = #{slsDeptId}
+			    AND   CRIT_YAM = #{critYam}
+
+	</select>
+
+    <!-- 저장가능여부 조회-->
+    <select id="Select_isAbleToSave"
+            parameterType="com.ibiz.api.model.ReportVO"
+            resultType="java.lang.Integer">
+
+			SELECT NVL(COUNT(1),0)
+			FROM
+			    BPIP260T
+			WHERE
+			    CRIT_YAM = #{critYam}
+			    AND   SLS_DEPT_ID = #{slsDeptId}
+
+	</select>
+
+    <!--
+
+        INSERT
+
+    -->
+    <!-- 월간보고서 등록-->
+    <insert id="Insert_reporDetail"
+            parameterType="com.ibiz.api.model.ReportVO">
+
+			INSERT INTO BPIP260T (
+			    CRIT_YAM,
+			    SLS_DEPT_ID,
+			    BDCT_CONT,
+			    REG_EMP_ID,
+			    REG_DT,
+			    CHG_EMP_ID,
+			    CHG_DT
+			) VALUES (
+			    #{critYam},
+			    #{slsDeptId},
+			    #{bdctCont},
+			    #{regEmpId},
+			    SYSDATE,
+			    #{chgEmpId},
+			    SYSDATE
+			)
+
+	</insert>
+
+    <!--
+
+		UPDATE
+
+	-->
+
+    <!-- 월간보고서 수정-->
+    <update id="Update_reportDetail"
+            parameterType="com.ibiz.api.model.ReportVO">
+
+			UPDATE BPIP260T
+			    SET
+			        BDCT_CONT = #{bdctCont},
+			        CHG_EMP_ID = #{chgEmpId},
+			        CHG_DT = SYSDATE
+			WHERE
+			    SLS_DEPT_ID = #{slsDeptId}
+			    AND   CRIT_YAM = #{critYam}
+
+	</update>
+
+    <!--
+
+		DELETE
+
+	-->
+
+    <!-- 월간보고서 삭제-->
+    <delete id="Delete_reportDetail"
+            parameterType="com.ibiz.api.model.ReportVO">
+			DELETE FROM
+				BPIP260T
+			WHERE
+			    SLS_DEPT_ID = #{slsDeptId}
+			    AND   CRIT_YAM = #{critYam}
+	</delete>
+
+</mapper>

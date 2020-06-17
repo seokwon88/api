@@ -1,0 +1,956 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="BusinessTargetMapper">
+
+    <!--
+
+		SELECT (월별 부서)
+
+	-->
+
+    <!-- 사업목표 조회(영업부서/영업대표) -->
+    <select id="Select_businessTargetList"
+            parameterType="com.ibiz.api.model.BusinessTargetSearchVO"
+            resultType="com.ibiz.api.model.BusinessTargetForDeptMMVO">
+
+        SELECT BC.BSNS_CLSF_CD,  BC.BSNS_CLSF_NM, -- 사업분류코드
+            BC.PROD_DST_CD,  BC.PROD_DST_NM, -- 상품구분코드
+            JAN_AMT, FEB_AMT, MAR_AMT, APR_AMT, MAY_AMT, JUN_AMT,
+            JUL_AMT, AUG_AMT, SEP_AMT, OCT_AMT, NOV_AMT, DEC_AMT
+            FROM
+        ( SELECT BSNS_CLSF_CD, PROD_DST_CD,
+            SUM(JAN_AMT) JAN_AMT, SUM(FEB_AMT) FEB_AMT, SUM(MAR_AMT) MAR_AMT, SUM(APR_AMT) APR_AMT, SUM(MAY_AMT) MAY_AMT, SUM(JUN_AMT) JUN_AMT,
+            SUM(JUL_AMT) JUL_AMT, SUM(AUG_AMT) AUG_AMT ,SUM(SEP_AMT) SEP_AMT, SUM(OCT_AMT) OCT_AMT, SUM(NOV_AMT) NOV_AMT, SUM(DEC_AMT) DEC_AMT
+            <if test='manageTarget == "SDPT" and bplnDstCd != "F1" '>
+            FROM BRST100T   -- ★조회조건 목표관리주체 : 영업부서 (사업목표조회인 경우) 2020-03-12
+            </if>
+            <if test='manageTarget == "SPRN" and bplnDstCd != "F1" '>
+            FROM BRST110T   -- ★조회조건 목표관리주체 : 영업대표 (사업목표조회인 경우) 2020-03-12
+            </if>
+            <if test='manageTarget == "SDPT" and bplnDstCd == "F1" '>
+            FROM BRST100V   -- ★조회조건 목표관리주체 : 영업부서 (사업예상불러오기인 경우) 2020-03-12
+            </if>
+            <if test='manageTarget == "SPRN" and bplnDstCd == "F1" '>
+            FROM BRST110V   -- ★조회조건 목표관리주체 : 영업대표 (사업예상불러오기인 경우) 2020-03-12
+            </if>
+            WHERE CRIT_YEAR = #{year}  -- ★조회조건 기준연도
+            <if test='lowerDeptYN == "N"'>
+                AND DEPT_ID = #{slsDeptId}  -- ★조회조건 하위부서 비포함, 조회조건 대상부서
+            </if>
+            <if test='manageTarget == "SPRN" '>
+                AND EMP_ID = #{empId} -- ★조회조건 목표관리주체 : 영업대표일때
+            </if>
+            <if test='lowerDeptYN == "Y" '>
+                AND DEPT_ID IN (SELECT DEPT_ID FROM HMST110T  -- ★조회조건 하위부서 포함
+                WHERE SELL_OCR_YN = 'Y' -- 매출발생부서
+                START WITH DEPT_ID = #{slsDeptId} AND CRIT_YEAR = #{year}  -- ★조회조건 대상부서
+                CONNECT BY PRIOR DEPT_ID = HGRK_DEPT_ID AND PRIOR CRIT_YEAR = CRIT_YEAR)
+            </if>
+            <if test='bplnDstCd != "F1" '>
+                AND BPLN_DST_CD = #{bplnDstCd} -- ★조회조건 사업계획구분(사업목표조회인 경우)
+                AND BSNS_RSL_DTL_DST_CD = #{bsnsRslDtlDstCd}  -- ★조회조건 실적구분(사업목표조회인 경우)
+            </if>
+            <if test='bplnDstCd == "F1" '>
+                AND BSNS_RSL_DTL_DST_CD = SUBSTR(#{bsnsRslDtlDstCd} ,1,1)||'F'  -- ★조회조건 실적구분(사업예상불러오기인 경우)
+            </if>
+            GROUP BY BSNS_CLSF_CD, PROD_DST_CD
+            ) V,
+            ( SELECT B.BSNS_SEQC, B.BSNS_CLSF_CD, B.BSNS_CLSF_CD_NM AS BSNS_CLSF_NM,
+                D.PROD_SEQC, D.PROD_DST_CD, D.PROD_DST_NM
+                --,C.BRSL_SEQC, C.BRSL_DST_CD, C.BSNS_RSL_DTL_DST_CD
+                FROM
+                ( SELECT SORT_SEQC AS BSNS_SEQC,
+                BSNS_CLSF_CD, BSNS_CLSF_CD_NM
+                FROM BRST004T
+                WHERE CRIT_YEAR = #{year} -- ★조회조건 기준연도
+                ) B,
+                ( SELECT SORT_SEQC AS PROD_SEQC,
+                C10.COM_CD PROD_DST_CD, C10.COM_CD_NM PROD_DST_NM
+                FROM ACOM020T C20, ACOM010T C10
+                WHERE C20.CLMN_NM = 'PROD_DST_CD'
+                AND C20.COM_GRP_CD = C10.COM_GRP_CD
+                AND C10.USE_YN = 'Y'
+                ) D
+            ) BC
+        WHERE BC.BSNS_CLSF_CD = V.BSNS_CLSF_CD(+)
+        AND BC.PROD_DST_CD = V.PROD_DST_CD(+)
+        ORDER BY BC.BSNS_SEQC, BC.PROD_SEQC
+
+    </select>
+
+    <!-- 기준연도 (연도별 실적 테이블에 따라 조회) -->
+    <select id="Select_businessTargetCritYear"
+            resultType="java.util.HashMap">
+        SELECT
+            NVL(MIN(CRIT_YEAR), TO_CHAR(SYSDATE,'YYYY')) as MIN_CRIT_YEAR,
+            NVL(MAX(CRIT_YEAR+1), TO_CHAR(SYSDATE + (INTERVAL '1' YEAR),'YYYY')) as MAX_CRIT_YEAR
+        FROM
+        <if test='manageTarget == "SDPT" '>
+            BRST100T
+        </if>
+        <if test='manageTarget == "SPRN" '>
+            BRST110T
+        </if>
+
+    </select>
+
+
+    <!-- 월별영업부서실적 조회-->
+    <select id="Select_businessTargetForDeptResult"
+            parameterType="com.ibiz.api.model.BusinessTargetSearchVO"
+            resultType="com.ibiz.api.model.BusinessTargetForDeptMMVO">
+     SELECT H10.DEPT_SEQC, H10.DEPT_ID, H10.DEPT_NM,
+            H10.DEPT_L1_ID AS DEPT_LVL1_ID, H10.DEPT_L1_NM AS DEPT_LVL1_NM, H10.DEPT_L2_ID AS DEPT_LVL2_ID, H10.DEPT_L2_NM AS DEPT_LVL2_NM,
+            SUM(JAN_AMT) JAN_AMT, SUM(FEB_AMT) FEB_AMT, SUM(MAR_AMT) MAR_AMT, SUM(APR_AMT) APR_AMT, SUM(MAY_AMT) MAY_AMT, SUM(JUN_AMT) JUN_AMT,
+            SUM(JUL_AMT) JUL_AMT, SUM(AUG_AMT) AUG_AMT ,SUM(SEP_AMT) SEP_AMT, SUM(OCT_AMT) OCT_AMT, SUM(NOV_AMT) NOV_AMT, SUM(DEC_AMT) DEC_AMT,
+            #{bsnsRslDtlDstCd} BSNS_RSL_DTL_DST_CD
+       FROM BRST100V V10,
+           ( SELECT DEPT_SEQC, DEPT_ID, DEPT_NM, -- DEPT_LVL, HGRK_DEPT_ID
+                    <![CDATA[
+                    CASE WHEN DEPT_LVL = 1 THEN DEPT_ID ELSE SUBSTRB(DEPT_ID_PATH,2,INSTRB(DEPT_ID_PATH,'@',1,2)-2) END AS DEPT_L1_ID,
+                    CASE WHEN DEPT_LVL = 1 THEN DEPT_NM ELSE SUBSTRB(DEPT_NM_PATH,2,INSTRB(DEPT_NM_PATH,'@',1,2)-2) END AS DEPT_L1_NM,
+                    CASE WHEN DEPT_LVL < 3 THEN HGRK_DEPT_ID
+                         ELSE SUBSTRB(DEPT_ID_PATH,INSTRB(DEPT_ID_PATH,'@',1,2)+1,DECODE(DEPT_LVL,2,LENGTH(DEPT_ID_PATH),INSTRB(DEPT_ID_PATH,'@',1,3)-1)-INSTRB(DEPT_ID_PATH,'@',1,2))
+                    END AS DEPT_L2_ID,
+                    CASE WHEN DEPT_LVL < 3 THEN HGRK_DEPT_NM
+                         ELSE SUBSTRB(DEPT_NM_PATH,INSTRB(DEPT_NM_PATH,'@',1,2)+1,DECODE(DEPT_LVL,2,LENGTH(DEPT_NM_PATH),INSTRB(DEPT_NM_PATH,'@',1,3)-1)-INSTRB(DEPT_NM_PATH,'@',1,2))
+                    END AS DEPT_L2_NM,
+                     ]]>
+                    #{bsnsRslDtlDstCd} BSNS_RSL_DTL_DST_CD -- ★조회조건 실적구분
+               FROM
+                   ( SELECT ROWNUM AS DEPT_SEQC, LEVEL AS DEPT_LVL, DEPT_ID, DEPT_NM,
+                            SYS_CONNECT_BY_PATH(DEPT_ID,'@') DEPT_ID_PATH,
+                            SYS_CONNECT_BY_PATH(DEPT_NM,'@') DEPT_NM_PATH,
+                            HGRK_DEPT_ID, (SELECT DEPT_NM FROM HMST110T WHERE DEPT_ID = A.HGRK_DEPT_ID  AND  CRIT_YEAR = #{year}) HGRK_DEPT_NM
+                       FROM HMST110T A
+                      WHERE ( SELL_OCR_YN = 'Y' AND DEPT_LVL_CD = '5' ) -- 영업팀
+                     START WITH DEPT_ID = #{slsDeptId} AND CRIT_YEAR = #{year} --★조회조건: 영업부서, 기준연도
+                     CONNECT BY ( PRIOR DEPT_ID = HGRK_DEPT_ID AND PRIOR CRIT_YEAR = CRIT_YEAR
+                                  AND ( SELL_OCR_YN = 'Y'
+                                        OR EXISTS (SELECT 1 FROM HMST110T B   --★하위에 매출부서를 포함하고 있는 조직
+                                                    WHERE SELL_OCR_YN = 'Y'
+                                                   START WITH B.DEPT_ID = A.DEPT_ID AND CRIT_YEAR = A.CRIT_YEAR
+                                                   CONNECT BY PRIOR B.DEPT_ID = B.HGRK_DEPT_ID AND PRIOR CRIT_YEAR = CRIT_YEAR) ) )
+                     ORDER SIBLINGS BY DEPT_SORT_SEQC )
+            ) H10
+      WHERE V10.CRIT_YEAR(+) = #{year}  -- ★조회조건 기준연도
+        AND H10.DEPT_ID = V10.DEPT_ID(+)
+        AND H10.BSNS_RSL_DTL_DST_CD = V10.BSNS_RSL_DTL_DST_CD(+)
+     GROUP BY H10.DEPT_SEQC, H10.DEPT_ID, H10.DEPT_NM,
+              H10.DEPT_L1_ID, H10.DEPT_L1_NM, H10.DEPT_L2_ID, H10.DEPT_L2_NM
+    ORDER BY H10.DEPT_SEQC
+
+
+	</select>
+
+
+    <!-- 월별영업대표실적 조회-->
+    <select id="Select_businessTargetForEmpResult"
+            parameterType="com.ibiz.api.model.BusinessTargetSearchVO"
+            resultType="com.ibiz.api.model.BusinessTargetForEmpMMVO">
+
+        SELECT H30.DEPT_SEQC, H30.DEPT_ID, H30.DEPT_NM, --, H30.DEPT_ID_PATH, H30.DEPT_NM_PATH
+               H30.EMP_ID, IBIZ_EMP_NM(H30.EMP_ID) AS EMP_NM, -- 실적사원
+               #{bsnsRslDtlDstCd} BSNS_RSL_DTL_DST_CD ,
+               H30.DEPT_L1_ID AS DEPT_LVL1_ID, H30.DEPT_L1_NM AS DEPT_LVL1_NM , H30.DEPT_L2_ID AS DEPT_LVL2_ID, H30.DEPT_L2_NM AS DEPT_LVL2_NM,
+               SUM(JAN_AMT) JAN_AMT, SUM(FEB_AMT) FEB_AMT, SUM(MAR_AMT) MAR_AMT, SUM(APR_AMT) APR_AMT, SUM(MAY_AMT) MAY_AMT, SUM(JUN_AMT) JUN_AMT,
+               SUM(JUL_AMT) JUL_AMT, SUM(AUG_AMT) AUG_AMT ,SUM(SEP_AMT) SEP_AMT, SUM(OCT_AMT) OCT_AMT, SUM(NOV_AMT) NOV_AMT, SUM(DEC_AMT) DEC_AMT
+          FROM BRST110V V11,
+              ( SELECT H.DEPT_SEQC, H.DEPT_ID, H.DEPT_NM, P.EMP_ID,
+                        H.DEPT_L1_ID, H.DEPT_L1_NM , H.DEPT_L2_ID, H.DEPT_L2_NM,
+                       #{bsnsRslDtlDstCd} BSNS_RSL_DTL_DST_CD -- ★조회조건 실적구분
+                  FROM BRST110V P,
+                      ( SELECT DEPT_SEQC, DEPT_ID, DEPT_NM, -- DEPT_LVL, HGRK_DEPT_ID
+                                <![CDATA[
+                               CASE WHEN DEPT_LVL = 1 THEN DEPT_ID ELSE SUBSTRB(DEPT_ID_PATH,2,INSTRB(DEPT_ID_PATH,'@',1,2)-2) END AS DEPT_L1_ID,
+                               CASE WHEN DEPT_LVL = 1 THEN DEPT_NM ELSE SUBSTRB(DEPT_NM_PATH,2,INSTRB(DEPT_NM_PATH,'@',1,2)-2) END AS DEPT_L1_NM,
+                               CASE WHEN DEPT_LVL < 3 THEN HGRK_DEPT_ID
+                                    ELSE SUBSTRB(DEPT_ID_PATH,INSTRB(DEPT_ID_PATH,'@',1,2)+1,DECODE(DEPT_LVL,2,LENGTH(DEPT_ID_PATH),INSTRB(DEPT_ID_PATH,'@',1,3)-1)-INSTRB(DEPT_ID_PATH,'@',1,2))
+                               END AS DEPT_L2_ID,
+                               CASE WHEN DEPT_LVL < 3 THEN HGRK_DEPT_NM
+                                    ELSE SUBSTRB(DEPT_NM_PATH,INSTRB(DEPT_NM_PATH,'@',1,2)+1,DECODE(DEPT_LVL,2,LENGTH(DEPT_NM_PATH),INSTRB(DEPT_NM_PATH,'@',1,3)-1)-INSTRB(DEPT_NM_PATH,'@',1,2))
+                               END AS DEPT_L2_NM
+                                ]]>
+                          FROM
+                              ( SELECT ROWNUM AS DEPT_SEQC, LEVEL AS DEPT_LVL, DEPT_ID, DEPT_NM,
+                                       SYS_CONNECT_BY_PATH(DEPT_ID,'@') DEPT_ID_PATH,
+                                       SYS_CONNECT_BY_PATH(DEPT_NM,'@') DEPT_NM_PATH,
+                                       HGRK_DEPT_ID, (SELECT DEPT_NM FROM HMST110T WHERE DEPT_ID = A.HGRK_DEPT_ID  AND  CRIT_YEAR = #{year}) HGRK_DEPT_NM
+                                  FROM HMST110T A
+                                 WHERE ( SELL_OCR_YN = 'Y' AND DEPT_LVL_CD = '5' ) -- 영업팀
+                                START WITH DEPT_ID = #{slsDeptId} AND CRIT_YEAR = #{year} --★조회조건: 영업부서, 기준연도
+                                CONNECT BY ( PRIOR DEPT_ID = HGRK_DEPT_ID AND PRIOR CRIT_YEAR = CRIT_YEAR
+                                             AND ( SELL_OCR_YN = 'Y'
+                                                   OR EXISTS (SELECT 1 FROM HMST110T B   --★하위에 매출부서를 포함하고 있는 조직
+                                                               WHERE SELL_OCR_YN = 'Y'
+                                                              START WITH B.DEPT_ID = A.DEPT_ID AND CRIT_YEAR = A.CRIT_YEAR
+                                                              CONNECT BY PRIOR B.DEPT_ID = B.HGRK_DEPT_ID AND PRIOR CRIT_YEAR = CRIT_YEAR) ) )
+                                ORDER SIBLINGS BY DEPT_SORT_SEQC )
+                       ) H
+                 WHERE P.CRIT_YEAR = #{year}  -- ★조회조건 기준연도
+                   AND P.DEPT_ID = H.DEPT_ID
+                GROUP BY H.DEPT_SEQC, H.DEPT_ID, H.DEPT_NM, P.EMP_ID,
+                       H.DEPT_L1_ID, H.DEPT_L1_NM, H.DEPT_L2_ID, H.DEPT_L2_NM
+               ) H30
+         WHERE V11.CRIT_YEAR(+) = #{year}  -- ★조회조건 기준연도
+           AND H30.DEPT_ID = V11.DEPT_ID(+)
+           AND H30.EMP_ID = V11.EMP_ID(+)
+           AND H30.BSNS_RSL_DTL_DST_CD = V11.BSNS_RSL_DTL_DST_CD(+)
+        GROUP BY H30.DEPT_SEQC, H30.DEPT_ID, H30.DEPT_NM, --H30.DEPT_ID_PATH, H30.DEPT_NM_PATH,
+                 H30.DEPT_L1_ID, H30.DEPT_L1_NM, H30.DEPT_L2_ID, H30.DEPT_L2_NM,
+                 H30.EMP_ID
+        ORDER BY DEPT_SEQC, EMP_NM
+
+	</select>
+
+
+    <!-- 월별상품실적 조회 -->
+    <select id="Select_businessTargetProductResult"
+            parameterType="com.ibiz.api.model.BusinessTargetSearchVO"
+            resultType="com.ibiz.api.model.BusinessTargetForDeptMMVO">
+
+            WITH
+            RSLT AS (
+                SELECT BSNS_CLSF_CD, PROD_DST_CD,#{bsnsRslDtlDstCd} BSNS_RSL_DTL_DST_CD,
+                       SUM(JAN_AMT) JAN_AMT, SUM(FEB_AMT) FEB_AMT, SUM(MAR_AMT) MAR_AMT, SUM(APR_AMT) APR_AMT, SUM(MAY_AMT) MAY_AMT, SUM(JUN_AMT) JUN_AMT,
+                       SUM(JUL_AMT) JUL_AMT, SUM(AUG_AMT) AUG_AMT ,SUM(SEP_AMT) SEP_AMT, SUM(OCT_AMT) OCT_AMT, SUM(NOV_AMT) NOV_AMT, SUM(DEC_AMT) DEC_AMT
+                  FROM BRST100V
+                 WHERE CRIT_YEAR = #{year}   -- ★조회조건: 기준연도
+                   AND DEPT_ID IN (SELECT DEPT_ID FROM HMST110T
+                                    WHERE SELL_OCR_YN = 'Y' -- 매출발생부서
+                                   START WITH DEPT_ID = #{slsDeptId} AND CRIT_YEAR = #{year}   -- ★조회조건: 영업부서+기준연도
+                                   CONNECT BY PRIOR DEPT_ID = HGRK_DEPT_ID AND PRIOR CRIT_YEAR = CRIT_YEAR)
+                   AND BSNS_RSL_DTL_DST_CD = #{bsnsRslDtlDstCd}  -- ★조회조건 실적구분
+                GROUP BY BSNS_CLSF_CD, PROD_DST_CD
+            )
+            SELECT BC.BSNS_CLSF_CD, BC.BSNS_CLSF_CD_NM AS BSNS_CLSF_NM,  -- 사업분류코드
+                   BC.PROD_DST_CD, BC.PROD_DST_CD_NM AS PROD_DST_NM,  -- 상품구분코드
+                   #{bsnsRslDtlDstCd} BSNS_RSL_DTL_DST_CD,
+                   JAN_AMT, FEB_AMT, MAR_AMT, APR_AMT, MAY_AMT, JUN_AMT,
+                   JUL_AMT, AUG_AMT, SEP_AMT, OCT_AMT, NOV_AMT, DEC_AMT
+              FROM RSLT,
+                   (SELECT B.BSNS_SEQC, B.BSNS_CLSF_CD, B.BSNS_CLSF_CD_NM,
+                       D.PROD_SEQC, D.PROD_DST_CD, D.PROD_DST_CD_NM
+                       --,C.BRSL_SEQC, C.BRSL_DST_CD, C.BSNS_RSL_DTL_DST_CD
+                  FROM
+                       ( SELECT SORT_SEQC AS BSNS_SEQC,
+                                BSNS_CLSF_CD, BSNS_CLSF_CD_NM
+                           FROM BRST004T
+                          WHERE CRIT_YEAR = #{year}  -- ★조회조건 기준연도
+                       ) B,
+                       ( SELECT SORT_SEQC AS PROD_SEQC,
+                                C10.COM_CD PROD_DST_CD, C10.COM_CD_NM PROD_DST_CD_NM
+                           FROM ACOM020T C20, ACOM010T C10
+                          WHERE C20.CLMN_NM = 'PROD_DST_CD'
+                            AND C20.COM_GRP_CD = C10.COM_GRP_CD
+                            AND C10.USE_YN = 'Y'
+                       ) D
+                    ) BC
+             WHERE BC.BSNS_CLSF_CD = RSLT.BSNS_CLSF_CD(+)
+               AND BC.PROD_DST_CD = RSLT.PROD_DST_CD(+)
+            ORDER BY BC.BSNS_SEQC, BC.PROD_SEQC
+	</select>
+
+    <!-- 월별영업목표 존재여부 체크(for 삭제) -->
+    <select id="Select_isExistsBusinessTarget"
+            parameterType="com.ibiz.api.model.BusinessTargetSearchVO"
+            resultType="java.lang.Integer">
+		SELECT  NVL(COUNT(1),0)
+        <if test="manageTarget == 'SDPT' ">
+			FROM BRST100T
+        </if>
+        <if test="manageTarget == 'SPRN' ">
+            FROM BRST110T
+        </if>
+			WHERE CRIT_YEAR = #{year}
+			    AND 	DEPT_ID = #{slsDeptId}
+        <if test="manageTarget == 'SPRN' ">
+			    AND 	EMP_ID = #{empId}
+        </if>
+			    AND		BPLN_DST_CD = #{bplnDstCd}
+			    AND		BSNS_RSL_DTL_DST_CD = #{bsnsRslDtlDstCd}
+
+	</select>
+    <!-- 삭제쿼리
+    &lt;!&ndash; 월별부서목표 존재여부 체크(for 삭제) &ndash;&gt;
+    <select id="Select_isExistsBusinessTargetDept"
+            parameterType="com.ibiz.api.model.BusinessTargetForDeptMMVO"
+            resultType="java.util.HashMap">
+			SELECT CASE WHEN COUNT(*)>0 THEN 'TRUE'
+		            ELSE 'FALSE'
+		            END RESULT
+			FROM BRST100T
+			WHERE CRIT_YEAR = #{critYear}
+			    AND 	DEPT_ID = #{deptId}
+			    AND		BPLN_DST_CD = #{bplnDstCd}
+			    AND		BSNS_RSL_DTL_DST_CD = #{bsnsRslDtlDstCd}
+
+	</select>
+
+    &lt;!&ndash; 월별영업대표목표 존재여부 체크(for 삭제) &ndash;&gt;
+    <select id="Select_isExistsBusinessTargetEmp"
+            parameterType="com.ibiz.api.model.BusinessTargetForEmpMMVO"
+            resultType="java.util.HashMap">
+			SELECT CASE WHEN COUNT(*)>0 THEN 'TRUE'
+		            ELSE 'FALSE'
+		            END RESULT
+			FROM BRST110T
+			WHERE CRIT_YEAR = #{critYear}
+			    AND 	DEPT_ID = #{deptId}
+			    AND 	EMP_ID = #{empId}
+			    AND		BPLN_DST_CD = #{bplnDstCd}
+			    AND		BSNS_RSL_DTL_DST_CD = #{bsnsRslDtlDstCd}
+
+	</select>-->
+
+    <!-- 실적관련 유효한 수정기간인지 여부 체크 -->
+    <select id="Select_isOpenAvlDate"
+            parameterType="com.ibiz.api.model.BusinessTargetSearchVO"
+            resultType="java.util.HashMap">
+		SELECT
+            COUNT(CASE WHEN OPEN_MGMT_TGT_CD = 'B1' THEN OPEN_MGMT_TGT_CD END ) AS tgtCnt,
+            COUNT(CASE WHEN OPEN_MGMT_TGT_CD = 'B2' THEN OPEN_MGMT_TGT_CD END ) AS dcdCnt
+        FROM SSYS310T
+        WHERE
+        <![CDATA[
+			OPEN_START_DATE <= TO_CHAR(SYSDATE,'YYYYMMDD')
+			AND OPEN_END_DATE >= TO_CHAR(SYSDATE,'YYYYMMDD')
+		]]>
+        AND OPEN_MGMT_TR = #{year}
+	</select>
+
+
+
+    <!--  insert  -->
+
+    <!-- 월별부서목표관리 등록 -->
+    <insert id="Insert_businessTargetDeptForMM"
+            parameterType="com.ibiz.api.model.BusinessTargetForDeptMMVO">
+        INSERT
+        INTO BRST100T (
+        CRIT_YEAR,
+        DEPT_ID,
+        BPLN_DST_CD,
+        BSNS_RSL_DTL_DST_CD,
+        BSNS_CLSF_CD,
+        PROD_DST_CD,
+        PROD_TYPE_CD,
+        <if test="janAmt != null and janAmt != ''">
+            JAN_AMT,
+        </if>
+        <if test="febAmt != null and febAmt != ''">
+            FEB_AMT,
+        </if>
+        <if test="marAmt != null and marAmt != ''">
+            MAR_AMT,
+        </if>
+        <if test="aprAmt != null and aprAmt != ''">
+            APR_AMT,
+        </if>
+        <if test="mayAmt != null and mayAmt != ''">
+            MAY_AMT,
+        </if>
+        <if test="junAmt != null and junAmt != ''">
+            JUN_AMT,
+        </if>
+        <if test="julAmt != null and julAmt != ''">
+            JUL_AMT,
+        </if>
+        <if test="augAmt != null and augAmt != ''">
+            AUG_AMT,
+        </if>
+        <if test="sepAmt != null and sepAmt != ''">
+            SEP_AMT,
+        </if>
+        <if test="octAmt != null and octAmt != ''">
+            OCT_AMT,
+        </if>
+        <if test="novAmt != null and novAmt != ''">
+            NOV_AMT,
+        </if>
+        <if test="decAmt != null and decAmt != ''">
+            DEC_AMT,
+        </if>
+        GODS_CLSF_CD
+        )
+        VALUES (
+        #{critYear},
+        #{deptId},
+        #{bplnDstCd},
+        #{bsnsRslDtlDstCd},
+        #{bsnsClsfCd},
+        #{prodDstCd},
+        #{prodTypeCd},
+        <if test="janAmt != null and janAmt != ''">
+            #{janAmt},
+        </if>
+        <if test="febAmt != null and febAmt != ''">
+            #{febAmt},
+        </if>
+        <if test="marAmt != null and marAmt != ''">
+            #{marAmt},
+        </if>
+        <if test="aprAmt != null and aprAmt != ''">
+            #{aprAmt},
+        </if>
+        <if test="mayAmt != null and mayAmt != ''">
+            #{mayAmt},
+        </if>
+        <if test="junAmt != null and junAmt != ''">
+            #{junAmt},
+        </if>
+        <if test="julAmt != null and julAmt != ''">
+            #{julAmt},
+        </if>
+        <if test="augAmt != null and augAmt != ''">
+            #{augAmt},
+        </if>
+        <if test="sepAmt != null and sepAmt != ''">
+            #{sepAmt},
+        </if>
+        <if test="octAmt != null and octAmt != ''">
+            #{octAmt},
+        </if>
+        <if test="novAmt != null and novAmt != ''">
+            #{novAmt},
+        </if>
+        <if test="decAmt != null and decAmt != ''">
+            #{decAmt},
+        </if>
+        #{godsClsfCd}
+        )
+    </insert>
+
+
+    <!-- 월별사원목표관리 등록 -->
+    <insert id="Insert_businessTargetEmpForMM"
+            parameterType="com.ibiz.api.model.BusinessTargetForEmpMMVO">
+        INSERT
+        INTO BRST110T (
+        CRIT_YEAR,
+        DEPT_ID,
+        EMP_ID,
+        BPLN_DST_CD,
+        BSNS_RSL_DTL_DST_CD,
+        BSNS_CLSF_CD,
+        PROD_DST_CD,
+        PROD_TYPE_CD,
+        <if test="janAmt != null and janAmt != ''">
+            JAN_AMT,
+        </if>
+        <if test="febAmt != null and febAmt != ''">
+            FEB_AMT,
+        </if>
+        <if test="marAmt != null and marAmt != ''">
+            MAR_AMT,
+        </if>
+        <if test="aprAmt != null and aprAmt != ''">
+            APR_AMT,
+        </if>
+        <if test="mayAmt != null and mayAmt != ''">
+            MAY_AMT,
+        </if>
+        <if test="junAmt != null and junAmt != ''">
+            JUN_AMT,
+        </if>
+        <if test="julAmt != null and julAmt != ''">
+            JUL_AMT,
+        </if>
+        <if test="augAmt != null and augAmt != ''">
+            AUG_AMT,
+        </if>
+        <if test="sepAmt != null and sepAmt != ''">
+            SEP_AMT,
+        </if>
+        <if test="octAmt != null and octAmt != ''">
+            OCT_AMT,
+        </if>
+        <if test="novAmt != null and novAmt != ''">
+            NOV_AMT,
+        </if>
+        <if test="decAmt != null and decAmt != ''">
+            DEC_AMT,
+        </if>
+        GODS_CLSF_CD
+        )
+        VALUES (
+        #{critYear},
+        #{deptId},
+        #{empId},
+        #{bplnDstCd},
+        #{bsnsRslDtlDstCd},
+        #{bsnsClsfCd},
+        #{prodDstCd},
+        #{prodTypeCd},
+        <if test="janAmt != null and janAmt != ''">
+            #{janAmt},
+        </if>
+        <if test="febAmt != null and febAmt != ''">
+            #{febAmt},
+        </if>
+        <if test="marAmt != null and marAmt != ''">
+            #{marAmt},
+        </if>
+        <if test="aprAmt != null and aprAmt != ''">
+            #{aprAmt},
+        </if>
+        <if test="mayAmt != null and mayAmt != ''">
+            #{mayAmt},
+        </if>
+        <if test="junAmt != null and junAmt != ''">
+            #{junAmt},
+        </if>
+        <if test="julAmt != null and julAmt != ''">
+            #{julAmt},
+        </if>
+        <if test="augAmt != null and augAmt != ''">
+            #{augAmt},
+        </if>
+        <if test="sepAmt != null and sepAmt != ''">
+            #{sepAmt},
+        </if>
+        <if test="octAmt != null and octAmt != ''">
+            #{octAmt},
+        </if>
+        <if test="novAmt != null and novAmt != ''">
+            #{novAmt},
+        </if>
+        <if test="decAmt != null and decAmt != ''">
+            #{decAmt},
+        </if>
+        #{godsClsfCd}
+        )
+    </insert>
+
+
+    <!--  delete -->
+
+    <!-- 월별부서목표 전체삭제-->
+    <delete id="Delete_allBusinessTargetDeptForMM"
+            parameterType="com.ibiz.api.model.BusinessTargetForDeptMMVO">
+			DELETE FROM BRST100T
+				WHERE	CRIT_YEAR = #{critYear}
+					    AND 	DEPT_ID = #{deptId}
+					    AND		BPLN_DST_CD = #{bplnDstCd}
+					    AND		BSNS_RSL_DTL_DST_CD = #{bsnsRslDtlDstCd}
+	</delete>
+
+    <!-- 월별사원목표 전체삭제 -->
+    <delete id="Delete_allBusinessTargetEmpForMM"
+            parameterType="com.ibiz.api.model.BusinessTargetForEmpMMVO">
+			DELETE FROM BRST110T
+				WHERE	CRIT_YEAR = #{critYear}
+					    AND 	DEPT_ID = #{deptId}
+					    AND 	EMP_ID = #{empId}
+					    AND		BPLN_DST_CD = #{bplnDstCd}
+					    AND		BSNS_RSL_DTL_DST_CD = #{bsnsRslDtlDstCd}
+	</delete>
+
+    <!-- 월별부서목표 목표확정 삭제 -->
+    <delete id="Delete_onlyGoalBusinessTargetDeptForMM"
+            parameterType="com.ibiz.api.model.BusinessTargetForDeptMMVO">
+			DELETE FROM BRST100T
+				WHERE	CRIT_YEAR = #{critYear}
+					    AND 	DEPT_ID = #{deptId}
+					    AND		BPLN_DST_CD ='P1'
+					    AND		BSNS_RSL_DTL_DST_CD = #{bsnsRslDtlDstCd}
+	</delete>
+
+    <!-- 월별사원목표 목표확정 삭제 -->
+    <delete id="Delete_onlyGoalBusinessTargetEmpForMM"
+            parameterType="com.ibiz.api.model.BusinessTargetForEmpMMVO">
+			DELETE FROM BRST110T
+				WHERE	CRIT_YEAR = #{critYear}
+					    AND 	DEPT_ID = #{deptId}
+					    AND 	EMP_ID = #{empId}
+					    AND		BPLN_DST_CD ='P1'
+					    AND		BSNS_RSL_DTL_DST_CD = #{bsnsRslDtlDstCd}
+	</delete>
+
+    <!-- 월별부서목표 목표확정 삭제 - 하위목표포함시 -->
+    <delete id="Delete_goalBusinessTargetDeptForLowerDept"
+            parameterType="com.ibiz.api.model.BusinessTargetSearchVO">
+			DELETE FROM BRST100T
+				WHERE	CRIT_YEAR = #{year}
+					    AND 	DEPT_ID  IN (
+			                            SELECT DEPT_ID FROM HMST100T
+			                            WHERE ORG_CLOSE_DATE >= TO_CHAR(SYSDATE,'YYYYMMDD')
+			                            START WITH
+			                                DEPT_ID =  #{slsDeptId}
+			                            CONNECT BY
+			                                PRIOR DEPT_ID = HGRK_DEPT_ID
+		                        	)
+					    AND		BPLN_DST_CD ='P1'
+					    AND		BSNS_RSL_DTL_DST_CD = #{bsnsRslDtlDstCd}
+	</delete>
+
+    <!-- 월별사원목표 목표확정 삭제  - 하위목표포함시 -->
+    <delete id="Delete_goalBusinessTargetEmpForLowerDept"
+            parameterType="com.ibiz.api.model.BusinessTargetSearchVO">
+			DELETE FROM BRST110T
+				WHERE	CRIT_YEAR = #{year}
+					    AND 	DEPT_ID IN (
+			                            SELECT DEPT_ID FROM HMST100T
+			                            WHERE ORG_CLOSE_DATE >= TO_CHAR(SYSDATE,'YYYYMMDD')
+			                            START WITH
+			                                DEPT_ID =  #{slsDeptId}
+			                            CONNECT BY
+			                                PRIOR DEPT_ID = HGRK_DEPT_ID
+		                        	)
+					    AND		BPLN_DST_CD ='P1'
+					    AND		BSNS_RSL_DTL_DST_CD = #{bsnsRslDtlDstCd}
+	</delete>
+
+
+    <!-- INSERT -->
+
+    <!-- 월별부서 목표관리 > 수립목표 확정  -->
+    <insert id="Insert_businessTargetDeptForMMConfirm"
+            parameterType="com.ibiz.api.model.BusinessTargetForDeptMMVO">
+        INSERT
+        INTO BRST100T (
+        CRIT_YEAR,
+        DEPT_ID,
+        BPLN_DST_CD,
+        BSNS_RSL_DTL_DST_CD,
+        BSNS_CLSF_CD,
+        PROD_DST_CD,
+        PROD_TYPE_CD,
+        <if test="janAmt != null and janAmt != ''">
+            JAN_AMT,
+        </if>
+        <if test="febAmt != null and febAmt != ''">
+            FEB_AMT,
+        </if>
+        <if test="marAmt != null and marAmt != ''">
+            MAR_AMT,
+        </if>
+        <if test="aprAmt != null and aprAmt != ''">
+            APR_AMT,
+        </if>
+        <if test="mayAmt != null and mayAmt != ''">
+            MAY_AMT,
+        </if>
+        <if test="junAmt != null and junAmt != ''">
+            JUN_AMT,
+        </if>
+        <if test="julAmt != null and julAmt != ''">
+            JUL_AMT,
+        </if>
+        <if test="augAmt != null and augAmt != ''">
+            AUG_AMT,
+        </if>
+        <if test="sepAmt != null and sepAmt != ''">
+            SEP_AMT,
+        </if>
+        <if test="octAmt != null and octAmt != ''">
+            OCT_AMT,
+        </if>
+        <if test="novAmt != null and novAmt != ''">
+            NOV_AMT,
+        </if>
+        <if test="decAmt != null and decAmt != ''">
+            DEC_AMT,
+        </if>
+        GODS_CLSF_CD
+        )
+        VALUES (
+        #{critYear},
+        #{deptId},
+        'P1',
+        #{bsnsRslDtlDstCd},
+        #{bsnsClsfCd},
+        #{prodDstCd},
+        #{prodTypeCd},
+        <if test="janAmt != null and janAmt != ''">
+            #{janAmt},
+        </if>
+        <if test="febAmt != null and febAmt != ''">
+            #{febAmt},
+        </if>
+        <if test="marAmt != null and marAmt != ''">
+            #{marAmt},
+        </if>
+        <if test="aprAmt != null and aprAmt != ''">
+            #{aprAmt},
+        </if>
+        <if test="mayAmt != null and mayAmt != ''">
+            #{mayAmt},
+        </if>
+        <if test="junAmt != null and junAmt != ''">
+            #{junAmt},
+        </if>
+        <if test="julAmt != null and julAmt != ''">
+            #{julAmt},
+        </if>
+        <if test="augAmt != null and augAmt != ''">
+            #{augAmt},
+        </if>
+        <if test="sepAmt != null and sepAmt != ''">
+            #{sepAmt},
+        </if>
+        <if test="octAmt != null and octAmt != ''">
+            #{octAmt},
+        </if>
+        <if test="novAmt != null and novAmt != ''">
+            #{novAmt},
+        </if>
+        <if test="decAmt != null and decAmt != ''">
+            #{decAmt},
+        </if>
+        #{godsClsfCd}
+        )
+    </insert>
+
+    <!-- 월별 사원목표관리  > 수립목표 확정 -->
+    <insert id="Insert_businessTargetEmpForMMConfirm"
+            parameterType="com.ibiz.api.model.BusinessTargetForEmpMMVO">
+        INSERT
+        INTO BRST110T (
+        CRIT_YEAR,
+        DEPT_ID,
+        EMP_ID,
+        BPLN_DST_CD,
+        BSNS_RSL_DTL_DST_CD,
+        BSNS_CLSF_CD,
+        PROD_DST_CD,
+        PROD_TYPE_CD,
+        <if test="janAmt != null and janAmt != ''">
+            JAN_AMT,
+        </if>
+        <if test="febAmt != null and febAmt != ''">
+            FEB_AMT,
+        </if>
+        <if test="marAmt != null and marAmt != ''">
+            MAR_AMT,
+        </if>
+        <if test="aprAmt != null and aprAmt != ''">
+            APR_AMT,
+        </if>
+        <if test="mayAmt != null and mayAmt != ''">
+            MAY_AMT,
+        </if>
+        <if test="junAmt != null and junAmt != ''">
+            JUN_AMT,
+        </if>
+        <if test="julAmt != null and julAmt != ''">
+            JUL_AMT,
+        </if>
+        <if test="augAmt != null and augAmt != ''">
+            AUG_AMT,
+        </if>
+        <if test="sepAmt != null and sepAmt != ''">
+            SEP_AMT,
+        </if>
+        <if test="octAmt != null and octAmt != ''">
+            OCT_AMT,
+        </if>
+        <if test="novAmt != null and novAmt != ''">
+            NOV_AMT,
+        </if>
+        <if test="decAmt != null and decAmt != ''">
+            DEC_AMT,
+        </if>
+        GODS_CLSF_CD
+        )
+        VALUES (
+        #{critYear},
+        #{deptId},
+        #{empId},
+        'P1',
+        #{bsnsRslDtlDstCd},
+        #{bsnsClsfCd},
+        #{prodDstCd},
+        #{prodTypeCd},
+        <if test="janAmt != null and janAmt != ''">
+            #{janAmt},
+        </if>
+        <if test="febAmt != null and febAmt != ''">
+            #{febAmt},
+        </if>
+        <if test="marAmt != null and marAmt != ''">
+            #{marAmt},
+        </if>
+        <if test="aprAmt != null and aprAmt != ''">
+            #{aprAmt},
+        </if>
+        <if test="mayAmt != null and mayAmt != ''">
+            #{mayAmt},
+        </if>
+        <if test="junAmt != null and junAmt != ''">
+            #{junAmt},
+        </if>
+        <if test="julAmt != null and julAmt != ''">
+            #{julAmt},
+        </if>
+        <if test="augAmt != null and augAmt != ''">
+            #{augAmt},
+        </if>
+        <if test="sepAmt != null and sepAmt != ''">
+            #{sepAmt},
+        </if>
+        <if test="octAmt != null and octAmt != ''">
+            #{octAmt},
+        </if>
+        <if test="novAmt != null and novAmt != ''">
+            #{novAmt},
+        </if>
+        <if test="decAmt != null and decAmt != ''">
+            #{decAmt},
+        </if>
+        #{godsClsfCd}
+        )
+    </insert>
+
+    <!-- 월별부서 목표관리 > 수립목표 확정  - 하위부서 포함 -->
+    <insert id="Insert_LowerDeptBusinessTargetDeptForMMConfirm"
+            parameterType="com.ibiz.api.model.BusinessTargetSearchVO">
+				INSERT
+			    INTO BRST100T (
+			        CRIT_YEAR,
+			        DEPT_ID,
+			        BPLN_DST_CD,
+			        BSNS_RSL_DTL_DST_CD,
+			        BSNS_CLSF_CD,
+			        PROD_DST_CD,
+			        PROD_TYPE_CD,
+			        JAN_AMT,
+			        FEB_AMT,
+			        MAR_AMT,
+			        APR_AMT,
+			        MAY_AMT,
+			        JUN_AMT,
+			        JUL_AMT,
+			        AUG_AMT,
+			        SEP_AMT,
+			        OCT_AMT,
+			        NOV_AMT,
+			        DEC_AMT,
+			        GODS_CLSF_CD
+			    )
+			 	(
+			 		SELECT
+				        CRIT_YEAR,
+				        DEPT_ID,
+				        'P1',
+				        BSNS_RSL_DTL_DST_CD,
+				        BSNS_CLSF_CD,
+				        PROD_DST_CD,
+				        PROD_TYPE_CD,
+				        JAN_AMT,
+				        FEB_AMT,
+				        MAR_AMT,
+				        APR_AMT,
+				        MAY_AMT,
+				        JUN_AMT,
+				        JUL_AMT,
+				        AUG_AMT,
+				        SEP_AMT,
+				        OCT_AMT,
+				        NOV_AMT,
+				        DEC_AMT,
+			        GODS_CLSF_CD
+			 		FROM BRST100T
+			 		WHERE
+			 		CRIT_YEAR = #{year}
+			 		AND BPLN_DST_CD = 'P2'
+					AND	BSNS_RSL_DTL_DST_CD = #{bsnsRslDtlDstCd}
+			 		AND DEPT_ID IN 	(
+			                            SELECT DEPT_ID FROM HMST100T
+			                            WHERE ORG_CLOSE_DATE >= TO_CHAR(SYSDATE,'YYYYMMDD')
+			                            START WITH
+			                                DEPT_ID = #{slsDeptId}
+			                            CONNECT BY
+			                                PRIOR DEPT_ID = HGRK_DEPT_ID
+		                        	)
+
+				)
+	</insert>
+
+    <!-- 월별 사원목표관리  > 수립목표 확정 - 하위부서포함 -->
+    <insert id="Insert_LowerDeptBusinessTargetEmpForMMConfirm"
+            parameterType="com.ibiz.api.model.BusinessTargetSearchVO">
+			INSERT
+			    INTO BRST110T (
+			        CRIT_YEAR,
+			        DEPT_ID,
+			        EMP_ID,
+			        BPLN_DST_CD,
+			        BSNS_RSL_DTL_DST_CD,
+			        BSNS_CLSF_CD,
+			        PROD_DST_CD,
+			        PROD_TYPE_CD,
+			        JAN_AMT,
+			        FEB_AMT,
+			        MAR_AMT,
+			        APR_AMT,
+			        MAY_AMT,
+			        JUN_AMT,
+			        JUL_AMT,
+			        AUG_AMT,
+			        SEP_AMT,
+			        OCT_AMT,
+			        NOV_AMT,
+		        	DEC_AMT,
+			        GODS_CLSF_CD
+			    )
+				(
+					SELECT
+				        CRIT_YEAR,
+				        DEPT_ID,
+				        EMP_ID,
+				        'P1',
+				        BSNS_RSL_DTL_DST_CD,
+				        BSNS_CLSF_CD,
+				        PROD_DST_CD,
+			            PROD_TYPE_CD,
+				        JAN_AMT,
+				        FEB_AMT,
+				        MAR_AMT,
+				        APR_AMT,
+				        MAY_AMT,
+				        JUN_AMT,
+				        JUL_AMT,
+				        AUG_AMT,
+				        SEP_AMT,
+				        OCT_AMT,
+				        NOV_AMT,
+			        	DEC_AMT,
+				        GODS_CLSF_CD
+					FROM BRST110T
+			 		WHERE
+			 		CRIT_YEAR = #{year}
+			 		AND BPLN_DST_CD = 'P2'
+					AND	BSNS_RSL_DTL_DST_CD = #{bsnsRslDtlDstCd}
+			 		AND DEPT_ID IN 	(
+			                            SELECT DEPT_ID FROM HMST100T
+			                            WHERE ORG_CLOSE_DATE >= TO_CHAR(SYSDATE,'YYYYMMDD')
+			                            START WITH
+			                                DEPT_ID = #{slsDeptId}
+			                            CONNECT BY
+			                                PRIOR DEPT_ID = HGRK_DEPT_ID
+		                        	)
+					)
+	</insert>
+
+    <!-- 실적현황 테이블에 따른 max 연도 조회 -->
+    <select id="Select_standardCritYear"
+            parameterType="com.ibiz.api.model.BusinessTargetSearchVO"
+            resultType="java.util.HashMap">
+        <if test="manageTarget == 'SDPT'">
+            SELECT
+            NVL(MAX(CRIT_YEAR),TO_CHAR(SYSDATE,'YYYY'))  as RESULT
+            FROM BRST100T
+        </if>
+        <if test="manageTarget == 'SPRN'">
+            SELECT
+            NVL(MAX(CRIT_YEAR), TO_CHAR(SYSDATE,'YYYY')) as RESULT
+            FROM BRST110T
+        </if>
+
+
+    </select>
+
+</mapper>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="CmnMapper">
+
+    <!--
+
+        SELECT
+
+    -->
+
+    <!-- 최상위 부서정보조회 -->
+    <select id="Select_HTRKDeptInfo"
+            resultType="com.ibiz.api.model.DeptVO">
+		SELECT DEPT_ID FROM HMST100T WHERE HGRK_DEPT_ID IS NULL
+	</select>
+
+
+</mapper>

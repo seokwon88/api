@@ -1,0 +1,33 @@
+[2019-12-03 17:06:59:1591][main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration' of type [org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration$$EnhancerBySpringCGLIB$$cf278ddd] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+[2019-12-03 17:06:59:2208][main] INFO  com.ibiz.api.ApiApplication - No active profile set, falling back to default profiles: default
+[2019-12-03 17:07:00:2999][main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode!
+[2019-12-03 17:07:00:3003][main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode.
+[2019-12-03 17:07:00:3037][main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 16ms. Found 0 repository interfaces.
+[2019-12-03 17:07:00:3161][main] WARN  o.s.b.actuate.endpoint.EndpointId - Endpoint ID 'service-registry' contains invalid characters, please migrate to a valid format.
+[2019-12-03 17:07:01:3244][main] WARN  o.m.s.mapper.ClassPathMapperScanner - No MyBatis mapper was found in '[com.ibiz.api]' package. Please check your configuration.
+[2019-12-03 17:07:01:3292][main] INFO  o.s.c.context.scope.GenericScope - BeanFactory id=ab6d9b23-2ed6-361e-9234-7d47f6a4881d
+[2019-12-03 17:07:01:3408][main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.ws.config.annotation.DelegatingWsConfiguration' of type [org.springframework.ws.config.annotation.DelegatingWsConfiguration$$EnhancerBySpringCGLIB$$57a54fdf] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+[2019-12-03 17:07:01:3433][main] INFO  o.s.w.s.a.s.AnnotationActionEndpointMapping - Supporting [WS-Addressing August 2004, WS-Addressing 1.0]
+[2019-12-03 17:07:01:3455][main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+[2019-12-03 17:07:01:3521][main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration' of type [org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration$$EnhancerBySpringCGLIB$$cf278ddd] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+[2019-12-03 17:07:01:3768][main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 7100 (http)
+[2019-12-03 17:07:01:3777][main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-7100"]
+[2019-12-03 17:07:01:3778][main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+[2019-12-03 17:07:01:3778][main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.27]
+[2019-12-03 17:07:01:3939][main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+[2019-12-03 17:07:01:3939][main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 1718 ms
+[2019-12-03 17:07:01:3939][main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 1718 ms
+[2019-12-03 17:07:01:4026][main] WARN  c.n.c.s.URLConfigurationSource - No URLs will be polled as dynamic configuration sources.
+[2019-12-03 17:07:01:4026][main] INFO  c.n.c.s.URLConfigurationSource - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[2019-12-03 17:07:01:4049][main] INFO  c.n.config.DynamicPropertyFactory - DynamicPropertyFactory is initialized with configuration sources: com.netflix.config.ConcurrentCompositeConfiguration@544e3679
+[2019-12-03 17:07:03:5461][main] WARN  c.n.c.s.URLConfigurationSource - No URLs will be polled as dynamic configuration sources.
+[2019-12-03 17:07:03:5462][main] INFO  c.n.c.s.URLConfigurationSource - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[2019-12-03 17:07:03:5644][main] INFO  o.s.s.c.ThreadPoolTaskExecutor - Initializing ExecutorService 'applicationTaskExecutor'
+[2019-12-03 17:07:04:6602][main] WARN  o.s.c.l.c.BlockingLoadBalancerClientAutoConfiguration$BlockingLoadBalancerClientRibbonWarnLogger - You already have RibbonLoadBalancerClient on your classpath. It will be used by default. As Spring Cloud Ribbon is in maintenance mode. We recommend switching to BlockingLoadBalancerClient instead. In order to use it, set the value of `spring.cloud.loadbalancer.ribbon.enabled` to `false` or remove spring-cloud-starter-netflix-ribbon from your project.
+[2019-12-03 17:07:04:6658][main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 2 endpoint(s) beneath base path '/actuator'
+[2019-12-03 17:07:04:6741][main] INFO  o.s.c.n.eureka.InstanceInfoFactory - Setting initial instance status as: STARTING
+[2019-12-03 17:07:04:6788][main] INFO  c.netflix.discovery.DiscoveryClient - Initializing Eureka in region us-east-1
+[2019-12-03 17:07:05:7294][main] INFO  c.n.d.p.DiscoveryJerseyProvider - Using JSON encoding codec LegacyJacksonJson
+[2019-12-03 17:07:05:7295][main] INFO  c.n.d.p.DiscoveryJerseyProvider - Using JSON decoding codec LegacyJacksonJson
+[2019-12-03 17:07:05:7418][main] INFO  c.n.d.p.DiscoveryJerseyProvider - Using XML encoding codec XStreamXml
+[2019-12-03 17:07:05:7418][main] INFO  c.n.d.p.DiscoveryJerseyProvider - Using XML decoding codec XStreamXml

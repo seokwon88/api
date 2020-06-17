@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="SalesRecordMapper">
+
+    <!--
+
+        SELECT
+
+    -->
+
+    <!-- 조건별 사업이슈 조회 -->
+    <select id="Select_BusinessIssueList"
+            parameterType="com.ibiz.api.model.BusinessIssueListVO"
+            resultType="com.ibiz.api.model.BusinessIssueListVO">
+       SELECT
+            ROWNUMBER,  TOTAL_CNT,
+            LAST_CUST_ID, LAST_CUST_NM,
+            PRJT_ID, PRJT_NM, ISSUE_TITL, ISSUE_OCR_DATE,
+            REG_EMP_ID,REG_EMP_NM,SLS_DEPT_ID, SLS_DEPT_NM, SLS_EMP_ID,SLS_EMP_NM,
+            ISSUE_DLNG_STAT_CD,ISSUE_DLNG_STAT_CD_NM,
+            DLNG_DEPT_ID,DLNG_DEPT_NM, DLNG_EMP_ID, DLNG_EMP_NM,
+            PLAN_REG_DATE, BTRM_CMPL_DATE,ISSUE_CONT, BTRM_PLAN_CONT,BTRM_PRGS_MTR
+        FROM (
+                    SELECT COUNT(1) OVER() AS TOTAL_CNT,
+                        ROW_NUMBER() OVER(ORDER BY ISSUE_OCR_DATE DESC,LAST_CUST_ID ASC, PRJT_NM ASC,ISSUE_TITL ASC) ROWNUMBER,
+                        T3.CUST_ID AS LAST_CUST_ID, T3.CUST_NM AS LAST_CUST_NM,
+                        T1.PRJT_ID, T1.PRJT_NM, T2.ISSUE_TITL, T2.ISSUE_OCR_DATE,
+                        T2.REG_EMP_ID,IBIZ_EMP_NM(T2.REG_EMP_ID) AS REG_EMP_NM,
+                        T1.SLS_DEPT_ID,IBIZ_DEPT_NM(T1.SLS_DEPT_ID) AS SLS_DEPT_NM,
+                        T1.SLS_EMP_ID,IBIZ_EMP_NM(T1.SLS_EMP_ID) AS SLS_EMP_NM,
+                        ISSUE_DLNG_STAT_CD,IBIZ_COM_CD_NM('ISSUE_DLNG_STAT_CD', T2.ISSUE_DLNG_STAT_CD) AS ISSUE_DLNG_STAT_CD_NM,
+                        T2.DLNG_DEPT_ID,IBIZ_DEPT_NM(T2.DLNG_DEPT_ID) AS DLNG_DEPT_NM,
+                        T2.DLNG_EMP_ID,IBIZ_EMP_NM(T2.DLNG_EMP_ID) AS DLNG_EMP_NM,
+                        T2.PLAN_REG_DATE, T2.BTRM_CMPL_DATE,T2.ISSUE_CONT, T2.BTRM_PLAN_CONT,T2.BTRM_PRGS_MTR
+                    FROM APRJ000T T1
+                    JOIN BPIP200T T2
+                    ON T1.PRJT_ID = T2.PRJT_ID
+                    JOIN CMST000T T3
+                    ON T1.LAST_CUST_ID = T3.CUST_ID
+                    JOIN
+                    (
+                        SELECT DEPT_ID, HGRK_DEPT_ID
+                        FROM (
+                                SELECT T1.DEPT_ID, T1.HGRK_DEPT_ID
+                                FROM HMST100T T1
+                                WHERE 1 = 1
+                                START WITH
+                                    <if test="slsDeptId != null and slsDeptId != ''">
+                                        T1.DEPT_ID = #{slsDeptId}
+                                    </if>
+                                    <if test="slsDeptId == null or slsDeptId == ''">
+                                        T1.HGRK_DEPT_ID IS NULL
+                                    </if>
+                                CONNECT BY PRIOR T1.DEPT_ID=T1.HGRK_DEPT_ID
+                                ORDER SIBLINGS BY TO_NUMBER(T1.DEPT_SORT_SEQC)
+                            )
+                    )T4
+                    ON T1.SLS_DEPT_ID= T4.DEPT_ID
+                    WHERE 1=1
+                    AND T2.ISSUE_RPRT_YN = 'Y'
+                        <if test="lastCustNm != null and lastCustNm != '' ">
+                            AND UPPER(T3.CUST_NM) LIKE '%'||UPPER(#{lastCustNm})||'%'
+                        </if>
+                        <if test="lastCustId != null and lastCustId != '' ">
+                            AND UPPER(T3.CUST_ID) LIKE UPPER(#{lastCustId})
+                        </if>
+                        <if test="prjtNm != null and prjtNm != '' ">
+                            AND UPPER(T1.PRJT_NM) LIKE '%'||UPPER(#{prjtNm})||'%'
+                        </if>
+                        <if test="prjtId != null and prjtId != '' ">
+                            AND UPPER(T1.PRJT_ID) LIKE UPPER(#{prjtId})
+                        </if>
+                        <if test="slsEmpId != null and slsEmpId != '' ">
+                            AND UPPER(T1.SLS_EMP_ID) LIKE '%'||UPPER(#{slsEmpId})||'%'
+                        </if>
+                        <if test="slsEmpNm != null and slsEmpNm != '' ">
+                            AND UPPER(T1.SLS_EMP_ID) IN (SELECT EMP_ID FROM HMST300T WHERE EMP_NM LIKE '%'||UPPER(#{slsEmpNm})||'%')
+                        </if>
+                        <if test="issueOcrStartDate != null and issueOcrStartDate != ''">
+                            <![CDATA[
+                            AND #{issueOcrStartDate} <= T2.ISSUE_OCR_DATE
+                            ]]>
+                        </if>
+                        <if test="issueOcrEndDate != null and issueOcrEndDate != ''">
+                            <![CDATA[
+                            AND #{issueOcrEndDate} >= T2.ISSUE_OCR_DATE
+                            ]]>
+                        </if>
+                        <if test="issueDlngStatCd != null and issueDlngStatCd != '' ">
+                            AND UPPER(T2.ISSUE_DLNG_STAT_CD) LIKE '%'||UPPER(#{issueDlngStatCd})||'%'
+                        </if>
+                    ORDER BY ISSUE_OCR_DATE DESC,LAST_CUST_ID ASC, PRJT_NM ASC,ISSUE_TITL ASC
+        )
+        WHERE
+            ROWNUMBER BETWEEN #{pageSize} * (#{pageNumber} - 1) + 1
+            AND #{pageSize} * (#{pageNumber} - 1) + #{pageSize}
+
+    </select>
+
+    <!-- 조건별 주간업무보고 조회 -->
+    <select id="Select_WeekJobReportList"
+            parameterType="com.ibiz.api.model.WeekJobReportVO"
+            resultType="com.ibiz.api.model.WeekJobReportVO">
+
+            SELECT
+                ROWNUMBER,BSNS_CLSF_CD,BSNS_CLSF_NM,
+                LAST_CUST_ID ,LAST_CUST_NM, PRJT_ID,BOPT_ID,BOPT_NM,
+                ORDE_CUST_ID, ORDE_CUST_NM,CNTR_DATE,CNTR_TRSF_START_YAM,CNTR_TRSF_END_YAM,SUM_SELL_AMT,
+                WCT_PRBB_CD ,WCT_PRBB_NM, SLS_DEPT_ID, SLS_DEPT_NM, SLS_EMP_ID, SLS_EMP_NM,
+                BOPT_STAT_CD, BOPT_STAT_NM,  TOTAL_CNT
+            FROM
+            (
+                SELECT ROWNUM AS ROWNUMBER,BSNS_CLSF_CD,BSNS_CLSF_NM,
+                        LAST_CUST_ID ,LAST_CUST_NM, PRJT_ID,BOPT_ID,BOPT_NM,
+                        ORDE_CUST_ID, ORDE_CUST_NM,CNTR_DATE,CNTR_TRSF_START_YAM,CNTR_TRSF_END_YAM,SUM_SELL_AMT,
+                        WCT_PRBB_CD ,WCT_PRBB_NM, SLS_DEPT_ID, SLS_DEPT_NM, SLS_EMP_ID, SLS_EMP_NM,
+                        BOPT_STAT_CD, BOPT_STAT_NM,  TOTAL_CNT
+                FROM (
+                        SELECT T1.BSNS_CLSF_CD ,IBIZ_COM_CD_NM('BSNS_CLSF_CD',T1.BSNS_CLSF_CD) BSNS_CLSF_NM,
+                            T2.LAST_CUST_ID ,T2.LAST_CUST_NM,T1.PRJT_ID,T1.BOPT_ID,T1.BOPT_NM,
+                            T1.ORDE_CUST_ID,IBIZ_CUST_NM(T1.ORDE_CUST_ID) AS ORDE_CUST_NM,
+                            T1.CNTR_DATE,T1.CNTR_TRSF_START_YAM,T1.CNTR_TRSF_END_YAM,
+                            (
+                                SELECT SUM(SELL_AMT)
+                                FROM  BPIP020T
+                                WHERE BOPT_ID = T1.BOPT_ID
+                            ) SUM_SELL_AMT,
+                            T1.WCT_PRBB_CD ,IBIZ_COM_CD_NM('WCT_PRBB_CD',T1.WCT_PRBB_CD) WCT_PRBB_NM,
+                            T1.SLS_DEPT_ID,IBIZ_DEPT_NM(T1.SLS_DEPT_ID) AS SLS_DEPT_NM,
+                            T1.SLS_EMP_ID,IBIZ_EMP_NM(T1.SLS_EMP_ID) AS SLS_EMP_NM,
+                            T1.BOPT_STAT_CD,IBIZ_COM_CD_NM('BOPT_STAT_CD',T1.BOPT_STAT_CD) BOPT_STAT_NM, COUNT(1) OVER() AS TOTAL_CNT
+                        FROM  BPIP000T T1
+                        JOIN
+                        (
+                            SELECT
+                                PRJT_ID,PRJT_NM,LAST_CUST_ID,PRJT_STAT_CD,IBIZ_CUST_NM(LAST_CUST_ID) AS LAST_CUST_NM
+                            FROM APRJ000T
+                            WHERE PRJT_STAT_CD NOT LIKE 'F%'
+                            AND PRJT_STAT_CD NOT LIKE 'D%'
+                        ) T2
+                        ON T1.PRJT_ID = T2.PRJT_ID
+                        WHERE 1=1
+                        AND T1.BOPT_STAT_CD != 'D1'
+                        AND T1.DTIM_RPRT_DISP_YN = 'Y'
+                        AND T1.SLS_DEPT_ID IN (SELECT DEPT_ID FROM HMST100T
+                                                    START WITH
+                                                        <if test="slsDeptId != null and slsDeptId != ''">
+                                                            DEPT_ID = #{slsDeptId}
+                                                        </if>
+                                                        <if test="slsDeptId == null or slsDeptId == ''">
+                                                        HGRK_DEPT_ID IS NULL
+                                                        </if>
+                                                    CONNECT BY PRIOR DEPT_ID=HGRK_DEPT_ID
+                                                )
+                            <if test="lastCustNm != null and lastCustNm != '' ">
+                                AND UPPER(T2.LAST_CUST_NM) LIKE '%'||UPPER(#{lastCustNm})||'%'
+                            </if>
+                            <if test="lastCustId != null and lastCustId != '' ">
+                                AND UPPER(T2.LAST_CUST_ID) = UPPER(#{lastCustId})
+                            </if>
+                            <if test="prjtNm != null and prjtNm != '' ">
+                                AND UPPER(T2.PRJT_NM) LIKE '%'||UPPER(#{prjtNm})||'%'
+                            </if>
+                            <if test="prjtId != null and prjtId != '' ">
+                                AND UPPER(T2.PRJT_ID) = UPPER(#{prjtId})
+                            </if>
+                            <if test="slsEmpId != null and slsEmpId != '' ">
+                                AND UPPER(T1.SLS_EMP_ID) LIKE '%'||UPPER(#{slsEmpId})||'%'
+                            </if>
+                        AND EXISTS (SELECT 1 FROM BPIP250T WHERE BOPT_ID = T1.BOPT_ID
+                            <if test="regActStartDate != null and regActStartDate != ''">
+                                <![CDATA[
+                                        AND #{regActStartDate} <= TO_CHAR(REG_DT, 'YYYYMMDD')
+                                ]]>
+                            </if>
+                            <if test="regActEndDate != null and regActEndDate != ''">
+                                <![CDATA[
+                                        AND #{regActEndDate} >= TO_CHAR(REG_DT, 'YYYYMMDD')
+                                    ]]>
+                            </if>
+                        )
+                            <if test="boptStatCd != null and boptStatCd != '' ">
+                                AND T1.BOPT_STAT_CD = #{boptStatCd}
+                            </if>
+                            <if test="minWctPrbbCd != null and minWctPrbbCd != ''">
+                                <![CDATA[
+                                 AND #{minWctPrbbCd} <= TO_NUMBER(T1.WCT_PRBB_CD)
+                                ]]>
+                            </if>
+                            <if test="maxWctPrbbCd != null and maxWctPrbbCd != ''">
+                                <![CDATA[
+                                AND #{maxWctPrbbCd} >= TO_NUMBER(T1.WCT_PRBB_CD)
+                                ]]>
+                            </if>
+                            <if test='sumSellAmt != null and sumSellAmt != "" and sumSellAmt != "0" '>
+                                    AND NVL((
+                                             SELECT  SUM(SELL_AMT)
+                                             FROM BPIP020T
+                                             WHERE  BOPT_ID = T1.BOPT_ID
+                                <choose>
+                                    <when test="compareCd == 'above'">
+                                        <![CDATA[
+                                         ),0) >= #{sumSellAmt} * 100000000
+                                        ]]>
+                                    </when>
+                                    <when test="compareCd == 'below'">
+                                        <![CDATA[
+                                         ),0) <= #{sumSellAmt} * 100000000
+                                        ]]>
+                                    </when>
+                                    <when test="compareCd == 'over'">
+                                        <![CDATA[
+                                         ),0) > #{sumSellAmt} * 100000000
+                                        ]]>
+                                    </when>
+                                    <when test="compareCd == 'under'">
+                                        <![CDATA[
+                                         ),0) < #{sumSellAmt} * 100000000
+                                        ]]>
+                                    </when>
+                                </choose>
+                            </if>
+                        ORDER BY T1.BSNS_CLSF_CD, SUM_SELL_AMT DESC, T1.CNTR_DATE
+                )TF
+            ) WT
+            WHERE
+            ROWNUMBER BETWEEN #{pageSize} * (#{pageNumber} - 1) + 1
+            AND #{pageSize} * (#{pageNumber} - 1) + #{pageSize}
+
+
+    </select>
+
+    <!-- 조건별 주간업무보고 조회(서브) -->
+    <select id="Select_WeekJobReportSubList"
+            parameterType="com.ibiz.api.model.WeekJobReportVO"
+            resultType="com.ibiz.api.model.WeekJobReportSubVO">
+		SELECT
+            T250.BOPT_ID,  T000.SPCL_CONT, T250.PRMRY_ACT_CONT,  T250.ACT_PLAN_CONT
+        FROM BPIP250T T250
+        LEFT OUTER JOIN BPIP000T T000
+        ON T000.BOPT_ID = T250.BOPT_ID
+		WHERE 1 = 1
+	    AND T250.BOPT_ID = #{boptId}
+	    ORDER BY T250.REG_DT DESC, T250.CHG_DT DESC
+	</select>
+
+</mapper>
