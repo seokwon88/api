@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="BusinessResultsMapper">
+<mapper namespace="BizResultMapper">
 
     <!--
 
@@ -11,12 +11,12 @@
 	-->
 
     <!--  영업부서별 실적현황 조회 -->
-    <select id="Select_BusinessResultsByDeptList"
-            parameterType="com.ibiz.api.model.BusinessResultsSearchVO"
-            resultType="com.ibiz.api.model.BusinessResultsVO">
+    <select id="selectExpectDeptStatsList"
+            parameterType="com.ibiz.api.model.BusinessResultSearchVO"
+            resultType="com.ibiz.api.model.BusinessResultVO">
 
         SELECT DEPT_ID, DEPT_NM, DEPT_L1_ID AS DEPT_LVL1_ID, DEPT_L1_NM AS DEPT_LVL1_NM, DEPT_L2_ID AS DEPT_LVL2_ID, DEPT_L2_NM AS DEPT_LVL2_NM,
-            BRSL_DST_CD, IBIZ_COM_CD_NM('BRSL_DST_CD',BRSL_DST_CD) AS BRSL_DST_NM,
+            BRSL_DST_CD, IBIZ_COM_CD_NM('BRSL_DST_CD',BRSL_DST_CD) AS BRSL_DST_CD_NM,
             YRLY_GOAL_RSL_AMT, YRLY_OPPTY_RSL_AMT, YRLY_FCST_RSL_AMT, YRLY_BRSL_RSL_AMT,
             STD_GOAL_RSL_AMT, STD_OPPTY_RSL_AMT, STD_FCST_RSL_AMT, STD_BRSL_RSL_AMT,
             ACML_GOAL_RSL_AMT, ACML_OPPTY_RSL_AMT, ACML_FCST_RSL_AMT, ACML_BRSL_RSL_AMT,
@@ -112,11 +112,11 @@
 
 
     <!--  영업대표별 실적현황 조회 -->
-    <select id="Select_BusinessResultsByEmpList"
-            parameterType="com.ibiz.api.model.BusinessResultsSearchVO"
-            resultType="com.ibiz.api.model.BusinessResultsVO">
+    <select id="selectExpectEmployeeStatsList"
+            parameterType="com.ibiz.api.model.BusinessResultSearchVO"
+            resultType="com.ibiz.api.model.BusinessResultVO">
         SELECT DEPT_ID, DEPT_NM, EMP_ID, IBIZ_EMP_NM(EMP_ID) AS EMP_NM,
-               BRSL_DST_CD, IBIZ_COM_CD_NM('BRSL_DST_CD',BRSL_DST_CD) BRSL_DST_NM,
+               BRSL_DST_CD, IBIZ_COM_CD_NM('BRSL_DST_CD',BRSL_DST_CD) BRSL_DST_CD_NM,
                YRLY_GOAL_RSL_AMT, YRLY_OPPTY_RSL_AMT, YRLY_FCST_RSL_AMT, YRLY_BRSL_RSL_AMT,
                STD_GOAL_RSL_AMT, STD_OPPTY_RSL_AMT, STD_FCST_RSL_AMT, STD_BRSL_RSL_AMT,
                ACML_GOAL_RSL_AMT, ACML_OPPTY_RSL_AMT, ACML_FCST_RSL_AMT, ACML_BRSL_RSL_AMT,
@@ -190,9 +190,9 @@
 
 
     <!--  사업부문별 실적현황 조회  -->
-    <select id="Select_BusinessResultsByBsnsClsfCdList"
-            parameterType="com.ibiz.api.model.BusinessResultsSearchVO"
-            resultType="com.ibiz.api.model.BusinessResultsVO">
+    <select id="selectExpectBizGroupStatsList"
+            parameterType="com.ibiz.api.model.BusinessResultSearchVO"
+            resultType="com.ibiz.api.model.BusinessResultVO">
 
         WITH
         RV AS (
@@ -204,8 +204,8 @@
                                START WITH DEPT_ID = #{deptId} AND CRIT_YEAR = #{critYear}  -- ★조회조건 대상부서
                                CONNECT BY PRIOR DEPT_ID = HGRK_DEPT_ID AND PRIOR CRIT_YEAR = CRIT_YEAR)
         )
-        SELECT BSNS_CLSF_CD, BSNS_CLSF_CD_NM AS BSNS_CLSF_NM, --◀2020-02-24
-               BRSL_DST_CD, BRSL_DST_CD_NM AS BRSL_DST_NM, --◀2020-02-24
+        SELECT BSNS_CLSF_CD, BSNS_CLSF_CD_NM AS BSNS_CLSF_CD_NM, --◀2020-02-24
+               BRSL_DST_CD, BRSL_DST_CD_NM AS BRSL_DST_CD_NM, --◀2020-02-24
                YRLY_GOAL_RSL_AMT, YRLY_OPPTY_RSL_AMT, YRLY_FCST_RSL_AMT, YRLY_BRSL_RSL_AMT,
                STD_GOAL_RSL_AMT, STD_OPPTY_RSL_AMT, STD_FCST_RSL_AMT, STD_BRSL_RSL_AMT,
                ACML_GOAL_RSL_AMT, ACML_OPPTY_RSL_AMT, ACML_FCST_RSL_AMT, ACML_BRSL_RSL_AMT,
@@ -267,18 +267,18 @@
 
 
     <!-- 상품별 실적현황 조회 -->
-    <select id="Select_BusinessResultsByProdCdList"
-            parameterType="com.ibiz.api.model.BusinessResultsSearchVO"
-            resultType="com.ibiz.api.model.BusinessResultsVO">
+    <select id="selectExpectProdGroupStatsList"
+            parameterType="com.ibiz.api.model.BusinessResultSearchVO"
+            resultType="com.ibiz.api.model.BusinessResultVO">
 
-        SELECT BRSL_DST_CD, BRSL_DST_CD_NM AS BRSL_DST_NM,
+        SELECT BRSL_DST_CD, BRSL_DST_CD_NM AS BRSL_DST_CD_NM,
         <if test='bsnsClsfCd == "" and bsnsClsfCd != null '>
-            'AL' AS BSNS_CLSF_CD, '전체' AS BSNS_CLSF_NM, --★조회조건: 사업분류코드(전체) --◀2020-02-24
+            'AL' AS BSNS_CLSF_CD, '전체' AS BSNS_CLSF_CD_NM, --★조회조건: 사업분류코드(전체) --◀2020-02-24
         </if>
         <if test='bsnsClsfCd != "" and bsnsClsfCd != null '>
-            BSNS_CLSF_CD, BSNS_CLSF_CD_NM AS BSNS_CLSF_NM , --★조회조건: 사업분류코드(택1) --◀2020-02-24
+            BSNS_CLSF_CD, BSNS_CLSF_CD_NM AS BSNS_CLSF_CD_NM , --★조회조건: 사업분류코드(택1) --◀2020-02-24
         </if>
-            PROD_DST_CD, PROD_DST_CD_NM AS PROD_DST_NM, --◀2020-02-24
+            PROD_DST_CD, PROD_DST_CD_NM AS PROD_DST_CD_NM, --◀2020-02-24
             YRLY_GOAL_RSL_AMT, YRLY_OPPTY_RSL_AMT, YRLY_FCST_RSL_AMT, YRLY_BRSL_RSL_AMT,
             STD_GOAL_RSL_AMT, STD_OPPTY_RSL_AMT, STD_FCST_RSL_AMT, STD_BRSL_RSL_AMT,
             ACML_GOAL_RSL_AMT, ACML_OPPTY_RSL_AMT, ACML_FCST_RSL_AMT, ACML_BRSL_RSL_AMT,
@@ -367,17 +367,17 @@
 
 
     <!-- 수주 예상/실적 리스트 조회 -->
-    <select id="Select_BusinessResultsWCTDetailList"
-            parameterType="com.ibiz.api.model.BusinessResultsSearchVO"
-            resultType="com.ibiz.api.model.BusinessResultsDetailVO">
+    <select id="selectWCTSalesReportList"
+            parameterType="com.ibiz.api.model.BusinessResultSearchVO"
+            resultType="com.ibiz.api.model.SalesReportVO">
         SELECT * FROM (
         SELECT COUNT(1) OVER() AS TOTAL_CNT,  ROWNUM AS ROWNUMBER, T.* FROM (
         SELECT  LAST_CUST_ID, LAST_CUST_NM, PRJT_ID, PRJT_NM, SLS_DEPT_ID, SLS_EMP_ID, SLS_EMP_NM,
-            CNTR_DATE, BSNS_CLSF_CD, BSNS_CLSF_NM, -- 사업분류코드
-            WCT_PRBB_CD,  WCT_PRBB_NM, -- 수주확률코드
-            BOPT_STAT_CD, BOPT_STAT_NM, -- 사업기회상태코드
+            CNTR_DATE, BSNS_CLSF_CD, BSNS_CLSF_CD_NM, -- 사업분류코드
+            WCT_PRBB_CD,  WCT_PRBB_CD_NM, -- 수주확률코드
+            BOPT_STAT_CD, BOPT_STAT_CD_NM, -- 사업기회상태코드
             <if test='prodDstCd != null and prodDstCd != "" '>
-                PROD_DST_CD, PROD_DST_NM,  -- 상품구분코드  -- ★상품실적현황인 경우
+                PROD_DST_CD, PROD_DST_CD_NM,  -- 상품구분코드  -- ★상품실적현황인 경우
             </if>
             SELL_OPPTY_RSL_AMT, -- 매출금액_기회
             BUY_OPPTY_RSL_AMT, -- 매입금액_기회
@@ -385,17 +385,17 @@
             BUY_FCST_RSL_AMT, -- 매입금액_확률적용
             SELL_RSL_AMT, -- 매출금액_실적
             BUY_RSL_AMT, -- 매입금액_실적
-            ISSUE_CNT, BOPT_ID, BOPT_NM, BOPT_END_TYPE_CD, BOPT_END_TYPE_NM, COM_CD_NUM_VAL
+            ISSUE_CNT, BOPT_ID, BOPT_NM, BOPT_END_TYPE_CD, BOPT_END_TYPE_CD_NM, COM_CD_NUM_VAL
         FROM
         (
             SELECT P.LAST_CUST_ID, M.CUST_NM LAST_CUST_NM, P.PRJT_ID, P.PRJT_NM,
                 P.SLS_DEPT_ID, P.SLS_EMP_ID, H.EMP_NM SLS_EMP_NM,
                 P.CNTR_DATE,
-                BSNS_CLSF_CD, IBIZ_COM_CD_NM('BSNS_CLSF_CD',P.BSNS_CLSF_CD) BSNS_CLSF_NM, -- 사업분류코드
-                WCT_PRBB_CD, IBIZ_COM_CD_NM('WCT_PRBB_CD',P.WCT_PRBB_CD) WCT_PRBB_NM, -- 수주확률코드
-                BOPT_STAT_CD, IBIZ_COM_CD_NM('BOPT_STAT_CD',P.BOPT_STAT_CD) BOPT_STAT_NM, -- 사업기회상태코드
+                BSNS_CLSF_CD, IBIZ_COM_CD_NM('BSNS_CLSF_CD',P.BSNS_CLSF_CD) BSNS_CLSF_CD_NM, -- 사업분류코드
+                WCT_PRBB_CD, IBIZ_COM_CD_NM('WCT_PRBB_CD',P.WCT_PRBB_CD) WCT_PRBB_CD_NM, -- 수주확률코드
+                BOPT_STAT_CD, IBIZ_COM_CD_NM('BOPT_STAT_CD',P.BOPT_STAT_CD) BOPT_STAT_CD_NM, -- 사업기회상태코드
                 <if test='prodDstCd != null and prodDstCd != "" '>
-                    P.PROD_DST_CD, IBIZ_COM_CD_NM('PROD_DST_CD',P.PROD_DST_CD) PROD_DST_NM,  -- 상품구분코드  -- ★상품실적현황인 경우
+                    P.PROD_DST_CD, IBIZ_COM_CD_NM('PROD_DST_CD',P.PROD_DST_CD) PROD_DST_CD_NM,  -- 상품구분코드  -- ★상품실적현황인 경우
                 </if>
                 --GODS_CLSF_CD, IBIZ_COM_CD_NM('GODS_CLSF_CD',B.GODS_CLSF_CD) GODS_CLSF_NM,  -- 제품분류코드
                 P.SELL_AMT AS SELL_OPPTY_RSL_AMT, -- 매출금액_기회
@@ -410,7 +410,7 @@
                     AND ISSUE_DLNG_STAT_CD IN ('A','B','C','D') -- 이슈처리상태: A.등록, B.계획수립, C.처리중, D.결과검토
                 ) ISSUE_CNT,
                 P.BOPT_ID, P.BOPT_NM,
-                P.BOPT_END_TYPE_CD, IBIZ_COM_CD_NM('BOPT_END_TYPE_CD', P.BOPT_END_TYPE_CD) BOPT_END_TYPE_NM,
+                P.BOPT_END_TYPE_CD, IBIZ_COM_CD_NM('BOPT_END_TYPE_CD', P.BOPT_END_TYPE_CD) BOPT_END_TYPE_CD_NM,
                 P.COM_CD_NUM_VAL
             FROM CMST000T M, HMST300T H,
             (
@@ -505,19 +505,19 @@
 
 
     <!-- 매입/매출 예상/실적 리스트 조회 -->
-    <select id="Select_BusinessResultsBuySellDetailList"
-            parameterType="com.ibiz.api.model.BusinessResultsSearchVO"
-            resultType="com.ibiz.api.model.BusinessResultsDetailVO">
+    <select id="selectBuySellSalesReportList"
+            parameterType="com.ibiz.api.model.BusinessResultSearchVO"
+            resultType="com.ibiz.api.model.SalesReportVO">
         SELECT * FROM (
         SELECT COUNT(1) OVER() AS TOTAL_CNT, ROWNUM AS ROWNUMBER, T.* FROM (
         SELECT LAST_CUST_ID, LAST_CUST_NM, PRJT_ID, PRJT_NM, BOPT_ID,
             SLS_DEPT_ID, SLS_EMP_ID, SLS_EMP_NM,
             CNTR_DATE, FCST_YAM,
-            BSNS_CLSF_CD,  BSNS_CLSF_NM, -- 사업분류코드
-            WCT_PRBB_CD,  WCT_PRBB_NM, -- 수주확률코드
-            BOPT_STAT_CD, BOPT_STAT_NM, -- 사업기회상태코드
+            BSNS_CLSF_CD,  BSNS_CLSF_CD_NM, -- 사업분류코드
+            WCT_PRBB_CD,  WCT_PRBB_CD_NM, -- 수주확률코드
+            BOPT_STAT_CD, BOPT_STAT_CD_NM, -- 사업기회상태코드
             <if test='prodDstCd != null and prodDstCd != "" '>
-                PROD_DST_CD, PROD_DST_NM,  -- 상품구분코드  -- ★상품실적현황인 경우
+                PROD_DST_CD, PROD_DST_CD_NM,  -- 상품구분코드  -- ★상품실적현황인 경우
             </if>
             --GODS_CLSF_CD, IBIZ_COM_CD_NM('GODS_CLSF_CD',B.GODS_CLSF_CD) GODS_CLSF_NM,  -- 제품분류코드
             SELL_OPPTY_RSL_AMT, -- 매출금액_기회
@@ -537,11 +537,11 @@
             SELECT P.LAST_CUST_ID, M.CUST_NM LAST_CUST_NM, P.PRJT_ID, P.PRJT_NM, P.BOPT_ID,
             P.SLS_DEPT_ID, P.SLS_EMP_ID, H.EMP_NM SLS_EMP_NM,
             P.CNTR_DATE, P.FCST_YAM,
-            P.BSNS_CLSF_CD, IBIZ_COM_CD_NM('BSNS_CLSF_CD',P.BSNS_CLSF_CD) BSNS_CLSF_NM, -- 사업분류코드
-            P.WCT_PRBB_CD, IBIZ_COM_CD_NM('WCT_PRBB_CD',P.WCT_PRBB_CD) WCT_PRBB_NM, -- 수주확률코드
-            P.BOPT_STAT_CD, IBIZ_COM_CD_NM('BOPT_STAT_CD',P.BOPT_STAT_CD) BOPT_STAT_NM, -- 사업기회상태코드
+            P.BSNS_CLSF_CD, IBIZ_COM_CD_NM('BSNS_CLSF_CD',P.BSNS_CLSF_CD) BSNS_CLSF_CD_NM, -- 사업분류코드
+            P.WCT_PRBB_CD, IBIZ_COM_CD_NM('WCT_PRBB_CD',P.WCT_PRBB_CD) WCT_PRBB_CD_NM, -- 수주확률코드
+            P.BOPT_STAT_CD, IBIZ_COM_CD_NM('BOPT_STAT_CD',P.BOPT_STAT_CD) BOPT_STAT_CD_NM, -- 사업기회상태코드
             <if test='prodDstCd != null and prodDstCd != "" '>
-                P.PROD_DST_CD, IBIZ_COM_CD_NM('PROD_DST_CD',P.PROD_DST_CD) PROD_DST_NM,  -- 상품구분코드  -- ★상품실적현황인 경우
+                P.PROD_DST_CD, IBIZ_COM_CD_NM('PROD_DST_CD',P.PROD_DST_CD) PROD_DST_CD_NM,  -- 상품구분코드  -- ★상품실적현황인 경우
             </if>
             --GODS_CLSF_CD, IBIZ_COM_CD_NM('GODS_CLSF_CD',B.GODS_CLSF_CD) GODS_CLSF_NM,  -- 제품분류코드
             P.SELL_AMT AS SELL_OPPTY_RSL_AMT, -- 매출금액_기회
@@ -694,18 +694,18 @@
     </select>
 
     <!-- 월별실적비교분석 -->
-    <select id="Select_ResultCmprList"
-            parameterType="com.ibiz.api.model.BusinessResultsSearchVO"
-            resultType="com.ibiz.api.model.BusinessResultsVO">
-        SELECT BC.BRSL_DST_CD, BC.BRSL_DST_NM, --사업실적구분
+    <select id="selectMonthlyCompareStatsList"
+            parameterType="com.ibiz.api.model.BusinessResultSearchVO"
+            resultType="com.ibiz.api.model.BusinessResultVO">
+        SELECT BC.BRSL_DST_CD, BC.BRSL_DST_CD_NM, --사업실적구분
                JAN_AMT, FEB_AMT, MAR_AMT, APR_AMT, MAY_AMT, JUN_AMT,
                JUL_AMT, AUG_AMT, SEP_AMT, OCT_AMT, NOV_AMT, DEC_AMT
         FROM
-              ( SELECT CC.BRSL_DST_CD, A.BSNS_RSL_DTL_DST_CD, --CC.BSNS_RSL_DTL_DST_NM, CC.BRSL_DST_CD,
+              ( SELECT CC.BRSL_DST_CD, A.BSNS_RSL_DTL_DST_CD, --CC.BSNS_RSL_DTL_DST_CD_NM, CC.BRSL_DST_CD,
                        SUM(JAN_AMT) JAN_AMT, SUM(FEB_AMT) FEB_AMT, SUM(MAR_AMT) MAR_AMT, SUM(APR_AMT) APR_AMT, SUM(MAY_AMT) MAY_AMT, SUM(JUN_AMT) JUN_AMT,
                        SUM(JUL_AMT) JUL_AMT, SUM(AUG_AMT) AUG_AMT ,SUM(SEP_AMT) SEP_AMT, SUM(OCT_AMT) OCT_AMT, SUM(NOV_AMT) NOV_AMT, SUM(DEC_AMT) DEC_AMT
                   FROM BRST100V A,   --연도별부서실적
-                     ( SELECT C10.COM_CD BSNS_RSL_DTL_DST_CD, C10.COM_CD_NM BSNS_RSL_DTL_DST_NM, C10.HGRK_COM_CD AS BRSL_DST_CD
+                     ( SELECT C10.COM_CD BSNS_RSL_DTL_DST_CD, C10.COM_CD_NM BSNS_RSL_DTL_DST_CD_NM, C10.HGRK_COM_CD AS BRSL_DST_CD
                          FROM ACOM020T C20, ACOM010T C10
                         WHERE C20.CLMN_NM = 'BSNS_RSL_DTL_DST_CD' --사업실적상세구분코드
                           AND C20.COM_GRP_CD = C10.COM_GRP_CD
@@ -736,11 +736,11 @@
                             WHERE SELL_OCR_YN = 'Y' -- 매출발생부서
                             START WITH DEPT_ID = #{deptId} AND CRIT_YEAR = #{critYear} --★조회조건: 영업부서
                             CONNECT BY PRIOR DEPT_ID = HGRK_DEPT_ID AND PRIOR CRIT_YEAR = CRIT_YEAR)
-         GROUP BY CC.BRSL_DST_CD, A.BSNS_RSL_DTL_DST_CD --, CC.BSNS_RSL_DTL_DST_NM, CC.BRSL_DST_CD
+         GROUP BY CC.BRSL_DST_CD, A.BSNS_RSL_DTL_DST_CD --, CC.BSNS_RSL_DTL_DST_CD_NM, CC.BRSL_DST_CD
          ORDER BY CC.BRSL_DST_CD, A.BSNS_RSL_DTL_DST_CD
        ) V,
        ( SELECT SORT_SEQC AS RSL_DST_SEQC, --정렬순서를 가져오기 위해 FUNCTION을 사용하지 않고 직접 Query
-                C10.COM_CD BRSL_DST_CD, C10.COM_CD_NM BRSL_DST_NM
+                C10.COM_CD BRSL_DST_CD, C10.COM_CD_NM BRSL_DST_CD_NM
            FROM ACOM020T C20, ACOM010T C10
           WHERE C20.CLMN_NM = 'BRSL_DST_CD' --사업실적구분코드
             AND C20.COM_GRP_CD = C10.COM_GRP_CD
@@ -752,13 +752,330 @@
     </select>
 
     <!-- 기준연도별 사업분류리스트 조회-->
-    <select id="Select_BsnsClsfCdListByCritYear"
-            parameterType="com.ibiz.api.model.BusinessResultsSearchVO"
-            resultType="com.ibiz.api.model.BusinessClassByYearVO">
-        SELECT CRIT_YEAR, BSNS_CLSF_CD, BSNS_CLSF_CD_NM AS BSNS_CLSF_NM
+    <select id="selectBsnsClsfList"
+            parameterType="com.ibiz.api.model.YearBizTypeDimVO"
+            resultType="com.ibiz.api.model.YearBizTypeDimVO">
+        SELECT CRIT_YEAR, BSNS_CLSF_CD, BSNS_CLSF_CD_NM AS BSNS_CLSF_CD_NM
         FROM BRST004T
         WHERE CRIT_YEAR = #{critYear}
         ORDER BY SORT_SEQC
     </select>
+
+
+    <!-- 조건별 주간업무보고 조회 -->
+    <select id="selectWeeklyActivityList"
+            parameterType="com.ibiz.api.model.WeekJobReportVO"
+            resultType="com.ibiz.api.model.WeekJobReportVO">
+
+        SELECT
+            ROWNUMBER,BSNS_CLSF_CD,BSNS_CLSF_CD_NM,
+            LAST_CUST_ID ,LAST_CUST_NM, PRJT_ID,BOPT_ID,BOPT_NM,
+            ORDE_CUST_ID, ORDE_CUST_NM,CNTR_DATE,CNTR_TRSF_START_YAM,CNTR_TRSF_END_YAM,SUM_SELL_AMT,
+            WCT_PRBB_CD ,WCT_PRBB_CD_NM, SLS_DEPT_ID, SLS_DEPT_NM, SLS_EMP_ID, SLS_EMP_NM,
+            BOPT_STAT_CD, BOPT_STAT_CD_NM,  TOTAL_CNT
+        FROM
+        ( SELECT ROWNUM AS ROWNUMBER,BSNS_CLSF_CD,BSNS_CLSF_CD_NM,
+                LAST_CUST_ID ,LAST_CUST_NM, PRJT_ID,BOPT_ID,BOPT_NM,
+                ORDE_CUST_ID, ORDE_CUST_NM,CNTR_DATE,CNTR_TRSF_START_YAM,CNTR_TRSF_END_YAM,SUM_SELL_AMT,
+                WCT_PRBB_CD ,WCT_PRBB_CD_NM, SLS_DEPT_ID, SLS_DEPT_NM, SLS_EMP_ID, SLS_EMP_NM,
+                BOPT_STAT_CD, BOPT_STAT_CD_NM,  TOTAL_CNT
+            FROM (
+                    SELECT T1.BSNS_CLSF_CD ,IBIZ_COM_CD_NM('BSNS_CLSF_CD',T1.BSNS_CLSF_CD) BSNS_CLSF_CD_NM,
+                        T2.LAST_CUST_ID ,T2.LAST_CUST_NM,T1.PRJT_ID,T1.BOPT_ID,T1.BOPT_NM,
+                        T1.ORDE_CUST_ID,IBIZ_CUST_NM(T1.ORDE_CUST_ID) AS ORDE_CUST_NM,
+                        T1.CNTR_DATE,T1.CNTR_TRSF_START_YAM,T1.CNTR_TRSF_END_YAM,
+                        ( SELECT SUM(SELL_AMT)
+                            FROM  BPIP020T
+                            WHERE BOPT_ID = T1.BOPT_ID
+                        ) SUM_SELL_AMT,
+                        T1.WCT_PRBB_CD ,IBIZ_COM_CD_NM('WCT_PRBB_CD',T1.WCT_PRBB_CD) WCT_PRBB_CD_NM,
+                        T1.SLS_DEPT_ID,IBIZ_DEPT_NM(T1.SLS_DEPT_ID) AS SLS_DEPT_NM,
+                        T1.SLS_EMP_ID,IBIZ_EMP_NM(T1.SLS_EMP_ID) AS SLS_EMP_NM,
+                        T1.BOPT_STAT_CD,IBIZ_COM_CD_NM('BOPT_STAT_CD',T1.BOPT_STAT_CD) BOPT_STAT_CD_NM, COUNT(1) OVER() AS TOTAL_CNT
+                    FROM  BPIP000T T1
+                    JOIN
+                        ( SELECT PRJT_ID,PRJT_NM,LAST_CUST_ID,PRJT_STAT_CD,IBIZ_CUST_NM(LAST_CUST_ID) AS LAST_CUST_NM
+                            FROM APRJ000T
+                            WHERE PRJT_STAT_CD NOT LIKE 'F%'
+                            AND PRJT_STAT_CD NOT LIKE 'D%'
+                        ) T2
+                    ON T1.PRJT_ID = T2.PRJT_ID
+                    WHERE 1=1
+                    AND T1.BOPT_STAT_CD != 'D1'
+                    AND T1.DTIM_RPRT_DISP_YN = 'Y'
+                    AND T1.SLS_DEPT_ID IN (SELECT DEPT_ID FROM HMST100T
+                                            START WITH
+                                            <if test="slsDeptId != null and slsDeptId != ''">
+                                                DEPT_ID = #{slsDeptId}
+                                            </if>
+                                            <if test="slsDeptId == null or slsDeptId == ''">
+                                                HGRK_DEPT_ID IS NULL
+                                            </if>
+                                            CONNECT BY PRIOR DEPT_ID=HGRK_DEPT_ID
+                                        )
+                <if test="lastCustNm != null and lastCustNm != '' ">
+                    AND UPPER(T2.LAST_CUST_NM) LIKE '%'||UPPER(#{lastCustNm})||'%'
+                </if>
+                <if test="lastCustId != null and lastCustId != '' ">
+                    AND UPPER(T2.LAST_CUST_ID) = UPPER(#{lastCustId})
+                </if>
+                <if test="prjtNm != null and prjtNm != '' ">
+                    AND UPPER(T2.PRJT_NM) LIKE '%'||UPPER(#{prjtNm})||'%'
+                </if>
+                <if test="prjtId != null and prjtId != '' ">
+                    AND UPPER(T2.PRJT_ID) = UPPER(#{prjtId})
+                </if>
+                <if test="slsEmpId != null and slsEmpId != '' ">
+                    AND UPPER(T1.SLS_EMP_ID) LIKE '%'||UPPER(#{slsEmpId})||'%'
+                </if>
+                AND EXISTS (SELECT 1 FROM BPIP250T WHERE BOPT_ID = T1.BOPT_ID
+                <if test="regActStartDate != null and regActStartDate != ''">
+                    <![CDATA[
+                                                AND #{regActStartDate} <= TO_CHAR(REG_DT, 'YYYYMMDD')
+                                        ]]>
+                </if>
+                <if test="regActEndDate != null and regActEndDate != ''">
+                    <![CDATA[
+                                                AND #{regActEndDate} >= TO_CHAR(REG_DT, 'YYYYMMDD')
+                                            ]]>
+                </if>
+                )
+        <if test="boptStatCd != null and boptStatCd != '' ">
+            AND T1.BOPT_STAT_CD = #{boptStatCd}
+        </if>
+        <if test="minWctPrbbCd != null and minWctPrbbCd != ''">
+            <![CDATA[
+                                 AND #{minWctPrbbCd} <= TO_NUMBER(T1.WCT_PRBB_CD)
+                                ]]>
+        </if>
+        <if test="maxWctPrbbCd != null and maxWctPrbbCd != ''">
+            <![CDATA[
+                                AND #{maxWctPrbbCd} >= TO_NUMBER(T1.WCT_PRBB_CD)
+                                ]]>
+        </if>
+        <if test='sumSellAmt != null and sumSellAmt != "" and sumSellAmt != "0" '>
+            AND NVL((
+            SELECT  SUM(SELL_AMT)
+            FROM BPIP020T
+            WHERE  BOPT_ID = T1.BOPT_ID
+            <choose>
+                <when test="compareCd == 'above'">
+                    <![CDATA[
+                                         ),0) >= #{sumSellAmt} * 100000000
+                                        ]]>
+                </when>
+                <when test="compareCd == 'below'">
+                    <![CDATA[
+                                         ),0) <= #{sumSellAmt} * 100000000
+                                        ]]>
+                </when>
+                <when test="compareCd == 'over'">
+                    <![CDATA[
+                                         ),0) > #{sumSellAmt} * 100000000
+                                        ]]>
+                </when>
+                <when test="compareCd == 'under'">
+                    <![CDATA[
+                                         ),0) < #{sumSellAmt} * 100000000
+                                        ]]>
+                </when>
+            </choose>
+        </if>
+        ORDER BY T1.BSNS_CLSF_CD, SUM_SELL_AMT DESC, T1.CNTR_DATE
+        )TF
+        ) WT
+        WHERE
+        ROWNUMBER BETWEEN #{pageSize} * (#{pageNumber} - 1) + 1
+        AND #{pageSize} * (#{pageNumber} - 1) + #{pageSize}
+
+    </select>
+
+    <!-- 조건별 주간업무보고 조회(서브) -->
+    <select id="selectWeeklyActivitySubList"
+            parameterType="com.ibiz.api.model.WeekJobReportVO"
+            resultType="com.ibiz.api.model.WeekJobReportVO">
+        SELECT T250.BOPT_ID,  T000.SPCL_CONT, T250.PRMRY_ACT_CONT,  T250.ACT_PLAN_CONT
+        FROM BPIP250T T250
+        LEFT OUTER JOIN BPIP000T T000
+        ON T000.BOPT_ID = T250.BOPT_ID
+        WHERE 1 = 1
+        AND T250.BOPT_ID = #{boptId}
+        ORDER BY T250.REG_DT DESC, T250.CHG_DT DESC
+    </select>
+
+
+    <!-- 월간보고서리스트 조회-->
+    <select id="selectMonthlyWorkList"
+            parameterType="com.ibiz.api.model.MontlyWorkVO"
+            resultType="com.ibiz.api.model.MontlyWorkVO">
+
+        SELECT CRIT_YAM,SLS_DEPT_ID, SLS_DEPT_NM, REG_EMP_ID, REG_EMP_NM,REG_DT,
+        CHG_EMP_ID, CHG_EMP_NM, CHG_DT, DEPT_SORT_ROWNUM,TOTAL_CNT,  ROWNUMBER
+        FROM
+        (
+        SELECT  CRIT_YAM,SLS_DEPT_ID, SLS_DEPT_NM, REG_EMP_ID, REG_EMP_NM,REG_DT,
+        CHG_EMP_ID, CHG_EMP_NM, CHG_DT, DEPT_SORT_ROWNUM,TOTAL_CNT,
+        ROWNUM AS ROWNUMBER
+        FROM (
+        SELECT
+        BPIP.CRIT_YAM, BPIP.SLS_DEPT_ID,HMST.DEPT_NM AS SLS_DEPT_NM,
+        BPIP.REG_EMP_ID, IBIZ_EMP_NM(BPIP.REG_EMP_ID) AS REG_EMP_NM,
+        BPIP.REG_DT, BPIP.CHG_EMP_ID,IBIZ_EMP_NM(BPIP.CHG_EMP_ID) AS CHG_EMP_NM,
+        BPIP.CHG_DT, HMST.DEPT_SORT_ROWNUM,
+        COUNT(1) OVER() AS TOTAL_CNT
+        FROM BPIP260T BPIP
+        JOIN
+        (
+        SELECT DEPT_ID, DEPT_NM, HGRK_DEPT_ID,  ROWNUM AS DEPT_SORT_ROWNUM
+        FROM HMST100T
+        START WITH
+        HGRK_DEPT_ID IS NULL
+        CONNECT BY
+        PRIOR DEPT_ID = HGRK_DEPT_ID
+        ORDER SIBLINGS BY
+        DEPT_SORT_SEQC ASC
+        ) HMST
+        ON BPIP.SLS_DEPT_ID = HMST.DEPT_ID
+        WHERE
+        1 = 1
+        <if test="slsDeptId != null and slsDeptId != ''">
+            AND   (
+            BPIP.SLS_DEPT_ID IN (
+            SELECT DEPT_ID
+            FROM HMST100T
+            START WITH
+            HGRK_DEPT_ID = #{slsDeptId}
+            CONNECT BY
+            PRIOR DEPT_ID = HGRK_DEPT_ID
+            )
+            OR    BPIP.SLS_DEPT_ID =  #{slsDeptId}
+            )
+        </if>
+        <if test="critYear != null and critYear != ''">
+            AND   SUBSTR(BPIP.CRIT_YAM,0,4) = #{critYear}
+        </if>
+        ORDER BY CRIT_YAM DESC, DEPT_SORT_ROWNUM ASC
+        ) TF
+        )
+        WHERE
+        ROWNUMBER BETWEEN #{pageSize} * (#{pageNumber} - 1) + 1
+        AND #{pageSize} * (#{pageNumber} - 1) + #{pageSize}
+
+    </select>
+
+    <!-- 월간보고서 기준연도 리스트 조회-->
+    <select id="selectCritYearList"
+            resultType="com.ibiz.api.model.MontlyWorkVO">
+        <![CDATA[
+			SELECT ( SELECT
+			            MIN(SUBSTR(CRIT_YAM,0,4) )
+			        FROM BPIP260T
+            ) +LEVEL-1 AS CRIT_YEAR
+            FROM DUAL
+            CONNECT BY LEVEL <= (
+			        SELECT
+			            MAX(SUBSTR(CRIT_YAM,0,4) ) - MIN(SUBSTR(CRIT_YAM,0,4) )
+			        FROM
+			            BPIP260T
+			    ) + 1
+			 ]]>
+    </select>
+
+    <!-- 월간보고서상세내역 조회-->
+    <select id="selectMonthlyWork"
+            parameterType="com.ibiz.api.model.MontlyWorkVO"
+            resultType="com.ibiz.api.model.MontlyWorkVO">
+
+        SELECT
+        CRIT_YAM, SLS_DEPT_ID, IBIZ_DEPT_NM(BPIP260T.SLS_DEPT_ID) AS SLS_DEPT_NM,
+        BDCT_CONT, REG_EMP_ID, IBIZ_EMP_NM(BPIP260T.REG_EMP_ID) AS REG_EMP_NM,
+        REG_DT, CHG_EMP_ID, IBIZ_EMP_NM(BPIP260T.CHG_EMP_ID) AS CHG_EMP_NM, CHG_DT
+        FROM
+        BPIP260T
+        WHERE
+        SLS_DEPT_ID = #{slsDeptId}
+        AND   CRIT_YAM = #{critYam}
+
+    </select>
+
+    <!-- 저장가능여부 조회-->
+    <select id="selectIsAbleToSave"
+            parameterType="com.ibiz.api.model.MontlyWorkVO"
+            resultType="java.lang.Integer">
+
+        SELECT NVL(COUNT(1),0)
+        FROM
+        BPIP260T
+        WHERE
+        CRIT_YAM = #{critYam}
+        AND   SLS_DEPT_ID = #{slsDeptId}
+
+    </select>
+
+    <!--
+
+        INSERT
+
+    -->
+    <!-- 월간보고서 등록-->
+    <insert id="insertMonthlyWork"
+            parameterType="com.ibiz.api.model.MontlyWorkVO">
+
+        INSERT INTO BPIP260T (
+        CRIT_YAM,
+        SLS_DEPT_ID,
+        BDCT_CONT,
+        REG_EMP_ID,
+        REG_DT,
+        CHG_EMP_ID,
+        CHG_DT
+        ) VALUES (
+        #{critYam},
+        #{slsDeptId},
+        #{bdctCont},
+        #{regEmpId},
+        SYSDATE,
+        #{chgEmpId},
+        SYSDATE
+        )
+
+    </insert>
+
+    <!--
+
+		UPDATE
+
+	-->
+
+    <!-- 월간보고서 수정-->
+    <update id="updateMonthlyWork"
+            parameterType="com.ibiz.api.model.MontlyWorkVO">
+
+        UPDATE BPIP260T
+        SET
+        BDCT_CONT = #{bdctCont},
+        CHG_EMP_ID = #{chgEmpId},
+        CHG_DT = SYSDATE
+        WHERE
+        SLS_DEPT_ID = #{slsDeptId}
+        AND   CRIT_YAM = #{critYam}
+
+    </update>
+
+    <!--
+
+		DELETE
+
+	-->
+
+    <!-- 월간보고서 삭제-->
+    <delete id="deleteMonthlyWork"
+            parameterType="com.ibiz.api.model.MontlyWorkVO">
+        DELETE FROM
+        BPIP260T
+        WHERE
+        SLS_DEPT_ID = #{slsDeptId}
+        AND   CRIT_YAM = #{critYam}
+    </delete>
 
 </mapper>

@@ -1,8 +1,11 @@
 package com.ibiz.api.model;
+/**
+ * @Table BRST110T
+ */
+public class YearEmpResultVO {
 
-public class BusinessTargetForDeptMMVO {
     /**
-     * 기준연도
+     * 사업연도
      */
     private String critYear;
 
@@ -10,6 +13,11 @@ public class BusinessTargetForDeptMMVO {
      * 부서ID
      */
     private String deptId;
+
+    /**
+     * 사원ID
+     */
+    private String empId;
 
     /**
      * 사업계획구분코드
@@ -27,15 +35,14 @@ public class BusinessTargetForDeptMMVO {
     private String bsnsClsfCd;
 
     /**
-     * 상붐구분코드
+     * 상품구분코드
      */
     private String prodDstCd;
 
     /**
-     * 상붐유형코드
+     * 상품유형코드
      */
     private String prodTypeCd;
-
     /**
      * 제품분류코드
      */
@@ -122,20 +129,29 @@ public class BusinessTargetForDeptMMVO {
     private String deptNm;
 
     /**
+     * 영업대표명
+     */
+    private String empNm;
+
+    /**
      * 본부 갯수
      */
-    private int cntHgrk;
+    private int hgrkDeptCnt;
+
+    /**
+     * 팀 갯수
+     */
+    private int hgrkDeptTeamCnt;
 
     /**
      * 상품구분명
      */
-    private String prodDstNm;
+    private String prodDstCdNm;
 
     /**
      * 소계 금액
      */
     private Long sumAmt;
-
 
     /**
      * 최상위 레벨의 부서명
@@ -156,12 +172,6 @@ public class BusinessTargetForDeptMMVO {
      * 상위 레벨의 부서ID
      */
     private String deptLvl2Id;
-
-    /**
-     * 사업분류명
-     */
-    private String bsnsClsfNm;
-
     public String getCritYear() {
         return critYear;
     }
@@ -176,6 +186,14 @@ public class BusinessTargetForDeptMMVO {
 
     public void setDeptId(String deptId) {
         this.deptId = deptId;
+    }
+
+    public String getEmpId() {
+        return empId;
+    }
+
+    public void setEmpId(String empId) {
+        this.empId = empId;
     }
 
     public String getBplnDstCd() {
@@ -346,20 +364,36 @@ public class BusinessTargetForDeptMMVO {
         this.deptNm = deptNm;
     }
 
-    public int getCntHgrk() {
-        return cntHgrk;
+    public String getEmpNm() {
+        return empNm;
     }
 
-    public void setCntHgrk(int cntHgrk) {
-        this.cntHgrk = cntHgrk;
+    public void setEmpNm(String empNm) {
+        this.empNm = empNm;
     }
 
-    public String getProdDstNm() {
-        return prodDstNm;
+    public int getHgrkDeptCnt() {
+        return hgrkDeptCnt;
     }
 
-    public void setProdDstNm(String prodDstNm) {
-        this.prodDstNm = prodDstNm;
+    public void setHgrkDeptCnt(int hgrkDeptCnt) {
+        this.hgrkDeptCnt = hgrkDeptCnt;
+    }
+
+    public int getHgrkDeptTeamCnt() {
+        return hgrkDeptTeamCnt;
+    }
+
+    public void setHgrkDeptTeamCnt(int hgrkDeptTeamCnt) {
+        this.hgrkDeptTeamCnt = hgrkDeptTeamCnt;
+    }
+
+    public String getProdDstCdNm() {
+        return prodDstCdNm;
+    }
+
+    public void setProdDstCdNm(String prodDstCdNm) {
+        this.prodDstCdNm = prodDstCdNm;
     }
 
     public Long getSumAmt() {
@@ -402,14 +436,6 @@ public class BusinessTargetForDeptMMVO {
         this.deptLvl2Id = deptLvl2Id;
     }
 
-    public String getBsnsClsfNm() {
-        return bsnsClsfNm;
-    }
-
-    public void setBsnsClsfNm(String bsnsClsfNm) {
-        this.bsnsClsfNm = bsnsClsfNm;
-    }
-
     public String getProdTypeCd() {
         return prodTypeCd;
     }
@@ -420,15 +446,15 @@ public class BusinessTargetForDeptMMVO {
 
     @Override
     public String toString() {
-        return "BusinessTargetForDeptMMVO [critYear=" + critYear + ", deptId=" + deptId + ", bplnDstCd=" + bplnDstCd
-                + ", bsnsRslDtlDstCd=" + bsnsRslDtlDstCd + ", bsnsClsfCd=" + bsnsClsfCd + ", prodDstCd=" + prodDstCd
-                + ", godsClsfCd=" + godsClsfCd + ", janAmt=" + janAmt + ", febAmt=" + febAmt + ", marAmt=" + marAmt
-                + ", aprAmt=" + aprAmt + ", mayAmt=" + mayAmt + ", junAmt=" + junAmt + ", julAmt=" + julAmt
-                + ", augAmt=" + augAmt + ", sepAmt=" + sepAmt + ", octAmt=" + octAmt + ", novAmt=" + novAmt
-                + ", decAmt=" + decAmt + ", hgrkDeptId=" + hgrkDeptId + ", hgrkDeptNm=" + hgrkDeptNm + ", deptSortSeqc="
-                + deptSortSeqc + ", deptNm=" + deptNm + ", cntHgrk=" + cntHgrk + ", prodDstNm=" + prodDstNm
+        return "YearEmpResultVO [critYear=" + critYear + ", deptId=" + deptId + ", empId=" + empId
+                + ", bplnDstCd=" + bplnDstCd + ", bsnsRslDtlDstCd=" + bsnsRslDtlDstCd + ", bsnsClsfCd=" + bsnsClsfCd
+                + ", prodDstCd=" + prodDstCd + ", godsClsfCd=" + godsClsfCd + ", janAmt=" + janAmt + ", febAmt="
+                + febAmt + ", marAmt=" + marAmt + ", aprAmt=" + aprAmt + ", mayAmt=" + mayAmt + ", junAmt=" + junAmt
+                + ", julAmt=" + julAmt + ", augAmt=" + augAmt + ", sepAmt=" + sepAmt + ", octAmt=" + octAmt
+                + ", novAmt=" + novAmt + ", decAmt=" + decAmt + ", hgrkDeptId=" + hgrkDeptId + ", hgrkDeptNm="
+                + hgrkDeptNm + ", deptSortSeqc=" + deptSortSeqc + ", deptNm=" + deptNm + ", empNm=" + empNm
+                + ", hgrkDeptCnt=" + hgrkDeptCnt + ", hgrkDeptTeamCnt=" + hgrkDeptTeamCnt + ", prodDstCdNm=" + prodDstCdNm
                 + ", sumAmt=" + sumAmt + ", deptLvl1Nm=" + deptLvl1Nm + ", deptLvl2Nm=" + deptLvl2Nm + ", deptLvl1Id="
-                + deptLvl1Id + ", deptLvl2Id=" + deptLvl2Id + ", bsnsClsfNm=" + bsnsClsfNm + "]";
+                + deptLvl1Id + ", deptLvl2Id=" + deptLvl2Id + "]";
     }
-
 }

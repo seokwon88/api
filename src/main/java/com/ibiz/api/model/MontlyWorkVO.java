@@ -2,8 +2,10 @@ package com.ibiz.api.model;
 
 import java.util.List;
 import java.util.Map;
-
-public class ReportVO {
+/**
+ * @Table BPIP260T
+ */
+public class MontlyWorkVO {
 
     private String accountRole;
 

@@ -1,6 +1,6 @@
 package com.ibiz.api.model;
 
-public class BusinessResultsVO {
+public class BusinessResultVO {
 
     /**
      * 사업부문별 코드
@@ -13,9 +13,9 @@ public class BusinessResultsVO {
     private String bsnsRslDtlDstCd;
 
     /**
-     * 실적구분명
+     * 실적구분코드명
      */
-    private String bsnsRslDtlDstNm;
+    private String bsnsRslDtlDstCdNm;
 
     /**
      * 연간목표실적
@@ -103,9 +103,9 @@ public class BusinessResultsVO {
     private String prodDstCd;
 
     /**
-     * 상품명
+     * 상품구분코드명
      */
-    private String prodDstNm;
+    private String prodDstCdNm;
 
     /**
      * 영업부서ID
@@ -143,9 +143,9 @@ public class BusinessResultsVO {
     private String brslDstCd;
 
     /**
-     * 실적구분명
+     * 실적구분코드명
      */
-    private String brslDstNm;
+    private String brslDstCdNm;
 
     /**
      * 최상위 레벨의 부서명
@@ -167,7 +167,7 @@ public class BusinessResultsVO {
      */
     private String deptLvl2Id;
 
-    private String bsnsClsfNm;
+    private String bsnsClsfCdNm;
 
     /**
      * 1월
@@ -250,12 +250,12 @@ public class BusinessResultsVO {
         this.bsnsRslDtlDstCd = bsnsRslDtlDstCd;
     }
 
-    public String getBsnsRslDtlDstNm() {
-        return bsnsRslDtlDstNm;
+    public String getBsnsRslDtlDstCdNm() {
+        return bsnsRslDtlDstCdNm;
     }
 
-    public void setBsnsRslDtlDstNm(String bsnsRslDtlDstNm) {
-        this.bsnsRslDtlDstNm = bsnsRslDtlDstNm;
+    public void setBsnsRslDtlDstCdNm(String bsnsRslDtlDstCdNm) {
+        this.bsnsRslDtlDstCdNm = bsnsRslDtlDstCdNm;
     }
 
     public Long getYrlyGoalRslAmt() {
@@ -362,12 +362,12 @@ public class BusinessResultsVO {
         this.prodDstCd = prodDstCd;
     }
 
-    public String getProdDstNm() {
-        return prodDstNm;
+    public String getProdDstCdNm() {
+        return prodDstCdNm;
     }
 
-    public void setProdDstNm(String prodDstNm) {
-        this.prodDstNm = prodDstNm;
+    public void setProdDstCdNm(String prodDstCdNm) {
+        this.prodDstCdNm = prodDstCdNm;
     }
 
     public String getDeptId() {
@@ -418,12 +418,12 @@ public class BusinessResultsVO {
         this.hgrkDeptNm = hgrkDeptNm;
     }
 
-    public String getBrslDstNm() {
-        return brslDstNm;
+    public String getBrslDstCdNm() {
+        return brslDstCdNm;
     }
 
-    public void setBrslDstNm(String brslDstNm) {
-        this.brslDstNm = brslDstNm;
+    public void setBrslDstCdNm(String brslDstCdNm) {
+        this.brslDstCdNm = brslDstCdNm;
     }
 
     public String getDeptLvl1Nm() {
@@ -466,12 +466,12 @@ public class BusinessResultsVO {
         this.brslDstCd = brslDstCd;
     }
 
-    public String getBsnsClsfNm() {
-        return bsnsClsfNm;
+    public String getBsnsClsfCdNm() {
+        return bsnsClsfCdNm;
     }
 
-    public void setBsnsClsfNm(String bsnsClsfNm) {
-        this.bsnsClsfNm = bsnsClsfNm;
+    public void setBsnsClsfCdNm(String bsnsClsfCdNm) {
+        this.bsnsClsfCdNm = bsnsClsfCdNm;
     }
 
     public Long getYrlyOpptyRslAmt() {
@@ -612,17 +612,17 @@ public class BusinessResultsVO {
 
     @Override
     public String toString() {
-        return "BusinessResultsVO [bsnsClsfCd=" + bsnsClsfCd + ", bsnsRslDtlDstCd=" + bsnsRslDtlDstCd
-                + ", bsnsRslDtlDstNm=" + bsnsRslDtlDstNm + ", yrlyGoalRslAmt=" + yrlyGoalRslAmt + ", yrlyFcstRslAmt="
+        return "BusinessResultVO [bsnsClsfCd=" + bsnsClsfCd + ", bsnsRslDtlDstCd=" + bsnsRslDtlDstCd
+                + ", bsnsRslDtlDstCdNm=" + bsnsRslDtlDstCdNm + ", yrlyGoalRslAmt=" + yrlyGoalRslAmt + ", yrlyFcstRslAmt="
                 + yrlyFcstRslAmt + ", yrlyBrslRslAmt=" + yrlyBrslRslAmt + ", stdGoalRslAmt=" + stdGoalRslAmt
                 + ", stdFcstRslAmt=" + stdFcstRslAmt + ", stdBrslRslAmt=" + stdBrslRslAmt + ", acmlGoalRslAmt="
                 + acmlGoalRslAmt + ", acmlFcstRslAmt=" + acmlFcstRslAmt + ", acmlBrslRslAmt=" + acmlBrslRslAmt
                 + ", rsdnGoalRslAmt=" + rsdnGoalRslAmt + ", rsdnFcstRslAmt=" + rsdnFcstRslAmt + ", rsdnBrslRslAmt="
-                + rsdnBrslRslAmt + ", prodDstCd=" + prodDstCd + ", prodDstNm=" + prodDstNm + ", deptId=" + deptId
+                + rsdnBrslRslAmt + ", prodDstCd=" + prodDstCd + ", prodDstCdNm=" + prodDstCdNm + ", deptId=" + deptId
                 + ", deptNm=" + deptNm + ", empId=" + empId + ", empNm=" + empNm + ", hgrkDeptId=" + hgrkDeptId
-                + ", hgrkDeptNm=" + hgrkDeptNm + ", brslDstCd=" + brslDstCd + ", brslDstNm=" + brslDstNm
+                + ", hgrkDeptNm=" + hgrkDeptNm + ", brslDstCd=" + brslDstCd + ", brslDstCdNm=" + brslDstCdNm
                 + ", deptLvl1Nm=" + deptLvl1Nm + ", deptLvl2Nm=" + deptLvl2Nm + ", deptLvl1Id=" + deptLvl1Id
-                + ", deptLvl2Id=" + deptLvl2Id + ", bsnsClsfNm=" + bsnsClsfNm + ", yrlyOpptyRslAmt=" + yrlyOpptyRslAmt + ", stdOpptyRslAmt=" + stdOpptyRslAmt
+                + ", deptLvl2Id=" + deptLvl2Id + ", bsnsClsfCdNm=" + bsnsClsfCdNm + ", yrlyOpptyRslAmt=" + yrlyOpptyRslAmt + ", stdOpptyRslAmt=" + stdOpptyRslAmt
                 + ", acmlOpptyRslAmt=" + acmlOpptyRslAmt + ", rsdnOpptyRslAmt=" + rsdnOpptyRslAmt
                 + ", janAmt=" + janAmt + ", febAmt=" + febAmt + ", marAmt=" + marAmt + ", aprAmt=" + aprAmt
                 + ", mayAmt=" + mayAmt + ", junAmt=" + junAmt + ", julAmt=" + julAmt + ", augAmt=" + augAmt

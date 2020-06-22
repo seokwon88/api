@@ -1,7 +1,5 @@
 package com.ibiz.api.model;
 
-import java.util.List;
-
 public class DeptVO {
 
     /**

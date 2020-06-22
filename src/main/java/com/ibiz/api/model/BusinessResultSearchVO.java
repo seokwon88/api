@@ -1,6 +1,6 @@
 package com.ibiz.api.model;
 
-public class BusinessResultsSearchVO {
+public class BusinessResultSearchVO {
 
     /**
      * 기준연도
@@ -132,7 +132,7 @@ public class BusinessResultsSearchVO {
     /**
      * 사업계획분류코드  명
      */
-    private String bplnClsfNm;
+    private String bplnClsfCdNm;
 
 
     /**
@@ -385,12 +385,12 @@ public class BusinessResultsSearchVO {
         this.bplnClsfCd = bplnClsfCd;
     }
 
-    public String getBplnClsfNm() {
-        return bplnClsfNm;
+    public String getBplnClsfCdNm() {
+        return bplnClsfCdNm;
     }
 
-    public void setBplnClsfNm(String bplnClsfNm) {
-        this.bplnClsfNm = bplnClsfNm;
+    public void setBplnClsfCdNm(String bplnClsfCdNm) {
+        this.bplnClsfCdNm = bplnClsfCdNm;
     }
 
     public String getRsdnStartMon() {

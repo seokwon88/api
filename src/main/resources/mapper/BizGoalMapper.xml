@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="BusinessTargetMapper">
+<mapper namespace="BizGoalMapper">
 
     <!--
 
@@ -11,12 +11,12 @@
 	-->
 
     <!-- 사업목표 조회(영업부서/영업대표) -->
-    <select id="Select_businessTargetList"
-            parameterType="com.ibiz.api.model.BusinessTargetSearchVO"
-            resultType="com.ibiz.api.model.BusinessTargetForDeptMMVO">
+    <select id="selectMonthlyGoalList"
+            parameterType="com.ibiz.api.model.BizGoalSearchVO"
+            resultType="com.ibiz.api.model.YearDeptResultVO">
 
-        SELECT BC.BSNS_CLSF_CD,  BC.BSNS_CLSF_NM, -- 사업분류코드
-            BC.PROD_DST_CD,  BC.PROD_DST_NM, -- 상품구분코드
+        SELECT BC.BSNS_CLSF_CD,  BC.BSNS_CLSF_CD_NM, -- 사업분류코드
+            BC.PROD_DST_CD,  BC.PROD_DST_CD_NM, -- 상품구분코드
             JAN_AMT, FEB_AMT, MAR_AMT, APR_AMT, MAY_AMT, JUN_AMT,
             JUL_AMT, AUG_AMT, SEP_AMT, OCT_AMT, NOV_AMT, DEC_AMT
             FROM
@@ -57,8 +57,8 @@
             </if>
             GROUP BY BSNS_CLSF_CD, PROD_DST_CD
             ) V,
-            ( SELECT B.BSNS_SEQC, B.BSNS_CLSF_CD, B.BSNS_CLSF_CD_NM AS BSNS_CLSF_NM,
-                D.PROD_SEQC, D.PROD_DST_CD, D.PROD_DST_NM
+            ( SELECT B.BSNS_SEQC, B.BSNS_CLSF_CD, B.BSNS_CLSF_CD_NM AS BSNS_CLSF_CD_NM,
+                D.PROD_SEQC, D.PROD_DST_CD, D.PROD_DST_CD_NM
                 --,C.BRSL_SEQC, C.BRSL_DST_CD, C.BSNS_RSL_DTL_DST_CD
                 FROM
                 ( SELECT SORT_SEQC AS BSNS_SEQC,
@@ -67,7 +67,7 @@
                 WHERE CRIT_YEAR = #{year} -- ★조회조건 기준연도
                 ) B,
                 ( SELECT SORT_SEQC AS PROD_SEQC,
-                C10.COM_CD PROD_DST_CD, C10.COM_CD_NM PROD_DST_NM
+                C10.COM_CD PROD_DST_CD, C10.COM_CD_NM PROD_DST_CD_NM
                 FROM ACOM020T C20, ACOM010T C10
                 WHERE C20.CLMN_NM = 'PROD_DST_CD'
                 AND C20.COM_GRP_CD = C10.COM_GRP_CD
@@ -81,7 +81,7 @@
     </select>
 
     <!-- 기준연도 (연도별 실적 테이블에 따라 조회) -->
-    <select id="Select_businessTargetCritYear"
+    <select id="selectMinMaxCritYear"
             resultType="java.util.HashMap">
         SELECT
             NVL(MIN(CRIT_YEAR), TO_CHAR(SYSDATE,'YYYY')) as MIN_CRIT_YEAR,
@@ -98,9 +98,9 @@
 
 
     <!-- 월별영업부서실적 조회-->
-    <select id="Select_businessTargetForDeptResult"
-            parameterType="com.ibiz.api.model.BusinessTargetSearchVO"
-            resultType="com.ibiz.api.model.BusinessTargetForDeptMMVO">
+    <select id="selectMonthlyDeptStatsList"
+            parameterType="com.ibiz.api.model.BizGoalSearchVO"
+            resultType="com.ibiz.api.model.YearDeptResultVO">
      SELECT H10.DEPT_SEQC, H10.DEPT_ID, H10.DEPT_NM,
             H10.DEPT_L1_ID AS DEPT_LVL1_ID, H10.DEPT_L1_NM AS DEPT_LVL1_NM, H10.DEPT_L2_ID AS DEPT_LVL2_ID, H10.DEPT_L2_NM AS DEPT_LVL2_NM,
             SUM(JAN_AMT) JAN_AMT, SUM(FEB_AMT) FEB_AMT, SUM(MAR_AMT) MAR_AMT, SUM(APR_AMT) APR_AMT, SUM(MAY_AMT) MAY_AMT, SUM(JUN_AMT) JUN_AMT,
@@ -147,9 +147,9 @@
 
 
     <!-- 월별영업대표실적 조회-->
-    <select id="Select_businessTargetForEmpResult"
-            parameterType="com.ibiz.api.model.BusinessTargetSearchVO"
-            resultType="com.ibiz.api.model.BusinessTargetForEmpMMVO">
+    <select id="selectMonthlyEmployeeStatsList"
+            parameterType="com.ibiz.api.model.BizGoalSearchVO"
+            resultType="com.ibiz.api.model.YearEmpResultVO">
 
         SELECT H30.DEPT_SEQC, H30.DEPT_ID, H30.DEPT_NM, --, H30.DEPT_ID_PATH, H30.DEPT_NM_PATH
                H30.EMP_ID, IBIZ_EMP_NM(H30.EMP_ID) AS EMP_NM, -- 실적사원
@@ -207,9 +207,9 @@
 
 
     <!-- 월별상품실적 조회 -->
-    <select id="Select_businessTargetProductResult"
-            parameterType="com.ibiz.api.model.BusinessTargetSearchVO"
-            resultType="com.ibiz.api.model.BusinessTargetForDeptMMVO">
+    <select id="selectMonthlyBizGroupStatsList"
+            parameterType="com.ibiz.api.model.BizGoalSearchVO"
+            resultType="com.ibiz.api.model.YearDeptResultVO">
 
             WITH
             RSLT AS (
@@ -225,8 +225,8 @@
                    AND BSNS_RSL_DTL_DST_CD = #{bsnsRslDtlDstCd}  -- ★조회조건 실적구분
                 GROUP BY BSNS_CLSF_CD, PROD_DST_CD
             )
-            SELECT BC.BSNS_CLSF_CD, BC.BSNS_CLSF_CD_NM AS BSNS_CLSF_NM,  -- 사업분류코드
-                   BC.PROD_DST_CD, BC.PROD_DST_CD_NM AS PROD_DST_NM,  -- 상품구분코드
+            SELECT BC.BSNS_CLSF_CD, BC.BSNS_CLSF_CD_NM AS BSNS_CLSF_CD_NM,  -- 사업분류코드
+                   BC.PROD_DST_CD, BC.PROD_DST_CD_NM AS PROD_DST_CD_NM,  -- 상품구분코드
                    #{bsnsRslDtlDstCd} BSNS_RSL_DTL_DST_CD,
                    JAN_AMT, FEB_AMT, MAR_AMT, APR_AMT, MAY_AMT, JUN_AMT,
                    JUL_AMT, AUG_AMT, SEP_AMT, OCT_AMT, NOV_AMT, DEC_AMT
@@ -254,8 +254,8 @@
 	</select>
 
     <!-- 월별영업목표 존재여부 체크(for 삭제) -->
-    <select id="Select_isExistsBusinessTarget"
-            parameterType="com.ibiz.api.model.BusinessTargetSearchVO"
+    <select id="selectisExistsBizGoal"
+            parameterType="com.ibiz.api.model.BizGoalSearchVO"
             resultType="java.lang.Integer">
 		SELECT  NVL(COUNT(1),0)
         <if test="manageTarget == 'SDPT' ">
@@ -273,41 +273,10 @@
 			    AND		BSNS_RSL_DTL_DST_CD = #{bsnsRslDtlDstCd}
 
 	</select>
-    <!-- 삭제쿼리
-    &lt;!&ndash; 월별부서목표 존재여부 체크(for 삭제) &ndash;&gt;
-    <select id="Select_isExistsBusinessTargetDept"
-            parameterType="com.ibiz.api.model.BusinessTargetForDeptMMVO"
-            resultType="java.util.HashMap">
-			SELECT CASE WHEN COUNT(*)>0 THEN 'TRUE'
-		            ELSE 'FALSE'
-		            END RESULT
-			FROM BRST100T
-			WHERE CRIT_YEAR = #{critYear}
-			    AND 	DEPT_ID = #{deptId}
-			    AND		BPLN_DST_CD = #{bplnDstCd}
-			    AND		BSNS_RSL_DTL_DST_CD = #{bsnsRslDtlDstCd}
-
-	</select>
-
-    &lt;!&ndash; 월별영업대표목표 존재여부 체크(for 삭제) &ndash;&gt;
-    <select id="Select_isExistsBusinessTargetEmp"
-            parameterType="com.ibiz.api.model.BusinessTargetForEmpMMVO"
-            resultType="java.util.HashMap">
-			SELECT CASE WHEN COUNT(*)>0 THEN 'TRUE'
-		            ELSE 'FALSE'
-		            END RESULT
-			FROM BRST110T
-			WHERE CRIT_YEAR = #{critYear}
-			    AND 	DEPT_ID = #{deptId}
-			    AND 	EMP_ID = #{empId}
-			    AND		BPLN_DST_CD = #{bplnDstCd}
-			    AND		BSNS_RSL_DTL_DST_CD = #{bsnsRslDtlDstCd}
-
-	</select>-->
 
     <!-- 실적관련 유효한 수정기간인지 여부 체크 -->
-    <select id="Select_isOpenAvlDate"
-            parameterType="com.ibiz.api.model.BusinessTargetSearchVO"
+    <select id="selectIsAvlChgDate"
+            parameterType="com.ibiz.api.model.BizGoalSearchVO"
             resultType="java.util.HashMap">
 		SELECT
             COUNT(CASE WHEN OPEN_MGMT_TGT_CD = 'B1' THEN OPEN_MGMT_TGT_CD END ) AS tgtCnt,
@@ -321,13 +290,11 @@
         AND OPEN_MGMT_TR = #{year}
 	</select>
 
-
-
     <!--  insert  -->
 
     <!-- 월별부서목표관리 등록 -->
-    <insert id="Insert_businessTargetDeptForMM"
-            parameterType="com.ibiz.api.model.BusinessTargetForDeptMMVO">
+    <insert id="insertMonthlyDeptGoal"
+            parameterType="com.ibiz.api.model.YearDeptResultVO">
         INSERT
         INTO BRST100T (
         CRIT_YEAR,
@@ -425,8 +392,8 @@
 
 
     <!-- 월별사원목표관리 등록 -->
-    <insert id="Insert_businessTargetEmpForMM"
-            parameterType="com.ibiz.api.model.BusinessTargetForEmpMMVO">
+    <insert id="insertMonthlyEmpGoal"
+            parameterType="com.ibiz.api.model.YearEmpResultVO">
         INSERT
         INTO BRST110T (
         CRIT_YEAR,
@@ -528,8 +495,8 @@
     <!--  delete -->
 
     <!-- 월별부서목표 전체삭제-->
-    <delete id="Delete_allBusinessTargetDeptForMM"
-            parameterType="com.ibiz.api.model.BusinessTargetForDeptMMVO">
+    <delete id="deleteMonthlyDeptGoal"
+            parameterType="com.ibiz.api.model.YearDeptResultVO">
 			DELETE FROM BRST100T
 				WHERE	CRIT_YEAR = #{critYear}
 					    AND 	DEPT_ID = #{deptId}
@@ -538,8 +505,8 @@
 	</delete>
 
     <!-- 월별사원목표 전체삭제 -->
-    <delete id="Delete_allBusinessTargetEmpForMM"
-            parameterType="com.ibiz.api.model.BusinessTargetForEmpMMVO">
+    <delete id="deleteMonthlyEmpGoal"
+            parameterType="com.ibiz.api.model.YearEmpResultVO">
 			DELETE FROM BRST110T
 				WHERE	CRIT_YEAR = #{critYear}
 					    AND 	DEPT_ID = #{deptId}
@@ -549,8 +516,8 @@
 	</delete>
 
     <!-- 월별부서목표 목표확정 삭제 -->
-    <delete id="Delete_onlyGoalBusinessTargetDeptForMM"
-            parameterType="com.ibiz.api.model.BusinessTargetForDeptMMVO">
+    <delete id="deleteGoalDcdMonthlyDept"
+            parameterType="com.ibiz.api.model.YearDeptResultVO">
 			DELETE FROM BRST100T
 				WHERE	CRIT_YEAR = #{critYear}
 					    AND 	DEPT_ID = #{deptId}
@@ -559,8 +526,8 @@
 	</delete>
 
     <!-- 월별사원목표 목표확정 삭제 -->
-    <delete id="Delete_onlyGoalBusinessTargetEmpForMM"
-            parameterType="com.ibiz.api.model.BusinessTargetForEmpMMVO">
+    <delete id="deleteGoalDcdMonthlyEmp"
+            parameterType="com.ibiz.api.model.YearEmpResultVO">
 			DELETE FROM BRST110T
 				WHERE	CRIT_YEAR = #{critYear}
 					    AND 	DEPT_ID = #{deptId}
@@ -570,8 +537,8 @@
 	</delete>
 
     <!-- 월별부서목표 목표확정 삭제 - 하위목표포함시 -->
-    <delete id="Delete_goalBusinessTargetDeptForLowerDept"
-            parameterType="com.ibiz.api.model.BusinessTargetSearchVO">
+    <delete id="deleteGoalDcdMonthlyDeptForLwrkDept"
+            parameterType="com.ibiz.api.model.BizGoalSearchVO">
 			DELETE FROM BRST100T
 				WHERE	CRIT_YEAR = #{year}
 					    AND 	DEPT_ID  IN (
@@ -587,8 +554,8 @@
 	</delete>
 
     <!-- 월별사원목표 목표확정 삭제  - 하위목표포함시 -->
-    <delete id="Delete_goalBusinessTargetEmpForLowerDept"
-            parameterType="com.ibiz.api.model.BusinessTargetSearchVO">
+    <delete id="deleteGoalDcdMonthlyEmpForLwrkDept"
+            parameterType="com.ibiz.api.model.BizGoalSearchVO">
 			DELETE FROM BRST110T
 				WHERE	CRIT_YEAR = #{year}
 					    AND 	DEPT_ID IN (
@@ -607,8 +574,8 @@
     <!-- INSERT -->
 
     <!-- 월별부서 목표관리 > 수립목표 확정  -->
-    <insert id="Insert_businessTargetDeptForMMConfirm"
-            parameterType="com.ibiz.api.model.BusinessTargetForDeptMMVO">
+    <insert id="insertMonthlyDeptGoalDcd"
+            parameterType="com.ibiz.api.model.YearDeptResultVO">
         INSERT
         INTO BRST100T (
         CRIT_YEAR,
@@ -705,8 +672,8 @@
     </insert>
 
     <!-- 월별 사원목표관리  > 수립목표 확정 -->
-    <insert id="Insert_businessTargetEmpForMMConfirm"
-            parameterType="com.ibiz.api.model.BusinessTargetForEmpMMVO">
+    <insert id="insertMonthlyEmpGoalDcd"
+            parameterType="com.ibiz.api.model.YearEmpResultVO">
         INSERT
         INTO BRST110T (
         CRIT_YEAR,
@@ -805,8 +772,8 @@
     </insert>
 
     <!-- 월별부서 목표관리 > 수립목표 확정  - 하위부서 포함 -->
-    <insert id="Insert_LowerDeptBusinessTargetDeptForMMConfirm"
-            parameterType="com.ibiz.api.model.BusinessTargetSearchVO">
+    <insert id="insertMonthlyDeptLwrkDeptCvrdGoal"
+            parameterType="com.ibiz.api.model.BizGoalSearchVO">
 				INSERT
 			    INTO BRST100T (
 			        CRIT_YEAR,
@@ -870,8 +837,8 @@
 	</insert>
 
     <!-- 월별 사원목표관리  > 수립목표 확정 - 하위부서포함 -->
-    <insert id="Insert_LowerDeptBusinessTargetEmpForMMConfirm"
-            parameterType="com.ibiz.api.model.BusinessTargetSearchVO">
+    <insert id="insertMonthlyEmpLwrkDeptCvrdGoal"
+            parameterType="com.ibiz.api.model.BizGoalSearchVO">
 			INSERT
 			    INTO BRST110T (
 			        CRIT_YEAR,
@@ -936,8 +903,8 @@
 	</insert>
 
     <!-- 실적현황 테이블에 따른 max 연도 조회 -->
-    <select id="Select_standardCritYear"
-            parameterType="com.ibiz.api.model.BusinessTargetSearchVO"
+    <select id="selectMaxCritYear"
+            parameterType="com.ibiz.api.model.BizGoalSearchVO"
             resultType="java.util.HashMap">
         <if test="manageTarget == 'SDPT'">
             SELECT

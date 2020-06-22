@@ -2,47 +2,47 @@ package com.ibiz.api.model;
 
 import java.util.List;
 
-public class BusinessTargetForEmpAllMMVO {
+public class YearEmpResultAllVO {
 
     /**
      * 사업분류 - UI
      */
-    private List<BusinessTargetForEmpMMVO> bsnsUIList;
+    private List<YearEmpResultVO> bsnsUIList;
 
     /**
      * 사업분류 - UX
      */
-    private List<BusinessTargetForEmpMMVO> bsnsUXList;
+    private List<YearEmpResultVO> bsnsUXList;
 
     /**
      * 사업분류 - ESB
      */
-    private List<BusinessTargetForEmpMMVO> bsnsESBList;
+    private List<YearEmpResultVO> bsnsESBList;
 
     /**
      * 사업분류 - ECM
      */
-    private List<BusinessTargetForEmpMMVO> bsnsECMList;
+    private List<YearEmpResultVO> bsnsECMList;
 
     /**
      * 사업분류 - MG
      */
-    private List<BusinessTargetForEmpMMVO> bsnsMGList;
+    private List<YearEmpResultVO> bsnsMGList;
 
     /**
      * 사업분류 - ILS
      */
-    private List<BusinessTargetForEmpMMVO> bsnsILSList;
+    private List<YearEmpResultVO> bsnsILSList;
 
     /**
      * 사업분류 - ETC
      */
-    private List<BusinessTargetForEmpMMVO> bsnsETCList;
+    private List<YearEmpResultVO> bsnsETCList;
 
     /**
      * 사업분류 - 전체 ( for C U D )
      */
-    private List<BusinessTargetForEmpMMVO> cudList;
+    private List<YearEmpResultVO> cudList;
 
     private String critYear;
 
@@ -54,67 +54,67 @@ public class BusinessTargetForEmpAllMMVO {
 
     private String empId;
 
-    public List<BusinessTargetForEmpMMVO> getBsnsUIList() {
+    public List<YearEmpResultVO> getBsnsUIList() {
         return bsnsUIList;
     }
 
-    public void setBsnsUIList(List<BusinessTargetForEmpMMVO> bsnsUIList) {
+    public void setBsnsUIList(List<YearEmpResultVO> bsnsUIList) {
         this.bsnsUIList = bsnsUIList;
     }
 
-    public List<BusinessTargetForEmpMMVO> getBsnsUXList() {
+    public List<YearEmpResultVO> getBsnsUXList() {
         return bsnsUXList;
     }
 
-    public void setBsnsUXList(List<BusinessTargetForEmpMMVO> bsnsUXList) {
+    public void setBsnsUXList(List<YearEmpResultVO> bsnsUXList) {
         this.bsnsUXList = bsnsUXList;
     }
 
-    public List<BusinessTargetForEmpMMVO> getBsnsESBList() {
+    public List<YearEmpResultVO> getBsnsESBList() {
         return bsnsESBList;
     }
 
-    public void setBsnsESBList(List<BusinessTargetForEmpMMVO> bsnsESBList) {
+    public void setBsnsESBList(List<YearEmpResultVO> bsnsESBList) {
         this.bsnsESBList = bsnsESBList;
     }
 
-    public List<BusinessTargetForEmpMMVO> getBsnsECMList() {
+    public List<YearEmpResultVO> getBsnsECMList() {
         return bsnsECMList;
     }
 
-    public void setBsnsECMList(List<BusinessTargetForEmpMMVO> bsnsECMList) {
+    public void setBsnsECMList(List<YearEmpResultVO> bsnsECMList) {
         this.bsnsECMList = bsnsECMList;
     }
 
-    public List<BusinessTargetForEmpMMVO> getBsnsMGList() {
+    public List<YearEmpResultVO> getBsnsMGList() {
         return bsnsMGList;
     }
 
-    public void setBsnsMGList(List<BusinessTargetForEmpMMVO> bsnsMGList) {
+    public void setBsnsMGList(List<YearEmpResultVO> bsnsMGList) {
         this.bsnsMGList = bsnsMGList;
     }
 
-    public List<BusinessTargetForEmpMMVO> getBsnsILSList() {
+    public List<YearEmpResultVO> getBsnsILSList() {
         return bsnsILSList;
     }
 
-    public void setBsnsILSList(List<BusinessTargetForEmpMMVO> bsnsILSList) {
+    public void setBsnsILSList(List<YearEmpResultVO> bsnsILSList) {
         this.bsnsILSList = bsnsILSList;
     }
 
-    public List<BusinessTargetForEmpMMVO> getBsnsETCList() {
+    public List<YearEmpResultVO> getBsnsETCList() {
         return bsnsETCList;
     }
 
-    public void setBsnsETCList(List<BusinessTargetForEmpMMVO> bsnsETCList) {
+    public void setBsnsETCList(List<YearEmpResultVO> bsnsETCList) {
         this.bsnsETCList = bsnsETCList;
     }
 
-    public List<BusinessTargetForEmpMMVO> getCudList() {
+    public List<YearEmpResultVO> getCudList() {
         return cudList;
     }
 
-    public void setCudList(List<BusinessTargetForEmpMMVO> cudList) {
+    public void setCudList(List<YearEmpResultVO> cudList) {
         this.cudList = cudList;
     }
 
@@ -160,7 +160,7 @@ public class BusinessTargetForEmpAllMMVO {
 
     @Override
     public String toString() {
-        return "BusinessTargetForEmpAllMMVO [bsnsUIList=" + bsnsUIList + ", bsnsUXList=" + bsnsUXList + ", bsnsESBList="
+        return "YearEmpResultAllVO [bsnsUIList=" + bsnsUIList + ", bsnsUXList=" + bsnsUXList + ", bsnsESBList="
                 + bsnsESBList + ", bsnsECMList=" + bsnsECMList + ", bsnsMGList=" + bsnsMGList + ", bsnsILSList="
                 + bsnsILSList + ", bsnsETCList=" + bsnsETCList + ", cudList=" + cudList + ", critYear=" + critYear
                 + ", deptId=" + deptId + ", bplnDstCd=" + bplnDstCd + ", bsnsRslDtlDstCd=" + bsnsRslDtlDstCd

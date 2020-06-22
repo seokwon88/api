@@ -10,7 +10,7 @@ public class WeekJobReportVO {
     /**
      * 사업분류코드명
      */
-    private String bsnsClsfNm;
+    private String bsnsClsfCdNm;
 
     /**
      * 최종고객ID
@@ -90,7 +90,7 @@ public class WeekJobReportVO {
     /**
      * 수주확률코드명
      */
-    private String wctPrbbNm;
+    private String wctPrbbCdNm;
 
     /**
      * 최고수주확률
@@ -130,7 +130,7 @@ public class WeekJobReportVO {
     /**
      * 사업기회상태코드명
      */
-    private String boptStatNm;
+    private String boptStatCdNm;
 
     /**
      * 비교코드
@@ -152,6 +152,21 @@ public class WeekJobReportVO {
      */
     private Integer totalCnt;
 
+    /**
+     * 특별내용
+     */
+    private String spclCont;
+
+    /**
+     * 주요활동내용
+     */
+    private String prmryActCont;
+
+    /**
+     * 활동계획내용
+     */
+    private String actPlanCont;
+
     public String getBsnsClsfCd() {
         return bsnsClsfCd;
     }
@@ -160,12 +175,12 @@ public class WeekJobReportVO {
         this.bsnsClsfCd = bsnsClsfCd;
     }
 
-    public String getBsnsClsfNm() {
-        return bsnsClsfNm;
+    public String getBsnsClsfCdNm() {
+        return bsnsClsfCdNm;
     }
 
-    public void setBsnsClsfNm(String bsnsClsfNm) {
-        this.bsnsClsfNm = bsnsClsfNm;
+    public void setBsnsClsfCdNm(String bsnsClsfCdNm) {
+        this.bsnsClsfCdNm = bsnsClsfCdNm;
     }
 
     public String getLastCustId() {
@@ -264,12 +279,12 @@ public class WeekJobReportVO {
         this.wctPrbbCd = wctPrbbCd;
     }
 
-    public String getWctPrbbNm() {
-        return wctPrbbNm;
+    public String getWctPrbbCdNm() {
+        return wctPrbbCdNm;
     }
 
-    public void setWctPrbbNm(String wctPrbbNm) {
-        this.wctPrbbNm = wctPrbbNm;
+    public void setWctPrbbCdNm(String wctPrbbCdNm) {
+        this.wctPrbbCdNm = wctPrbbCdNm;
     }
 
     public String getSlsDeptId() {
@@ -312,12 +327,12 @@ public class WeekJobReportVO {
         this.boptStatCd = boptStatCd;
     }
 
-    public String getBoptStatNm() {
-        return boptStatNm;
+    public String getBoptStatCdNm() {
+        return boptStatCdNm;
     }
 
-    public void setBoptStatNm(String boptStatNm) {
-        this.boptStatNm = boptStatNm;
+    public void setBoptStatCdNm(String boptStatCdNm) {
+        this.boptStatCdNm = boptStatCdNm;
     }
 
     public Integer getPageSize() {
@@ -392,18 +407,42 @@ public class WeekJobReportVO {
         this.totalCnt = totalCnt;
     }
 
+    public String getActPlanCont() {
+        return actPlanCont;
+    }
+
+    public String getPrmryActCont() {
+        return prmryActCont;
+    }
+
+    public String getSpclCont() {
+        return spclCont;
+    }
+
+    public void setActPlanCont(String actPlanCont) {
+        this.actPlanCont = actPlanCont;
+    }
+
+    public void setPrmryActCont(String prmryActCont) {
+        this.prmryActCont = prmryActCont;
+    }
+
+    public void setSpclCont(String spclCont) {
+        this.spclCont = spclCont;
+    }
+
     @Override
     public String toString() {
-        return "WeekJobReportVO [bsnsClsfCd=" + bsnsClsfCd + ", bsnsClsfNm=" + bsnsClsfNm + ", lastCustId=" + lastCustId
+        return "WeekJobReportVO [bsnsClsfCd=" + bsnsClsfCd + ", bsnsClsfCdNm=" + bsnsClsfCdNm + ", lastCustId=" + lastCustId
                 + ", lastCustNm=" + lastCustNm + ", prjtId=" + prjtId + ", prjtNm=" + prjtNm + ", boptId=" + boptId
                 + ", boptNm=" + boptNm + ", ordeCustId=" + ordeCustId + ", ordeCustNm=" + ordeCustNm + ", cntrDate="
                 + cntrDate + ", cntrTrsfStartYam=" + cntrTrsfStartYam + ", cntrTrsfEndYam=" + cntrTrsfEndYam
                 + ", regActStartDate=" + regActStartDate + ", regActEndDate=" + regActEndDate + ", sumSellAmt="
-                + sumSellAmt + ", wctPrbbCd=" + wctPrbbCd + ", wctPrbbNm=" + wctPrbbNm + ", minWctPrbbCd="
+                + sumSellAmt + ", wctPrbbCd=" + wctPrbbCd + ", wctPrbbCdNm=" + wctPrbbCdNm + ", minWctPrbbCd="
                 + minWctPrbbCd + ", maxWctPrbbCd=" + maxWctPrbbCd + ", slsDeptId=" + slsDeptId + ", slsDeptNm="
                 + slsDeptNm + ", slsEmpId=" + slsEmpId + ", slsEmpNm=" + slsEmpNm + ", boptStatCd=" + boptStatCd
-                + ", boptStatNm=" + boptStatNm + ", compareCd=" + compareCd + ", pageSize=" + pageSize + ", pageNumber="
-                + pageNumber + ", totalCnt=" + totalCnt + "]";
+                + ", boptStatCdNm=" + boptStatCdNm + ", compareCd=" + compareCd + ", pageSize=" + pageSize + ", pageNumber="
+                + pageNumber + ", totalCnt=" + totalCnt + ", actPlanCont=" + actPlanCont + ", prmryActCont=" + prmryActCont + ", spclCont=" + spclCont+ "]";
     }
 
 }

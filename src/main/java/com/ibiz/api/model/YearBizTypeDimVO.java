@@ -1,6 +1,6 @@
 package com.ibiz.api.model;
 
-public class BusinessClassByYearVO {
+public class YearBizTypeDimVO {
     /**
      * 기준연도
      */
@@ -14,7 +14,7 @@ public class BusinessClassByYearVO {
     /**
      * 사업분류명
      */
-    private String bsnsClsfNm;
+    private String bsnsClsfCdNm;
 
     /**
      * 정렬순서
@@ -37,12 +37,12 @@ public class BusinessClassByYearVO {
         this.bsnsClsfCd = bsnsClsfCd;
     }
 
-    public String getBsnsClsfNm() {
-        return bsnsClsfNm;
+    public String getBsnsClsfCdNm() {
+        return bsnsClsfCdNm;
     }
 
-    public void setBsnsClsfNm(String bsnsClsfNm) {
-        this.bsnsClsfNm = bsnsClsfNm;
+    public void setBsnsClsfCdNm(String bsnsClsfCdNm) {
+        this.bsnsClsfCdNm = bsnsClsfCdNm;
     }
 
     public Integer getSortSeqc() {

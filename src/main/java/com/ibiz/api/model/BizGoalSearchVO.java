@@ -1,6 +1,6 @@
 package com.ibiz.api.model;
 
-public class BusinessTargetSearchVO {
+public class BizGoalSearchVO {
 
     /**
      * 기준연도
@@ -60,6 +60,7 @@ public class BusinessTargetSearchVO {
 
     // 관리자를 위한 코드
     private String adminBplnDstCd;
+
     public String getYear() {
         return year;
     }
@@ -158,7 +159,7 @@ public class BusinessTargetSearchVO {
 
     @Override
     public String toString() {
-        return "BusinessTargetSearchVO [year=" + year + ", slsDeptId=" + slsDeptId + ", bplnDstCd=" + bplnDstCd
+        return "BizGoalSearchVO [year=" + year + ", slsDeptId=" + slsDeptId + ", bplnDstCd=" + bplnDstCd
                 + ", bsnsRslDtlDstCd=" + bsnsRslDtlDstCd + ", bsnsClsfCd=" + bsnsClsfCd + ", brslDstCd=" + brslDstCd
                 + ", empId=" + empId + ", manageTarget=" + manageTarget + ", amtUnitCd=" + amtUnitCd
                 + ", openMgmtTgtCd=" + openMgmtTgtCd + ", lowerDeptYN=" + lowerDeptYN + ", adminBplnDstCd="

@@ -1,6 +1,6 @@
 package com.ibiz.api.model;
 
-public class BusinessResultsDetailVO {
+public class SalesReportVO {
 
     /**
      * 사업기회ID
@@ -40,7 +40,7 @@ public class BusinessResultsDetailVO {
     /**
      * 수주확률명
      */
-    private String wctPrbbNm;
+    private String wctPrbbCdNm;
 
     /**
      * 영업부서ID
@@ -75,7 +75,7 @@ public class BusinessResultsDetailVO {
     /**
      * 사업기회상태명
      */
-    private String boptStatNm;
+    private String boptStatCdNm;
 
     /**
      * 사업기회종료유형코드
@@ -85,7 +85,7 @@ public class BusinessResultsDetailVO {
     /**
      * 사업기회종료유형코드명
      */
-    private String boptEndTypeNm;
+    private String boptEndTypeCdNm;
 
     /**
      * 이슈갯수
@@ -282,12 +282,12 @@ public class BusinessResultsDetailVO {
         this.wctPrbbCd = wctPrbbCd;
     }
 
-    public String getWctPrbbNm() {
-        return wctPrbbNm;
+    public String getWctPrbbCdNm() {
+        return wctPrbbCdNm;
     }
 
-    public void setWctPrbbNm(String wctPrbbNm) {
-        this.wctPrbbNm = wctPrbbNm;
+    public void setWctPrbbCdNm(String wctPrbbCdNm) {
+        this.wctPrbbCdNm = wctPrbbCdNm;
     }
 
     public String getDeptId() {
@@ -338,12 +338,12 @@ public class BusinessResultsDetailVO {
         this.boptStatCd = boptStatCd;
     }
 
-    public String getBoptStatNm() {
-        return boptStatNm;
+    public String getBoptStatCdNm() {
+        return boptStatCdNm;
     }
 
-    public void setBoptStatNm(String boptStatNm) {
-        this.boptStatNm = boptStatNm;
+    public void setBoptStatCdNm(String boptStatCdNm) {
+        this.boptStatCdNm = boptStatCdNm;
     }
 
     public String getBoptEndTypeCd() {
@@ -354,12 +354,12 @@ public class BusinessResultsDetailVO {
         this.boptEndTypeCd = boptEndTypeCd;
     }
 
-    public String getBoptEndTypeNm() {
-        return boptEndTypeNm;
+    public String getBoptEndTypeCdNm() {
+        return boptEndTypeCdNm;
     }
 
-    public void setBoptEndTypeNm(String boptEndTypeNm) {
-        this.boptEndTypeNm = boptEndTypeNm;
+    public void setBoptEndTypeCdNm(String boptEndTypeCdNm) {
+        this.boptEndTypeCdNm = boptEndTypeCdNm;
     }
 
     public int getIssueCnt() {
@@ -596,11 +596,11 @@ public class BusinessResultsDetailVO {
 
     @Override
     public String toString() {
-        return "BusinessResultsDetailVO [boptId=" + boptId + ", prjtId=" + prjtId + ", prjtNm=" + prjtNm
+        return "SalesReportVO [boptId=" + boptId + ", prjtId=" + prjtId + ", prjtNm=" + prjtNm
                 + ", bsnsClsfCd=" + bsnsClsfCd + ", lastCustId=" + lastCustId + ", lastCustNm=" + lastCustNm
-                + ", wctPrbbCd=" + wctPrbbCd + ", wctPrbbNm=" + wctPrbbNm + ", deptId=" + deptId + ", deptNm=" + deptNm
+                + ", wctPrbbCd=" + wctPrbbCd + ", wctPrbbCdNm=" + wctPrbbCdNm + ", deptId=" + deptId + ", deptNm=" + deptNm
                 + ", empId=" + empId + ", empNm=" + empNm + ", wctDcdDate=" + wctDcdDate + ", boptStatCd=" + boptStatCd
-                + ", boptStatNm=" + boptStatNm + ", boptEndTypeCd=" + boptEndTypeCd + ", boptEndTypeNm=" + boptEndTypeNm
+                + ", boptStatCdNm=" + boptStatCdNm + ", boptEndTypeCd=" + boptEndTypeCd + ", boptEndTypeCdNm=" + boptEndTypeCdNm
                 + ", issueCnt=" + issueCnt + ", wctCritYam=" + wctCritYam + ", cntrDate=" + cntrDate + ", fcstYam="
                 + fcstYam + ", wctOpptyRslAmt=" + wctOpptyRslAmt + ", wctFcstRslAmt=" + wctFcstRslAmt + ", wctRslAmt="
                 + wctRslAmt + ", sellCritYam=" + sellCritYam + ", sellOpptyRslAmt=" + sellOpptyRslAmt

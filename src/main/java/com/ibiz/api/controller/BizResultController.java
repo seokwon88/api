@@ -1,0 +1,153 @@
+package com.ibiz.api.controller;
+
+import com.google.gson.reflect.TypeToken;
+import com.ibiz.api.model.*;
+import com.ibiz.api.service.BizResultService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api")
+@Slf4j
+public class BizResultController extends BaseController {
+
+    @Autowired
+    private BizResultService bizResultService;
+
+    @GetMapping("/bizResult")
+    public String checkState() { return "bizResult-8200"; }
+
+    //영업부서실적현황
+    @PostMapping("/selectExpectDeptStatsList")
+    public ResponseEntity<String> selectExpectDeptStatsList(@RequestParam("payload") String payload) throws Exception {
+        log.info("Call Controller : " + this.getClass().getName() + ".selectExpectDeptStatsList");
+        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<BusinessResultSearchVO>>(){});
+
+        return super.composePayload(new Payload<List>(bizResultService.selectExpectDeptStatsList(requestPayload)));
+    }
+
+    //영업대표실적현황
+    @PostMapping("/selectExpectEmployeeStatsList")
+    public ResponseEntity<String> selectExpectEmployeeStatsList(@RequestParam("payload") String payload) throws Exception {
+        log.info("Call Controller : " + this.getClass().getName() + ".selectExpectEmployeeStatsList");
+        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<BusinessResultSearchVO>>(){});
+
+        return super.composePayload(new Payload<List>(bizResultService.selectExpectEmployeeStatsList(requestPayload)));
+    }
+
+    //사업부문실적현황
+    @PostMapping("/selectExpectBizGroupStatsList")
+    public ResponseEntity<String> selectExpectBizGroupStatsList(@RequestParam("payload") String payload) throws Exception {
+        log.info("Call Controller : " + this.getClass().getName() + ".selectExpectBizGroupStatsList");
+        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<BusinessResultSearchVO>>(){});
+
+        return super.composePayload(new Payload<List>(bizResultService.selectExpectBizGroupStatsList(requestPayload)));
+    }
+
+    //상품실적현황
+    @PostMapping("/selectExpectProdGroupStatsList")
+    public ResponseEntity<String> selectExpectProdGroupStatsList(@RequestParam("payload") String payload) throws Exception {
+        log.info("Call Controller : " + this.getClass().getName() + ".selectExpectProdGroupStatsList");
+        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<BusinessResultSearchVO>>(){});
+
+        return super.composePayload(new Payload<List>(bizResultService.selectExpectProdGroupStatsList(requestPayload)));
+    }
+
+    //실적상세리스트
+    @PostMapping("/selectSalesReportList")
+    public ResponseEntity<String> selectSalesReportList(@RequestParam("payload") String payload) throws Exception {
+        log.info("Call Controller : " + this.getClass().getName() + ".selectSalesReportList");
+        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<BusinessResultSearchVO>>(){});
+
+        return super.composePayload(new Payload<List>(bizResultService.selectSalesReportList(requestPayload)));
+    }
+
+    //사업분류 콤보박스 리스트
+    @PostMapping("/selectBsnsClsfList")
+    public ResponseEntity<String> selectBsnsClsfList(@RequestParam("payload") String payload) throws Exception {
+        log.info("Call Controller : " + this.getClass().getName() + ".selectBsnsClsfList");
+        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<YearBizTypeDimVO>>(){});
+
+        return super.composePayload(new Payload<List>(bizResultService.selectBsnsClsfList(requestPayload)));
+    }
+
+    //사업 실적비교
+    @PostMapping("/selectMonthlyCompareStatsList")
+    public ResponseEntity<String> selectMonthlyCompareStatsList(@RequestParam("payload") String payload) throws Exception {
+        log.info("Call Controller : " + this.getClass().getName() + ".selectMonthlyCompareStatsList");
+        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<BusinessResultSearchVO>>(){});
+
+        return super.composePayload(new Payload<List>(bizResultService.selectMonthlyCompareStatsList(requestPayload)));
+    }
+
+    //주간업무보고 조회
+    @PostMapping("/selectWeeklyActivityList")
+    public ResponseEntity<String> selectWeeklyActivityList(@RequestParam("payload") String payload) throws Exception {
+        log.info("Call Controller : " + this.getClass().getName() + ".selectWeeklyActivityList");
+        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<WeekJobReportVO>>(){});
+
+        return super.composePayload(new Payload<List>(bizResultService.selectWeeklyActivityList(requestPayload)));
+    }
+    //주간업무보고 조회(서브)
+    @PostMapping("/selectWeeklyActivitySubList")
+    public ResponseEntity<String> selectWeeklyActivitySubList(@RequestParam("payload") String payload) throws Exception {
+        log.info("Call Controller : " + this.getClass().getName() + ".selectWeeklyActivitySubList");
+        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<WeekJobReportVO>>(){});
+
+        return super.composePayload(new Payload<List>(bizResultService.selectWeeklyActivitySubList(requestPayload)));
+    }
+
+    //월간보고서리스트 조회
+    @PostMapping("/selectMonthlyWorkList")
+    public ResponseEntity<String> selectMonthlyWorkList(@RequestParam("payload") String payload) throws Exception {
+        log.info("Call Controller : " + this.getClass().getName() + ".selectMonthlyWorkList");
+        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<MontlyWorkVO>>(){});
+
+        return super.composePayload(new Payload<List>(bizResultService.selectMonthlyWorkList(requestPayload)));
+    }
+    //월간보고서 기준연도 리스트 조회
+    @PostMapping("/selectCritYearList")
+    public ResponseEntity<String> selectCritYearList() throws Exception {
+        log.info("Call Controller : " + this.getClass().getName() + ".selectCritYearList");
+
+        return super.composePayload(new Payload<List>(bizResultService.selectCritYearList()));
+    }
+
+    //월간보고서상세내역 조회
+    @PostMapping("/selectMonthlyWork")
+    public ResponseEntity<String> selectMonthlyWork(@RequestParam("payload") String payload) throws Exception {
+        log.info("Call Controller : " + this.getClass().getName() + ".selectMonthlyWork");
+        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<MontlyWorkVO>>(){});
+
+        return super.composePayload(new Payload<MontlyWorkVO>(bizResultService.selectMonthlyWork(requestPayload)));
+    }
+    //월간보고서 등록
+    @PostMapping("/insertMonthlyWork")
+    public ResponseEntity<String> insertMonthlyWork(@RequestParam("payload") String payload) throws Exception {
+        log.info("Call Controller : " + this.getClass().getName() + ".insertMonthlyWork");
+        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<MontlyWorkVO>>(){});
+
+        return super.composePayload(new Payload<MontlyWorkVO>(bizResultService.insertMonthlyWork(requestPayload)));
+    }
+    //월간보고서 수정
+    @PostMapping("/updateMonthlyWork")
+    public ResponseEntity<String> updateMonthlyWork(@RequestParam("payload") String payload) throws Exception {
+        log.info("Call Controller : " + this.getClass().getName() + ".updateMonthlyWork");
+        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<MontlyWorkVO>>(){});
+
+        return super.composePayload(new Payload<MontlyWorkVO>(bizResultService.updateMonthlyWork(requestPayload)));
+    }
+    //월간보고서 삭제
+    @PostMapping("/deleteMonthlyWork")
+    public ResponseEntity<String> deleteMonthlyWork(@RequestParam("payload") String payload) throws Exception {
+        log.info("Call Controller : " + this.getClass().getName() + ".deleteMonthlyWork");
+        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<MontlyWorkVO>>(){});
+
+        return super.composePayload(new Payload<MontlyWorkVO>(bizResultService.deleteMonthlyWork(requestPayload)));
+    }
+
+}
