@@ -3161,3 +3161,76 @@ could not find expected ':'
 [2020-06-22 18:50:05:382021][http-nio-7500-exec-7] INFO  com.ibiz.api.service.BizGoalService - Call Service : com.ibiz.api.service.BizGoalService.selectMonthlyBizGroupStatsList
 [2020-06-22 18:50:07:383854][http-nio-7500-exec-8] INFO  c.i.a.controller.BizGoalController - Call Controller : com.ibiz.api.controller.BizGoalController.selectMonthlyBizGroupStatsList
 [2020-06-22 18:50:07:383860][http-nio-7500-exec-8] INFO  com.ibiz.api.service.BizGoalService - Call Service : com.ibiz.api.service.BizGoalService.selectMonthlyBizGroupStatsList
+[2020-06-30 10:37:08:1489][main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration' of type [org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration$$EnhancerBySpringCGLIB$$2d608ec3] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+[2020-06-30 10:37:08:1863][main] INFO  com.ibiz.api.ApiApplication - The following profiles are active: local
+[2020-06-30 10:37:10:3386][main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode!
+[2020-06-30 10:37:10:3390][main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data repositories in DEFAULT mode.
+[2020-06-30 10:37:10:3460][main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 51ms. Found 0 repository interfaces.
+[2020-06-30 10:37:10:3630][main] WARN  o.s.b.actuate.endpoint.EndpointId - Endpoint ID 'service-registry' contains invalid characters, please migrate to a valid format.
+[2020-06-30 10:37:10:3789][main] WARN  o.m.s.mapper.ClassPathMapperScanner - No MyBatis mapper was found in '[com.ibiz.api]' package. Please check your configuration.
+[2020-06-30 10:37:10:3904][main] INFO  o.s.c.context.scope.GenericScope - BeanFactory id=d0f67880-5820-3417-bf5a-1dfb2ac30f41
+[2020-06-30 10:37:11:4316][main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.ws.config.annotation.DelegatingWsConfiguration' of type [org.springframework.ws.config.annotation.DelegatingWsConfiguration$$EnhancerBySpringCGLIB$$b5de50c5] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+[2020-06-30 10:37:11:4372][main] INFO  o.s.w.s.a.s.AnnotationActionEndpointMapping - Supporting [WS-Addressing August 2004, WS-Addressing 1.0]
+[2020-06-30 10:37:11:4395][main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+[2020-06-30 10:37:11:4644][main] INFO  o.s.c.s.PostProcessorRegistrationDelegate$BeanPostProcessorChecker - Bean 'org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration' of type [org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration$$EnhancerBySpringCGLIB$$2d608ec3] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+[2020-06-30 10:37:12:5118][main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 7500 (http)
+[2020-06-30 10:37:12:5140][main] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-7500"]
+[2020-06-30 10:37:12:5140][main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+[2020-06-30 10:37:12:5141][main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.27]
+[2020-06-30 10:37:12:5484][main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+[2020-06-30 10:37:12:5485][main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 3598 ms
+[2020-06-30 10:37:12:5485][main] INFO  o.s.web.context.ContextLoader - Root WebApplicationContext: initialization completed in 3598 ms
+[2020-06-30 10:37:12:5662][main] WARN  c.n.c.s.URLConfigurationSource - No URLs will be polled as dynamic configuration sources.
+[2020-06-30 10:37:12:5662][main] INFO  c.n.c.s.URLConfigurationSource - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[2020-06-30 10:37:12:5695][main] INFO  c.n.config.DynamicPropertyFactory - DynamicPropertyFactory is initialized with configuration sources: com.netflix.config.ConcurrentCompositeConfiguration@37a3ec27
+[2020-06-30 10:37:15:8088][main] WARN  c.n.c.s.URLConfigurationSource - No URLs will be polled as dynamic configuration sources.
+[2020-06-30 10:37:15:8089][main] INFO  c.n.c.s.URLConfigurationSource - To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+[2020-06-30 10:37:15:8880][main] WARN  o.s.c.l.c.BlockingLoadBalancerClientAutoConfiguration$BlockingLoadBalancerClientRibbonWarnLogger - You already have RibbonLoadBalancerClient on your classpath. It will be used by default. As Spring Cloud Ribbon is in maintenance mode. We recommend switching to BlockingLoadBalancerClient instead. In order to use it, set the value of `spring.cloud.loadbalancer.ribbon.enabled` to `false` or remove spring-cloud-starter-netflix-ribbon from your project.
+[2020-06-30 10:37:16:9014][main] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 18 endpoint(s) beneath base path '/actuator'
+[2020-06-30 10:37:16:9127][main] INFO  o.s.c.n.eureka.InstanceInfoFactory - Setting initial instance status as: STARTING
+[2020-06-30 10:37:16:9214][main] INFO  c.netflix.discovery.DiscoveryClient - Initializing Eureka in region us-east-1
+[2020-06-30 10:37:16:9563][main] INFO  c.n.d.p.DiscoveryJerseyProvider - Using JSON encoding codec LegacyJacksonJson
+[2020-06-30 10:37:16:9564][main] INFO  c.n.d.p.DiscoveryJerseyProvider - Using JSON decoding codec LegacyJacksonJson
+[2020-06-30 10:37:17:9967][main] INFO  c.n.d.p.DiscoveryJerseyProvider - Using XML encoding codec XStreamXml
+[2020-06-30 10:37:17:9968][main] INFO  c.n.d.p.DiscoveryJerseyProvider - Using XML decoding codec XStreamXml
+[2020-06-30 10:37:17:10496][main] INFO  c.n.d.s.r.aws.ConfigClusterResolver - Resolving eureka endpoints via configuration
+[2020-06-30 10:37:17:10533][main] INFO  c.netflix.discovery.DiscoveryClient - Disable delta property : false
+[2020-06-30 10:37:17:10533][main] INFO  c.netflix.discovery.DiscoveryClient - Single vip registry refresh property : null
+[2020-06-30 10:37:17:10534][main] INFO  c.netflix.discovery.DiscoveryClient - Force full registry fetch : false
+[2020-06-30 10:37:17:10534][main] INFO  c.netflix.discovery.DiscoveryClient - Application is null : false
+[2020-06-30 10:37:17:10534][main] INFO  c.netflix.discovery.DiscoveryClient - Registered Applications size is zero : true
+[2020-06-30 10:37:17:10534][main] INFO  c.netflix.discovery.DiscoveryClient - Application version is -1: true
+[2020-06-30 10:37:17:10534][main] INFO  c.netflix.discovery.DiscoveryClient - Getting all instance registry info from the eureka server
+[2020-06-30 10:37:17:10891][main] INFO  c.netflix.discovery.DiscoveryClient - The response status is 200
+[2020-06-30 10:37:17:10894][main] INFO  c.netflix.discovery.DiscoveryClient - Starting heartbeat executor: renew interval is: 30
+[2020-06-30 10:37:17:10898][main] INFO  c.n.d.InstanceInfoReplicator - InstanceInfoReplicator onDemand update allowed rate per min is 4
+[2020-06-30 10:37:17:10905][main] INFO  c.netflix.discovery.DiscoveryClient - Discovery Client initialized at timestamp 1593481037951 with initial instances count: 3
+[2020-06-30 10:37:17:10909][main] INFO  o.s.c.n.e.s.EurekaServiceRegistry - Registering application IBIZ-SALES-REPORT with eureka with status UP
+[2020-06-30 10:37:17:10910][main] INFO  c.netflix.discovery.DiscoveryClient - Saw local status change event StatusChangeEvent [timestamp=1593481037957, current=UP, previous=STARTING]
+[2020-06-30 10:37:17:10913][DiscoveryClient-InstanceInfoReplicator-0] INFO  c.netflix.discovery.DiscoveryClient - DiscoveryClient_IBIZ-SALES-REPORT/sales-report-7500: registering service...
+[2020-06-30 10:37:17:10935][main] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-7500"]
+[2020-06-30 10:37:18:10959][DiscoveryClient-InstanceInfoReplicator-0] INFO  c.netflix.discovery.DiscoveryClient - DiscoveryClient_IBIZ-SALES-REPORT/sales-report-7500 - registration status: 204
+[2020-06-30 10:37:18:10979][main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 7500 (http) with context path ''
+[2020-06-30 10:37:18:10980][main] INFO  o.s.c.n.e.s.EurekaAutoServiceRegistration - Updating port to 7500
+[2020-06-30 10:37:18:11023][main] INFO  com.ibiz.api.ApiApplication - Started ApiApplication in 10.723 seconds (JVM running for 12.758)
+[2020-06-30 10:39:42:155581][http-nio-7500-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+[2020-06-30 10:39:42:155582][http-nio-7500-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+[2020-06-30 10:39:42:155582][http-nio-7500-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+[2020-06-30 10:39:42:155600][http-nio-7500-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 18 ms
+[2020-06-30 10:39:42:155600][http-nio-7500-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 18 ms
+[2020-06-30 10:39:42:155797][http-nio-7500-exec-1] INFO  io.lettuce.core.EpollProvider - Starting without optional epoll library
+[2020-06-30 10:39:42:155800][http-nio-7500-exec-1] INFO  io.lettuce.core.KqueueProvider - Starting without optional kqueue library
+[2020-06-30 10:39:43:156085][http-nio-7500-exec-1] INFO  c.i.a.controller.BizGoalController - Call Controller : com.ibiz.api.controller.BizGoalController.selectMinMaxCritYear
+[2020-06-30 10:39:43:156101][http-nio-7500-exec-1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+[2020-06-30 10:39:43:156362][http-nio-7500-exec-1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+[2020-06-30 10:39:43:156373][http-nio-7500-exec-1] INFO  com.ibiz.api.service.BizGoalService - Call Service : com.ibiz.api.service.BizGoalService.selectMinMaxCritYear
+[2020-06-30 10:39:43:156700][http-nio-7500-exec-2] INFO  c.i.a.controller.BizGoalController - Call Controller : com.ibiz.api.controller.BizGoalController.selectMaxCritYear
+[2020-06-30 10:39:43:156703][http-nio-7500-exec-2] INFO  com.ibiz.api.service.BizGoalService - Call Service : com.ibiz.api.service.BizGoalService.selectMaxCritYear
+[2020-06-30 10:39:43:156761][http-nio-7500-exec-3] INFO  c.i.a.controller.BizGoalController - Call Controller : com.ibiz.api.controller.BizGoalController.selectMonthlyGoalList
+[2020-06-30 10:39:43:156764][http-nio-7500-exec-3] INFO  com.ibiz.api.service.BizGoalService - Call Service : com.ibiz.api.service.BizGoalService.selectMonthlyGoalList
+[2020-06-30 10:39:44:157404][http-nio-7500-exec-4] INFO  c.i.a.controller.BizGoalController - Call Controller : com.ibiz.api.controller.BizGoalController.selectIsAvlChgDate
+[2020-06-30 10:39:44:157407][http-nio-7500-exec-4] INFO  com.ibiz.api.service.BizGoalService - Call Service : com.ibiz.api.service.BizGoalService.BizGoalSearchVO
+[2020-06-30 10:40:00:173612][http-nio-7500-exec-5] INFO  c.i.a.controller.BizGoalController - Call Controller : com.ibiz.api.controller.BizGoalController.selectMinMaxCritYear
+[2020-06-30 10:40:00:173629][http-nio-7500-exec-5] INFO  com.ibiz.api.service.BizGoalService - Call Service : com.ibiz.api.service.BizGoalService.selectMinMaxCritYear
+[2020-06-30 10:40:00:173731][http-nio-7500-exec-6] INFO  c.i.a.controller.BizGoalController - Call Controller : com.ibiz.api.controller.BizGoalController.selectMonthlyDeptStatsList
+[2020-06-30 10:40:00:173734][http-nio-7500-exec-6] INFO  com.ibiz.api.service.BizGoalService - Call Service : com.ibiz.api.service.BizGoalService.selectMonthlyDeptStatsList

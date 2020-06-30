@@ -19,8 +19,8 @@ public class BizGoalController extends BaseController {
     @Autowired
     private BizGoalService bizGoalService;
 
-    @GetMapping("/businessTarget")
-    public String checkState() { return "businessTarget-8200"; }
+    @GetMapping("/bizGoal")
+    public String checkState() { return "bizGoal-8200"; }
 
     //사업목표관리 - 영업부서별/ 영업대표별
     @PostMapping("/selectMonthlyGoalList")
