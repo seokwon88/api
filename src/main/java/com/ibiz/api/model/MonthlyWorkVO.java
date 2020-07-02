@@ -34,12 +34,14 @@ public class MonthlyWorkVO {
     @NotNull
     private String bdctCont;
 
+    @Size(max=10, message=ExceptionCode.OUTOFSIZE_EXCEPTION+" 등록사원ID는 10자리 이하여야합니다." )
     private String regEmpId;
 
     private String regEmpNm;
 
     private String regDt;
 
+    @Size(max=10, message=ExceptionCode.OUTOFSIZE_EXCEPTION+" 변경사원ID는 10자리 이하여야합니다." )
     private String chgEmpId;
 
     private String chgEmpNm;
