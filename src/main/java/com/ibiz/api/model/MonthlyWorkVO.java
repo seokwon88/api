@@ -1,11 +1,15 @@
 package com.ibiz.api.model;
 
+import com.ibiz.api.exception.ExceptionCode;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.Map;
 /**
  * @Table BPIP260T
  */
-public class MontlyWorkVO {
+public class MonthlyWorkVO {
 
     private String accountRole;
 
@@ -17,12 +21,17 @@ public class MontlyWorkVO {
 
     private List<Map<String, String>> buttonList;
 
+    @NotNull
+    @Size(max=6, message=ExceptionCode.OUTOFSIZE_EXCEPTION+" 기준연월은 6자리 이하여야합니다." )
     private String critYam;
 
+    @NotNull
+    @Size(max=8, message= ExceptionCode.OUTOFSIZE_EXCEPTION+" 영업부서ID는 8자리 이하여야합니다." )
     private String slsDeptId;
 
     private String slsDeptNm;
 
+    @NotNull
     private String bdctCont;
 
     private String regEmpId;

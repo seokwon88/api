@@ -906,8 +906,8 @@
 
     <!-- 월간보고서리스트 조회-->
     <select id="selectMonthlyWorkList"
-            parameterType="com.ibiz.api.model.MontlyWorkVO"
-            resultType="com.ibiz.api.model.MontlyWorkVO">
+            parameterType="com.ibiz.api.model.MonthlyWorkVO"
+            resultType="com.ibiz.api.model.MonthlyWorkVO">
 
         SELECT CRIT_YAM,SLS_DEPT_ID, SLS_DEPT_NM, REG_EMP_ID, REG_EMP_NM,REG_DT,
         CHG_EMP_ID, CHG_EMP_NM, CHG_DT, DEPT_SORT_ROWNUM,TOTAL_CNT,  ROWNUMBER
@@ -965,7 +965,7 @@
 
     <!-- 월간보고서 기준연도 리스트 조회-->
     <select id="selectCritYearList"
-            resultType="com.ibiz.api.model.MontlyWorkVO">
+            resultType="com.ibiz.api.model.MonthlyWorkVO">
         <![CDATA[
 			SELECT ( SELECT
 			            MIN(SUBSTR(CRIT_YAM,0,4) )
@@ -983,8 +983,8 @@
 
     <!-- 월간보고서상세내역 조회-->
     <select id="selectMonthlyWork"
-            parameterType="com.ibiz.api.model.MontlyWorkVO"
-            resultType="com.ibiz.api.model.MontlyWorkVO">
+            parameterType="com.ibiz.api.model.MonthlyWorkVO"
+            resultType="com.ibiz.api.model.MonthlyWorkVO">
 
         SELECT
         CRIT_YAM, SLS_DEPT_ID, IBIZ_DEPT_NM(BPIP260T.SLS_DEPT_ID) AS SLS_DEPT_NM,
@@ -1000,7 +1000,7 @@
 
     <!-- 저장가능여부 조회-->
     <select id="selectIsAbleToSave"
-            parameterType="com.ibiz.api.model.MontlyWorkVO"
+            parameterType="com.ibiz.api.model.MonthlyWorkVO"
             resultType="java.lang.Integer">
 
         SELECT NVL(COUNT(1),0)
@@ -1019,7 +1019,7 @@
     -->
     <!-- 월간보고서 등록-->
     <insert id="insertMonthlyWork"
-            parameterType="com.ibiz.api.model.MontlyWorkVO">
+            parameterType="com.ibiz.api.model.MonthlyWorkVO">
 
         INSERT INTO BPIP260T (
         CRIT_YAM,
@@ -1049,7 +1049,7 @@
 
     <!-- 월간보고서 수정-->
     <update id="updateMonthlyWork"
-            parameterType="com.ibiz.api.model.MontlyWorkVO">
+            parameterType="com.ibiz.api.model.MonthlyWorkVO">
 
         UPDATE BPIP260T
         SET
@@ -1070,7 +1070,7 @@
 
     <!-- 월간보고서 삭제-->
     <delete id="deleteMonthlyWork"
-            parameterType="com.ibiz.api.model.MontlyWorkVO">
+            parameterType="com.ibiz.api.model.MonthlyWorkVO">
         DELETE FROM
         BPIP260T
         WHERE

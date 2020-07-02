@@ -123,9 +123,9 @@ public class BizGoalController extends BaseController {
     @PostMapping("/insertMonthlyDeptLwrkDeptCvrdGoal")
     public ResponseEntity<String> insertMonthlyDeptLwrkDeptCvrdGoal(@RequestParam("payload") String payload) throws Exception {
         log.info("Call Controller : " + this.getClass().getName() + ".insertMonthlyDeptLwrkDeptCvrdGoal");
-        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<BizGoalSearchVO>>(){});
+        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<YearDeptResultVO>>(){});
 
-        return super.composePayload(new Payload<BizGoalSearchVO>(bizGoalService.insertMonthlyDeptLwrkDeptCvrdGoal(requestPayload)));
+        return super.composePayload(new Payload<YearDeptResultVO>(bizGoalService.insertMonthlyDeptLwrkDeptCvrdGoal(requestPayload)));
     }
 
     //사업목표 확정 (영업부서)
@@ -141,16 +141,16 @@ public class BizGoalController extends BaseController {
     @PostMapping("/insertMonthlyEmpLwrkDeptCvrdGoal")
     public ResponseEntity<String> insertMonthlyEmpLwrkDeptCvrdGoal(@RequestParam("payload") String payload) throws Exception {
         log.info("Call Controller : " + this.getClass().getName() + ".insertMonthlyEmpLwrkDeptCvrdGoal");
-        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<BizGoalSearchVO>>(){});
+        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<YearEmpResultVO>>(){});
 
-        return super.composePayload(new Payload<BizGoalSearchVO>(bizGoalService.insertMonthlyEmpLwrkDeptCvrdGoal(requestPayload)));
+        return super.composePayload(new Payload<YearEmpResultVO>(bizGoalService.insertMonthlyEmpLwrkDeptCvrdGoal(requestPayload)));
     }
 
     //사업목표 확정 (영업대표)
     @PostMapping("/insertMonthlyEmpGoalDcd")
     public ResponseEntity<String> insertMonthlyEmpGoalDcd(@RequestParam("payload") String payload) throws Exception {
         log.info("Call Controller : " + this.getClass().getName() + ".insertMonthlyEmpGoalDcd");
-        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<BizGoalSearchVO>>(){});
+        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<YearEmpResultAllVO>>(){});
 
         return super.composePayload(new Payload<YearEmpResultAllVO>(bizGoalService.insertMonthlyEmpGoalDcd(requestPayload)));
     }

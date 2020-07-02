@@ -6,7 +6,7 @@
 package com.ibiz.api.service;
 
 import com.ibiz.api.dao.BizGoalDAO;
-import com.ibiz.api.dao.CmnDAO;
+import com.ibiz.api.exception.DeleteDeniedException;
 import com.ibiz.api.model.AccountVO;
 import com.ibiz.api.model.YearDeptResultAllVO;
 import com.ibiz.api.model.YearDeptResultVO;
@@ -33,8 +33,6 @@ public class BizGoalService {
     private static final Logger log = LoggerFactory.getLogger(BizGoalService.class);
     @Resource(name = "bizGoalDAO")
     private BizGoalDAO bizGoalDAO;
-    @Resource(name = "cmnDAO")
-    private CmnDAO cmnDAO;
     protected Calendar calendar;
 
     public BizGoalService() {
@@ -47,9 +45,6 @@ public class BizGoalService {
         log.info("Call Service : " + this.getClass().getName() + ".selectMonthlyGoalList");
         BizGoalSearchVO bizGoalSearchVO = (BizGoalSearchVO)requestPayload.getDto();
         new ArrayList();
-        if (bizGoalSearchVO.getSlsDeptId().equals("")) {
-            bizGoalSearchVO.setSlsDeptId(this.cmnDAO.selectHTRKDeptInfo().getDeptId());
-        }
 
         List<YearDeptResultVO> list = this.bizGoalDAO.selectMonthlyGoalList(bizGoalSearchVO);
         return list;
@@ -68,9 +63,6 @@ public class BizGoalService {
     public List<YearDeptResultVO> selectMonthlyDeptStatsList(Payload<BizGoalSearchVO> requestPayload) throws Exception {
         log.info("Call Service : " + this.getClass().getName() + ".selectMonthlyDeptStatsList");
         BizGoalSearchVO bizGoalSearchVO = (BizGoalSearchVO)requestPayload.getDto();
-        if (bizGoalSearchVO.getSlsDeptId().equals("")) {
-            bizGoalSearchVO.setSlsDeptId(this.cmnDAO.selectHTRKDeptInfo().getDeptId());
-        }
 
         List businessTargetForDeptMMList;
         if (!bizGoalSearchVO.getBsnsRslDtlDstCd().equals("AR") && !bizGoalSearchVO.getBsnsRslDtlDstCd().equals("BR") && !bizGoalSearchVO.getBsnsRslDtlDstCd().equals("CR") && !bizGoalSearchVO.getBsnsRslDtlDstCd().equals("DR") && !bizGoalSearchVO.getBsnsRslDtlDstCd().equals("ER") && !bizGoalSearchVO.getBsnsRslDtlDstCd().equals("FR")) {
@@ -126,9 +118,7 @@ public class BizGoalService {
     public List<YearEmpResultVO> selectMonthlyEmployeeStatsList(Payload<BizGoalSearchVO> requestPayload) throws Exception {
         log.info("Call Service : " + this.getClass().getName() + ".selectMonthlyEmployeeStatsList");
         BizGoalSearchVO bizGoalSearchVO = (BizGoalSearchVO)requestPayload.getDto();
-        if (bizGoalSearchVO.getSlsDeptId().equals("")) {
-            bizGoalSearchVO.setSlsDeptId(this.cmnDAO.selectHTRKDeptInfo().getDeptId());
-        }
+
 
         List businessTargetForEmpMMList;
         if (!bizGoalSearchVO.getBsnsRslDtlDstCd().equals("AR") && !bizGoalSearchVO.getBsnsRslDtlDstCd().equals("BR") && !bizGoalSearchVO.getBsnsRslDtlDstCd().equals("CR") && !bizGoalSearchVO.getBsnsRslDtlDstCd().equals("DR") && !bizGoalSearchVO.getBsnsRslDtlDstCd().equals("ER") && !bizGoalSearchVO.getBsnsRslDtlDstCd().equals("FR")) {
@@ -216,9 +206,6 @@ public class BizGoalService {
                 bizGoalSearchVO.setBsnsRslDtlDstCd("DS");
         }*/
 
-        if (bizGoalSearchVO.getSlsDeptId().equals("")) {
-            bizGoalSearchVO.setSlsDeptId(this.cmnDAO.selectHTRKDeptInfo().getDeptId());
-        }
 
         List<YearDeptResultVO> list = this.bizGoalDAO.selectMonthlyBizGroupStatsList(bizGoalSearchVO);
         if (String.valueOf(this.calendar.get(1)).equals(bizGoalSearchVO.getYear()) && (bizGoalSearchVO.getBsnsRslDtlDstCd().equals("AR") || bizGoalSearchVO.getBsnsRslDtlDstCd().equals("BS") || bizGoalSearchVO.getBsnsRslDtlDstCd().equals("CS") || bizGoalSearchVO.getBsnsRslDtlDstCd().equals("DS") || bizGoalSearchVO.getBsnsRslDtlDstCd().equals("ER") || bizGoalSearchVO.getBsnsRslDtlDstCd().equals("FR"))) {
@@ -250,9 +237,6 @@ public class BizGoalService {
         BizGoalSearchVO bizGoalSearchVO = (BizGoalSearchVO)requestPayload.getDto();
         new ArrayList();
         bizGoalSearchVO.setBplnDstCd("F1");
-        if (bizGoalSearchVO.getSlsDeptId().equals("")) {
-            bizGoalSearchVO.setSlsDeptId(this.cmnDAO.selectHTRKDeptInfo().getDeptId());
-        }
 
         if (bizGoalSearchVO.getBsnsRslDtlDstCd() != null) {
             String var4 = bizGoalSearchVO.getBsnsRslDtlDstCd();
@@ -324,6 +308,8 @@ public class BizGoalService {
 
             if(this.bizGoalDAO.selectisExistsBizGoal(searchVO) > 0 ){
                 this.bizGoalDAO.deleteMonthlyDeptGoal((YearDeptResultVO) yearDeptResultAllVO.getCudList().get(0));
+            }else{
+                throw new DeleteDeniedException("영없부서 사업목표 등록시 문제가 발생했습니다.", (YearDeptResultVO) yearDeptResultAllVO.getCudList().get(0));
             }
 
             /*if (Boolean.valueOf((String)this.bizGoalDAO.selectisExistsBizGoalDept((YearDeptResultVO)yearDeptResultAllVO.getCudList().get(0)).get("RESULT"))) {
@@ -379,6 +365,8 @@ public class BizGoalService {
 
             if(this.bizGoalDAO.selectisExistsBizGoal(searchVO) > 0 ){
                 this.bizGoalDAO.deleteMonthlyEmpGoal((YearEmpResultVO) yearEmpResultAllVO.getCudList().get(0));
+            }else{
+                throw new DeleteDeniedException("영업대표 사업목표 등록시 문제가 발생했습니다.", (YearEmpResultVO) yearEmpResultAllVO.getCudList().get(0));
             }
 
             /*if (Boolean.valueOf((String)this.bizGoalDAO.selectisExistsBizGoalEmp((YearEmpResultVO)yearEmpResultAllVO.getCudList().get(0)).get("RESULT"))) {
@@ -420,12 +408,12 @@ public class BizGoalService {
 
     // 부서 목표 수정(하위부서 포함)
     @Transactional
-    public BizGoalSearchVO insertMonthlyDeptLwrkDeptCvrdGoal(Payload<BizGoalSearchVO> requestPayload) throws Exception {
+    public YearDeptResultVO insertMonthlyDeptLwrkDeptCvrdGoal(Payload<YearDeptResultVO> requestPayload) throws Exception {
         log.info("Call Service : " + this.getClass().getName() + ".insertMonthlyDeptLwrkDeptCvrdGoal");
-        BizGoalSearchVO bizGoalSearchVO = (BizGoalSearchVO)requestPayload.getDto();
-        this.bizGoalDAO.deleteGoalDcdMonthlyDeptForLwrkDept(bizGoalSearchVO);
-        this.bizGoalDAO.insertMonthlyDeptLwrkDeptCvrdGoal(bizGoalSearchVO);
-        return bizGoalSearchVO;
+        YearDeptResultVO yearDeptResultVO = (YearDeptResultVO)requestPayload.getDto();
+        this.bizGoalDAO.deleteGoalDcdMonthlyDeptForLwrkDept(yearDeptResultVO);
+        this.bizGoalDAO.insertMonthlyDeptLwrkDeptCvrdGoal(yearDeptResultVO);
+        return yearDeptResultVO;
     }
 
     // 부서 목표 수정
@@ -444,6 +432,8 @@ public class BizGoalService {
 
             if(this.bizGoalDAO.selectisExistsBizGoal(searchVO) > 0 ){
                 this.bizGoalDAO.deleteMonthlyDeptGoal((YearDeptResultVO) yearDeptResultAllVO.getCudList().get(0));
+            }else{
+                throw new DeleteDeniedException("영업부서 사업목표 등록시 문제가 발생했습니다.", (YearDeptResultVO) yearDeptResultAllVO.getCudList().get(0));
             }
             /*
             if (Boolean.valueOf((String)this.bizGoalDAO.selectisExistsBizGoalDept((YearDeptResultVO)yearDeptResultAllVO.getCudList().get(0)).get("RESULT"))) {
@@ -484,12 +474,12 @@ public class BizGoalService {
 
     // 사원 목표 수정(하위부서 포함)
     @Transactional
-    public BizGoalSearchVO insertMonthlyEmpLwrkDeptCvrdGoal(Payload<BizGoalSearchVO> requestPayload) throws Exception {
+    public YearEmpResultVO insertMonthlyEmpLwrkDeptCvrdGoal(Payload<YearEmpResultVO> requestPayload) throws Exception {
         log.info("Call Service : " + this.getClass().getName() + ".insertMonthlyEmpLwrkDeptCvrdGoal");
-        BizGoalSearchVO bizGoalSearchVO = (BizGoalSearchVO)requestPayload.getDto();
-        this.bizGoalDAO.deleteGoalDcdMonthlyEmpForLwrkDept(bizGoalSearchVO);
-        this.bizGoalDAO.insertMonthlyEmpLwrkDeptCvrdGoal(bizGoalSearchVO);
-        return bizGoalSearchVO;
+        YearEmpResultVO yearEmpResultVO = (YearEmpResultVO)requestPayload.getDto();
+        this.bizGoalDAO.deleteGoalDcdMonthlyEmpForLwrkDept(yearEmpResultVO);
+        this.bizGoalDAO.insertMonthlyEmpLwrkDeptCvrdGoal(yearEmpResultVO);
+        return yearEmpResultVO;
     }
 
     // 사원 목표 수정
@@ -508,6 +498,8 @@ public class BizGoalService {
 
             if(this.bizGoalDAO.selectisExistsBizGoal(searchVO) > 0 ){
                 this.bizGoalDAO.deleteMonthlyEmpGoal((YearEmpResultVO) yearEmpResultAllVO.getCudList().get(0));
+            }else{
+                throw new DeleteDeniedException("영업대표 사업목표 등록시 문제가 발생했습니다.", (YearEmpResultVO) yearEmpResultAllVO.getCudList().get(0));
             }
             /*
             if (Boolean.valueOf((String)this.bizGoalDAO.selectisExistsBizGoalEmp((YearEmpResultVO)yearEmpResultAllVO.getCudList().get(0)).get("RESULT"))) {

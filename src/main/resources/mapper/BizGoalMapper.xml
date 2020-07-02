@@ -538,14 +538,14 @@
 
     <!-- 월별부서목표 목표확정 삭제 - 하위목표포함시 -->
     <delete id="deleteGoalDcdMonthlyDeptForLwrkDept"
-            parameterType="com.ibiz.api.model.BizGoalSearchVO">
+            parameterType="com.ibiz.api.model.YearDeptResultVO">
 			DELETE FROM BRST100T
-				WHERE	CRIT_YEAR = #{year}
+				WHERE	CRIT_YEAR = #{critYear}
 					    AND 	DEPT_ID  IN (
 			                            SELECT DEPT_ID FROM HMST100T
 			                            WHERE ORG_CLOSE_DATE >= TO_CHAR(SYSDATE,'YYYYMMDD')
 			                            START WITH
-			                                DEPT_ID =  #{slsDeptId}
+			                                DEPT_ID =  #{deptId}
 			                            CONNECT BY
 			                                PRIOR DEPT_ID = HGRK_DEPT_ID
 		                        	)
@@ -555,14 +555,14 @@
 
     <!-- 월별사원목표 목표확정 삭제  - 하위목표포함시 -->
     <delete id="deleteGoalDcdMonthlyEmpForLwrkDept"
-            parameterType="com.ibiz.api.model.BizGoalSearchVO">
+            parameterType="com.ibiz.api.model.YearEmpResultVO">
 			DELETE FROM BRST110T
-				WHERE	CRIT_YEAR = #{year}
+				WHERE	CRIT_YEAR = #{critYear}
 					    AND 	DEPT_ID IN (
 			                            SELECT DEPT_ID FROM HMST100T
 			                            WHERE ORG_CLOSE_DATE >= TO_CHAR(SYSDATE,'YYYYMMDD')
 			                            START WITH
-			                                DEPT_ID =  #{slsDeptId}
+			                                DEPT_ID =  #{deptId}
 			                            CONNECT BY
 			                                PRIOR DEPT_ID = HGRK_DEPT_ID
 		                        	)
@@ -773,7 +773,7 @@
 
     <!-- 월별부서 목표관리 > 수립목표 확정  - 하위부서 포함 -->
     <insert id="insertMonthlyDeptLwrkDeptCvrdGoal"
-            parameterType="com.ibiz.api.model.BizGoalSearchVO">
+            parameterType="com.ibiz.api.model.YearDeptResultVO">
 				INSERT
 			    INTO BRST100T (
 			        CRIT_YEAR,
@@ -821,14 +821,14 @@
 			        GODS_CLSF_CD
 			 		FROM BRST100T
 			 		WHERE
-			 		CRIT_YEAR = #{year}
+			 		CRIT_YEAR = #{critYear}
 			 		AND BPLN_DST_CD = 'P2'
 					AND	BSNS_RSL_DTL_DST_CD = #{bsnsRslDtlDstCd}
 			 		AND DEPT_ID IN 	(
 			                            SELECT DEPT_ID FROM HMST100T
 			                            WHERE ORG_CLOSE_DATE >= TO_CHAR(SYSDATE,'YYYYMMDD')
 			                            START WITH
-			                                DEPT_ID = #{slsDeptId}
+			                                DEPT_ID = #{deptId}
 			                            CONNECT BY
 			                                PRIOR DEPT_ID = HGRK_DEPT_ID
 		                        	)
@@ -838,7 +838,7 @@
 
     <!-- 월별 사원목표관리  > 수립목표 확정 - 하위부서포함 -->
     <insert id="insertMonthlyEmpLwrkDeptCvrdGoal"
-            parameterType="com.ibiz.api.model.BizGoalSearchVO">
+            parameterType="com.ibiz.api.model.YearEmpResultVO">
 			INSERT
 			    INTO BRST110T (
 			        CRIT_YEAR,
@@ -888,14 +888,14 @@
 				        GODS_CLSF_CD
 					FROM BRST110T
 			 		WHERE
-			 		CRIT_YEAR = #{year}
+			 		CRIT_YEAR = #{critYear}
 			 		AND BPLN_DST_CD = 'P2'
 					AND	BSNS_RSL_DTL_DST_CD = #{bsnsRslDtlDstCd}
 			 		AND DEPT_ID IN 	(
 			                            SELECT DEPT_ID FROM HMST100T
 			                            WHERE ORG_CLOSE_DATE >= TO_CHAR(SYSDATE,'YYYYMMDD')
 			                            START WITH
-			                                DEPT_ID = #{slsDeptId}
+			                                DEPT_ID = #{deptId}
 			                            CONNECT BY
 			                                PRIOR DEPT_ID = HGRK_DEPT_ID
 		                        	)

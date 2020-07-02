@@ -1,4 +1,11 @@
 package com.ibiz.api.model;
+
+import com.ibiz.api.exception.ExceptionCode;
+
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 /**
  * @Table BRST110T
  */
@@ -7,106 +14,138 @@ public class YearEmpResultVO {
     /**
      * 사업연도
      */
+    @NotNull
+    @Size(max=4, message= ExceptionCode.OUTOFSIZE_EXCEPTION+" 기준연도는 4자리 이하여야합니다." )
     private String critYear;
 
     /**
      * 부서ID
      */
+    @NotNull
+    @Size(max=8, message=ExceptionCode.OUTOFSIZE_EXCEPTION+" 부서ID는 8자리 이하여야합니다." )
     private String deptId;
 
     /**
      * 사원ID
      */
+    @NotNull
+    @Size(max=10, message=ExceptionCode.OUTOFSIZE_EXCEPTION+" 사원ID는 10자리 이하여야합니다." )
     private String empId;
 
     /**
      * 사업계획구분코드
      */
+    @NotNull
+    @Size(max=4, message=ExceptionCode.OUTOFSIZE_EXCEPTION+" 사업계획구분코드는 4자리 이하여야합니다." )
     private String bplnDstCd;
 
     /**
      * 사업실적상세구분코드
      */
+    @NotNull
+    @Size(max=4, message=ExceptionCode.OUTOFSIZE_EXCEPTION+" 사업실적상세구분코드는 4자리 이하여야합니다." )
     private String bsnsRslDtlDstCd;
 
     /**
      * 사업분류코드
      */
+    @NotNull
+    @Size(max=4, message=ExceptionCode.OUTOFSIZE_EXCEPTION+" 사업분류코드는 4자리 이하여야합니다." )
     private String bsnsClsfCd;
 
     /**
-     * 상품구분코드
+     * 상붐구분코드
      */
+    @NotNull
+    @Size(max=4, message=ExceptionCode.OUTOFSIZE_EXCEPTION+" 상품구분코드는 4자리 이하여야합니다." )
     private String prodDstCd;
 
     /**
-     * 상품유형코드
+     * 상붐유형코드
      */
+    @NotNull
+    @Size(max=4, message=ExceptionCode.OUTOFSIZE_EXCEPTION+" 상품유형코드는 4자리 이하여야합니다." )
     private String prodTypeCd;
+
     /**
      * 제품분류코드
      */
+    @NotNull
+    @Size(max=4, message=ExceptionCode.OUTOFSIZE_EXCEPTION+" 제품분류코드는 4자리 이하여야합니다." )
     private String godsClsfCd;
 
     /**
      * 1월금액
      */
+    @Digits(integer=15,fraction=0)
     private Long janAmt;
 
     /**
      * 2월금액
      */
+    @Digits(integer=15,fraction=0)
     private Long febAmt;
 
     /**
      * 3월금액
      */
+    @Digits(integer=15,fraction=0)
     private Long marAmt;
 
     /**
      * 4월금액
      */
+    @Digits(integer=15,fraction=0)
     private Long aprAmt;
 
     /**
      * 5월금액
      */
+    @Digits(integer=15,fraction=0)
     private Long mayAmt;
 
     /**
      * 6월금액
      */
+    @Digits(integer=15,fraction=0)
     private Long junAmt;
 
     /**
      * 7월금액
      */
+    @Digits(integer=15,fraction=0)
     private Long julAmt;
 
     /**
      * 8월금액
      */
+    @Digits(integer=15,fraction=0)
     private Long augAmt;
 
     /**
      * 9월금액
      */
+    @Digits(integer=15,fraction=0)
     private Long sepAmt;
 
     /**
      * 10월금액
      */
+    @Digits(integer=15,fraction=0)
     private Long octAmt;
 
     /**
      * 11월금액
      */
+    @Digits(integer=15,fraction=0)
     private Long novAmt;
 
     /**
      * 12월금액
      */
+    @Digits(integer=15,fraction=0)
     private Long decAmt;
+
 
     /**
      * 상위부서ID(본부ID)

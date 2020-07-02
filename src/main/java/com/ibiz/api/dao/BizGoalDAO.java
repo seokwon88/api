@@ -63,12 +63,12 @@ public class BizGoalDAO {
      */
 
     //사업목표 등록(월별부서)
-    public void insertMonthlyDeptGoal(YearDeptResultVO yearDeptResultVO) {
+    public void insertMonthlyDeptGoal(YearDeptResultVO yearDeptResultVO) throws Exception {
         mybatis.update( "BizGoalMapper.insertMonthlyDeptGoal", yearDeptResultVO);
     }
 
     //사업목표 등록(월별부서)
-    public void insertMonthlyEmpGoal(YearEmpResultVO yearEmpResultVO) {
+    public void insertMonthlyEmpGoal(YearEmpResultVO yearEmpResultVO) throws Exception {
         mybatis.update( "BizGoalMapper.insertMonthlyEmpGoal", yearEmpResultVO);
     }
 
@@ -87,13 +87,13 @@ public class BizGoalDAO {
     }
 
     //사업목표 수립 >> 확정 (영업부서) - 하위부서포함
-    public void insertMonthlyDeptLwrkDeptCvrdGoal(BizGoalSearchVO bizGoalSearchVO) {
-        mybatis.update( "BizGoalMapper.insertMonthlyDeptLwrkDeptCvrdGoal", bizGoalSearchVO);
+    public void insertMonthlyDeptLwrkDeptCvrdGoal(YearDeptResultVO yearDeptResultVO) throws Exception {
+        mybatis.update( "BizGoalMapper.insertMonthlyDeptLwrkDeptCvrdGoal", yearDeptResultVO);
     }
 
     //사업목표 수립 >> 확정 (영업대표) - 하위부서포함
-    public void insertMonthlyEmpLwrkDeptCvrdGoal(BizGoalSearchVO bizGoalSearchVO) throws Exception {
-        mybatis.insert( "BizGoalMapper.insertMonthlyEmpLwrkDeptCvrdGoal", bizGoalSearchVO);
+    public void insertMonthlyEmpLwrkDeptCvrdGoal(YearEmpResultVO yearEmpResultVO) throws Exception {
+        mybatis.insert( "BizGoalMapper.insertMonthlyEmpLwrkDeptCvrdGoal", yearEmpResultVO);
     }
 
     /*
@@ -121,12 +121,12 @@ public class BizGoalDAO {
     }
 
     //사업목표 목표확정 삭제(월별부서) 하위부서포함일 경우
-    public void deleteGoalDcdMonthlyDeptForLwrkDept(BizGoalSearchVO bizGoalSearchVO) throws Exception {
-        mybatis.delete("BizGoalMapper.deleteGoalDcdMonthlyDeptForLwrkDept", bizGoalSearchVO);
+    public void deleteGoalDcdMonthlyDeptForLwrkDept(YearDeptResultVO yearDeptResultVO) throws Exception {
+        mybatis.delete("BizGoalMapper.deleteGoalDcdMonthlyDeptForLwrkDept", yearDeptResultVO);
     }
 
     // 사업목표 목표확정 전체삭제(월별영업대표) 하위부서포함일 경우
-    public void deleteGoalDcdMonthlyEmpForLwrkDept(BizGoalSearchVO bizGoalSearchVO) throws Exception {
-        mybatis.delete("BizGoalMapper.deleteGoalDcdMonthlyEmpForLwrkDept", bizGoalSearchVO);
+    public void deleteGoalDcdMonthlyEmpForLwrkDept(YearEmpResultVO yearEmpResultVO) throws Exception {
+        mybatis.delete("BizGoalMapper.deleteGoalDcdMonthlyEmpForLwrkDept", yearEmpResultVO);
     }
 }

@@ -1,7 +1,7 @@
 package com.ibiz.api.service;
 
 import com.ibiz.api.dao.BizResultDAO;
-import com.ibiz.api.dao.CmnDAO;
+import com.ibiz.api.exception.UpdateDeniedException;
 import com.ibiz.api.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,18 +18,12 @@ public class BizResultService {
     @Resource(name = "bizResultDAO")
     private BizResultDAO bizResultDAO;
 
-    @Resource(name = "cmnDAO")
-    private CmnDAO cmnDAO;
-
     //영업부서실적현황
     @Transactional
     public List<BusinessResultVO> selectExpectDeptStatsList(Payload<BusinessResultSearchVO> requestPayload) throws Exception {
         log.info("Call Service : " + this.getClass().getName() + ".selectExpectDeptStatsList");
         BusinessResultSearchVO businessResultSearchVO = requestPayload.getDto();
 
-        if(businessResultSearchVO.getDeptId().equals("")) {
-            businessResultSearchVO.setDeptId(cmnDAO.selectHTRKDeptInfo().getDeptId());
-        }
 
         businessResultSearchVO.setJanDate(businessResultSearchVO.getCritYear()+"01"); // 기준연도+1월
         businessResultSearchVO.setFromDate(businessResultSearchVO.getCritYear()+ businessResultSearchVO.getCritMon()); // 기준월
@@ -47,9 +41,6 @@ public class BizResultService {
         log.info("Call Service : " + this.getClass().getName() + ".selectExpectEmployeeStatsList");
         BusinessResultSearchVO businessResultSearchVO = requestPayload.getDto();
 
-        if(businessResultSearchVO.getDeptId().equals("")) {
-            businessResultSearchVO.setDeptId(cmnDAO.selectHTRKDeptInfo().getDeptId());
-        }
         businessResultSearchVO.setJanDate(businessResultSearchVO.getCritYear()+"01"); // 기준연도+1월
         businessResultSearchVO.setFromDate(businessResultSearchVO.getCritYear()+ businessResultSearchVO.getCritMon()); // 기준월
         businessResultSearchVO.setRsdnStartDate(businessResultSearchVO.getCritYear()+ businessResultSearchVO.getRsdnStartMon()); // 잔여시작월
@@ -66,9 +57,6 @@ public class BizResultService {
         log.info("Call Service : " + this.getClass().getName() + ".selectExpectBizGroupStatsList");
         BusinessResultSearchVO businessResultSearchVO = requestPayload.getDto();
 
-        if(businessResultSearchVO.getDeptId().equals("")) {
-            businessResultSearchVO.setDeptId(cmnDAO.selectHTRKDeptInfo().getDeptId());
-        }
         businessResultSearchVO.setJanDate(businessResultSearchVO.getCritYear()+"01"); // 기준연도+1월
         businessResultSearchVO.setFromDate(businessResultSearchVO.getCritYear()+ businessResultSearchVO.getCritMon()); // 기준월
         businessResultSearchVO.setRsdnStartDate(businessResultSearchVO.getCritYear()+ businessResultSearchVO.getRsdnStartMon()); // 잔여시작월
@@ -172,24 +160,24 @@ public class BizResultService {
 
     //월간보고서리스트 조회
     @Transactional
-    public List<MontlyWorkVO> selectMonthlyWorkList(Payload<MontlyWorkVO> requestPayload) {
+    public List<MonthlyWorkVO> selectMonthlyWorkList(Payload<MonthlyWorkVO> requestPayload) {
         log.info("Call Service : " + this.getClass().getName() + ".selectMonthlyWorkList");
         AccountVO accountVO = requestPayload.getAccountVO();
-        MontlyWorkVO montlyWorkVO = requestPayload.getDto();
+        MonthlyWorkVO monthlyWorkVO = requestPayload.getDto();
 
-        List<MontlyWorkVO> ReportList = bizResultDAO.selectMonthlyWorkList(montlyWorkVO);
+        List<MonthlyWorkVO> ReportList = bizResultDAO.selectMonthlyWorkList(monthlyWorkVO);
 
         if (accountVO.getRoleList().contains("AD")) {
-            montlyWorkVO.setAccountRole("AD");
+            monthlyWorkVO.setAccountRole("AD");
         }
 
         return ReportList;
     }
     //월간보고서 기준연도 리스트 조회
     @Transactional
-    public List<MontlyWorkVO> selectCritYearList() {
+    public List<MonthlyWorkVO> selectCritYearList() {
         log.info("Call Service : " + this.getClass().getName() + ".selectCritYearList");
-        List<MontlyWorkVO> reportResult;
+        List<MonthlyWorkVO> reportResult;
 
         if(bizResultDAO.selectCritYearList().get(0) != null) {
             reportResult = bizResultDAO.selectCritYearList();
@@ -201,56 +189,57 @@ public class BizResultService {
     }
     //월간보고서상세내역 조회
     @Transactional
-    public MontlyWorkVO selectMonthlyWork(Payload<MontlyWorkVO> requestPayload) {
+    public MonthlyWorkVO selectMonthlyWork(Payload<MonthlyWorkVO> requestPayload) {
         log.info("Call Service : " + this.getClass().getName() + ".selectMonthlyWork");
         AccountVO accountVO = requestPayload.getAccountVO();
-        MontlyWorkVO montlyWorkVO = requestPayload.getDto();
+        MonthlyWorkVO monthlyWorkVO = requestPayload.getDto();
 
-        MontlyWorkVO report = bizResultDAO.selectMonthlyWork(montlyWorkVO);
+        MonthlyWorkVO report = bizResultDAO.selectMonthlyWork(monthlyWorkVO);
 
         return report;
     }
 
     //월간보고서 등록
     @Transactional
-    public MontlyWorkVO insertMonthlyWork(Payload<MontlyWorkVO> requestPayload) throws Exception {
+    public MonthlyWorkVO insertMonthlyWork(Payload<MonthlyWorkVO> requestPayload) throws Exception {
         log.info("Call Service : " + this.getClass().getName() + ".insertMonthlyWork");
         AccountVO accountVO = requestPayload.getAccountVO();
-        MontlyWorkVO montlyWorkVO = requestPayload.getDto();
+        MonthlyWorkVO monthlyWorkVO = requestPayload.getDto();
 
-        montlyWorkVO.setRegEmpId(accountVO.getEmpId());
-        montlyWorkVO.setChgEmpId(accountVO.getEmpId());
+        monthlyWorkVO.setRegEmpId(accountVO.getEmpId());
+        monthlyWorkVO.setChgEmpId(accountVO.getEmpId());
 
-        if(bizResultDAO.selectIsAbleToSave(montlyWorkVO) == 0){
-            bizResultDAO.insertMonthlyWork(montlyWorkVO);
+        if(bizResultDAO.selectIsAbleToSave(monthlyWorkVO) == 0){
+            bizResultDAO.insertMonthlyWork(monthlyWorkVO);
         }else{
-            montlyWorkVO = null;
+            monthlyWorkVO = null;
+            throw new UpdateDeniedException("동일한 기준연월의 월간보고가 존재하여 저장이 불가합니다.", monthlyWorkVO);
         }
 
-        return montlyWorkVO;
+        return monthlyWorkVO;
     }
     //월간보고서 수정
     @Transactional
-    public MontlyWorkVO updateMonthlyWork(Payload<MontlyWorkVO> requestPayload) {
+    public MonthlyWorkVO updateMonthlyWork(Payload<MonthlyWorkVO> requestPayload) throws Exception {
         log.info("Call Service : " + this.getClass().getName() + ".updateMonthlyWork");
         AccountVO accountVO = requestPayload.getAccountVO();
-        MontlyWorkVO montlyWorkVO = requestPayload.getDto();
+        MonthlyWorkVO monthlyWorkVO = requestPayload.getDto();
 
-        montlyWorkVO.setChgEmpId(accountVO.getEmpId());
-        bizResultDAO.updateMonthlyWork(montlyWorkVO);
+        monthlyWorkVO.setChgEmpId(accountVO.getEmpId());
+        bizResultDAO.updateMonthlyWork(monthlyWorkVO);
 
-        return montlyWorkVO;
+        return monthlyWorkVO;
     }
     //월간보고서 삭제
     @Transactional
-    public MontlyWorkVO deleteMonthlyWork(Payload<MontlyWorkVO> requestPayload) {
+    public MonthlyWorkVO deleteMonthlyWork(Payload<MonthlyWorkVO> requestPayload) throws Exception {
         log.info("Call Service : " + this.getClass().getName() + ".deleteMonthlyWork");
         AccountVO accountVO = requestPayload.getAccountVO();
-        MontlyWorkVO montlyWorkVO = requestPayload.getDto();
+        MonthlyWorkVO monthlyWorkVO = requestPayload.getDto();
 
-        bizResultDAO.deleteMonthlyWork(montlyWorkVO);
+        bizResultDAO.deleteMonthlyWork(monthlyWorkVO);
 
-        return montlyWorkVO;
+        return monthlyWorkVO;
     }
 
 }

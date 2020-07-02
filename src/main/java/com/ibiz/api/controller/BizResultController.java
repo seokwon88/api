@@ -105,7 +105,7 @@ public class BizResultController extends BaseController {
     @PostMapping("/selectMonthlyWorkList")
     public ResponseEntity<String> selectMonthlyWorkList(@RequestParam("payload") String payload) throws Exception {
         log.info("Call Controller : " + this.getClass().getName() + ".selectMonthlyWorkList");
-        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<MontlyWorkVO>>(){});
+        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<MonthlyWorkVO>>(){});
 
         return super.composePayload(new Payload<List>(bizResultService.selectMonthlyWorkList(requestPayload)));
     }
@@ -121,33 +121,33 @@ public class BizResultController extends BaseController {
     @PostMapping("/selectMonthlyWork")
     public ResponseEntity<String> selectMonthlyWork(@RequestParam("payload") String payload) throws Exception {
         log.info("Call Controller : " + this.getClass().getName() + ".selectMonthlyWork");
-        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<MontlyWorkVO>>(){});
+        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<MonthlyWorkVO>>(){});
 
-        return super.composePayload(new Payload<MontlyWorkVO>(bizResultService.selectMonthlyWork(requestPayload)));
+        return super.composePayload(new Payload<MonthlyWorkVO>(bizResultService.selectMonthlyWork(requestPayload)));
     }
     //월간보고서 등록
     @PostMapping("/insertMonthlyWork")
     public ResponseEntity<String> insertMonthlyWork(@RequestParam("payload") String payload) throws Exception {
         log.info("Call Controller : " + this.getClass().getName() + ".insertMonthlyWork");
-        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<MontlyWorkVO>>(){});
+        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<MonthlyWorkVO>>(){});
 
-        return super.composePayload(new Payload<MontlyWorkVO>(bizResultService.insertMonthlyWork(requestPayload)));
+        return super.composePayload(new Payload<MonthlyWorkVO>(bizResultService.insertMonthlyWork(requestPayload)));
     }
     //월간보고서 수정
     @PostMapping("/updateMonthlyWork")
     public ResponseEntity<String> updateMonthlyWork(@RequestParam("payload") String payload) throws Exception {
         log.info("Call Controller : " + this.getClass().getName() + ".updateMonthlyWork");
-        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<MontlyWorkVO>>(){});
+        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<MonthlyWorkVO>>(){});
 
-        return super.composePayload(new Payload<MontlyWorkVO>(bizResultService.updateMonthlyWork(requestPayload)));
+        return super.composePayload(new Payload<MonthlyWorkVO>(bizResultService.updateMonthlyWork(requestPayload)));
     }
     //월간보고서 삭제
     @PostMapping("/deleteMonthlyWork")
     public ResponseEntity<String> deleteMonthlyWork(@RequestParam("payload") String payload) throws Exception {
         log.info("Call Controller : " + this.getClass().getName() + ".deleteMonthlyWork");
-        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<MontlyWorkVO>>(){});
+        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<MonthlyWorkVO>>(){});
 
-        return super.composePayload(new Payload<MontlyWorkVO>(bizResultService.deleteMonthlyWork(requestPayload)));
+        return super.composePayload(new Payload<MonthlyWorkVO>(bizResultService.deleteMonthlyWork(requestPayload)));
     }
 
 }

@@ -67,38 +67,38 @@ public class BizResultDAO {
         return mybatis.selectList( "BizResultMapper.selectWeeklyActivitySubList", weekJobReportVO);
     }
 
-    public List<MontlyWorkVO> selectMonthlyWorkList(MontlyWorkVO montlyWorkVO) {
-        return mybatis.selectList( "BizResultMapper.selectMonthlyWorkList", montlyWorkVO);
+    public List<MonthlyWorkVO> selectMonthlyWorkList(MonthlyWorkVO monthlyWorkVO) {
+        return mybatis.selectList( "BizResultMapper.selectMonthlyWorkList", monthlyWorkVO);
     }
 
     //월간보고서 기준연도 리스트 조회
-    public List<MontlyWorkVO> selectCritYearList() {
+    public List<MonthlyWorkVO> selectCritYearList() {
         return mybatis.selectList( "BizResultMapper.selectCritYearList");
     }
 
     //월간보고서상세내역 조회
-    public MontlyWorkVO selectMonthlyWork(MontlyWorkVO montlyWorkVO) {
-        return mybatis.selectOne( "BizResultMapper.selectMonthlyWork", montlyWorkVO);
+    public MonthlyWorkVO selectMonthlyWork(MonthlyWorkVO monthlyWorkVO) {
+        return mybatis.selectOne( "BizResultMapper.selectMonthlyWork", monthlyWorkVO);
     }
 
     //저장가능여부 조회
-    public int selectIsAbleToSave(MontlyWorkVO montlyWorkVO) {
-        return mybatis.selectOne( "BizResultMapper.selectIsAbleToSave", montlyWorkVO);
+    public int selectIsAbleToSave(MonthlyWorkVO monthlyWorkVO) {
+        return mybatis.selectOne( "BizResultMapper.selectIsAbleToSave", monthlyWorkVO);
     }
     
     //월간보고서 등록
-    public void insertMonthlyWork(MontlyWorkVO montlyWorkVO) throws Exception {
-        mybatis.insert( "BizResultMapper.insertMonthlyWork", montlyWorkVO);
+    public void insertMonthlyWork(MonthlyWorkVO monthlyWorkVO) throws Exception {
+        mybatis.insert( "BizResultMapper.insertMonthlyWork", monthlyWorkVO);
     }
 
     //월간보고서 수정
-    public void updateMonthlyWork(MontlyWorkVO montlyWorkVO) {
-        mybatis.update( "BizResultMapper.updateMonthlyWork", montlyWorkVO);
+    public void updateMonthlyWork(MonthlyWorkVO monthlyWorkVO) throws Exception {
+        mybatis.update( "BizResultMapper.updateMonthlyWork", monthlyWorkVO);
     }
 
     //월간보고서 삭제
-    public void deleteMonthlyWork(MontlyWorkVO montlyWorkVO) {
-        mybatis.delete("BizResultMapper.deleteMonthlyWork", montlyWorkVO);
+    public void deleteMonthlyWork(MonthlyWorkVO monthlyWorkVO) throws Exception {
+        mybatis.delete("BizResultMapper.deleteMonthlyWork", monthlyWorkVO);
     }
 
 }
