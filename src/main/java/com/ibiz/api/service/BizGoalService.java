@@ -308,8 +308,6 @@ public class BizGoalService {
 
             if(this.bizGoalDAO.selectisExistsBizGoal(searchVO) > 0 ){
                 this.bizGoalDAO.deleteMonthlyDeptGoal((YearDeptResultVO) yearDeptResultAllVO.getCudList().get(0));
-            }else{
-                throw new DeleteDeniedException("영없부서 사업목표 등록시 문제가 발생했습니다.", (YearDeptResultVO) yearDeptResultAllVO.getCudList().get(0));
             }
 
             /*if (Boolean.valueOf((String)this.bizGoalDAO.selectisExistsBizGoalDept((YearDeptResultVO)yearDeptResultAllVO.getCudList().get(0)).get("RESULT"))) {
@@ -365,8 +363,6 @@ public class BizGoalService {
 
             if(this.bizGoalDAO.selectisExistsBizGoal(searchVO) > 0 ){
                 this.bizGoalDAO.deleteMonthlyEmpGoal((YearEmpResultVO) yearEmpResultAllVO.getCudList().get(0));
-            }else{
-                throw new DeleteDeniedException("영업대표 사업목표 등록시 문제가 발생했습니다.", (YearEmpResultVO) yearEmpResultAllVO.getCudList().get(0));
             }
 
             /*if (Boolean.valueOf((String)this.bizGoalDAO.selectisExistsBizGoalEmp((YearEmpResultVO)yearEmpResultAllVO.getCudList().get(0)).get("RESULT"))) {
@@ -426,14 +422,14 @@ public class BizGoalService {
             BizGoalSearchVO searchVO = new BizGoalSearchVO();
             searchVO.setYear(yearDeptResultAllVO.getCudList().get(0).getCritYear());
             searchVO.setManageTarget("SDPT");
+            searchVO.setBplnDstCd("P1");
             searchVO.setSlsDeptId(yearDeptResultAllVO.getCudList().get(0).getDeptId());
             searchVO.setBplnDstCd(yearDeptResultAllVO.getCudList().get(0).getBplnDstCd());
             searchVO.setBsnsRslDtlDstCd(yearDeptResultAllVO.getCudList().get(0).getBsnsRslDtlDstCd());
 
             if(this.bizGoalDAO.selectisExistsBizGoal(searchVO) > 0 ){
+                yearDeptResultAllVO.getCudList().get(0).setBplnDstCd("P1");
                 this.bizGoalDAO.deleteMonthlyDeptGoal((YearDeptResultVO) yearDeptResultAllVO.getCudList().get(0));
-            }else{
-                throw new DeleteDeniedException("영업부서 사업목표 등록시 문제가 발생했습니다.", (YearDeptResultVO) yearDeptResultAllVO.getCudList().get(0));
             }
             /*
             if (Boolean.valueOf((String)this.bizGoalDAO.selectisExistsBizGoalDept((YearDeptResultVO)yearDeptResultAllVO.getCudList().get(0)).get("RESULT"))) {
@@ -491,15 +487,15 @@ public class BizGoalService {
             BizGoalSearchVO searchVO = new BizGoalSearchVO();
             searchVO.setYear(yearEmpResultAllVO.getCudList().get(0).getCritYear());
             searchVO.setManageTarget("SPRN");
+            searchVO.setBplnDstCd("P1");
             searchVO.setSlsDeptId(yearEmpResultAllVO.getCudList().get(0).getDeptId());
             searchVO.setBplnDstCd(yearEmpResultAllVO.getCudList().get(0).getBplnDstCd());
             searchVO.setBsnsRslDtlDstCd(yearEmpResultAllVO.getCudList().get(0).getBsnsRslDtlDstCd());
             searchVO.setEmpId(yearEmpResultAllVO.getCudList().get(0).getEmpId());
 
             if(this.bizGoalDAO.selectisExistsBizGoal(searchVO) > 0 ){
+                yearEmpResultAllVO.getCudList().get(0).setBplnDstCd("P1");
                 this.bizGoalDAO.deleteMonthlyEmpGoal((YearEmpResultVO) yearEmpResultAllVO.getCudList().get(0));
-            }else{
-                throw new DeleteDeniedException("영업대표 사업목표 등록시 문제가 발생했습니다.", (YearEmpResultVO) yearEmpResultAllVO.getCudList().get(0));
             }
             /*
             if (Boolean.valueOf((String)this.bizGoalDAO.selectisExistsBizGoalEmp((YearEmpResultVO)yearEmpResultAllVO.getCudList().get(0)).get("RESULT"))) {

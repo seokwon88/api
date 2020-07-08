@@ -110,7 +110,7 @@ public class BizGoalController extends BaseController {
     @PostMapping("/insertMonthlyEmpGoal")
     public ResponseEntity<String> insertMonthlyEmpGoal(@RequestParam("payload") String payload) throws Exception {
         log.info("Call Controller : " + this.getClass().getName() + ".insertMonthlyEmpGoal");
-        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<YearDeptResultAllVO>>(){});
+        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<YearEmpResultAllVO>>(){});
 
         return super.composePayload(new Payload<YearEmpResultAllVO>(bizGoalService.insertMonthlyEmpGoal(requestPayload)));
     }
