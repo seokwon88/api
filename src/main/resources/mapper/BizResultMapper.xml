@@ -774,20 +774,20 @@
         SELECT
             ROWNUMBER,BSNS_CLSF_CD,BSNS_CLSF_CD_NM,
             LAST_CUST_ID ,LAST_CUST_NM, PRJT_ID,BOPT_ID,BOPT_NM,
-            ORDE_CUST_ID, ORDE_CUST_NM,CNTR_DATE,CNTR_TRSF_START_YAM,CNTR_TRSF_END_YAM,SUM_SELL_AMT,
+            ORDE_CUST_ID, ORDE_CUST_NM,CNTR_DATE, CNTR_AMT,CNTR_TRSF_START_YAM,CNTR_TRSF_END_YAM,SUM_SELL_AMT,
             WCT_PRBB_CD ,WCT_PRBB_CD_NM, SLS_DEPT_ID, SLS_DEPT_NM, SLS_EMP_ID, SLS_EMP_NM,
             BOPT_STAT_CD, BOPT_STAT_CD_NM,  TOTAL_CNT
         FROM
         ( SELECT ROWNUM AS ROWNUMBER,BSNS_CLSF_CD,BSNS_CLSF_CD_NM,
                 LAST_CUST_ID ,LAST_CUST_NM, PRJT_ID,BOPT_ID,BOPT_NM,
-                ORDE_CUST_ID, ORDE_CUST_NM,CNTR_DATE,CNTR_TRSF_START_YAM,CNTR_TRSF_END_YAM,SUM_SELL_AMT,
+                ORDE_CUST_ID, ORDE_CUST_NM,CNTR_DATE, CNTR_AMT, CNTR_TRSF_START_YAM,CNTR_TRSF_END_YAM,SUM_SELL_AMT,
                 WCT_PRBB_CD ,WCT_PRBB_CD_NM, SLS_DEPT_ID, SLS_DEPT_NM, SLS_EMP_ID, SLS_EMP_NM,
                 BOPT_STAT_CD, BOPT_STAT_CD_NM,  TOTAL_CNT
             FROM (
                     SELECT T1.BSNS_CLSF_CD ,IBIZ_COM_CD_NM('BSNS_CLSF_CD',T1.BSNS_CLSF_CD) BSNS_CLSF_CD_NM,
                         T2.LAST_CUST_ID ,T2.LAST_CUST_NM,T1.PRJT_ID,T1.BOPT_ID,T1.BOPT_NM,
                         T1.ORDE_CUST_ID,IBIZ_CUST_NM(T1.ORDE_CUST_ID) AS ORDE_CUST_NM,
-                        T1.CNTR_DATE,T1.CNTR_TRSF_START_YAM,T1.CNTR_TRSF_END_YAM,
+                        T1.CNTR_DATE, T1.CNTR_AMT,T1.CNTR_TRSF_START_YAM,T1.CNTR_TRSF_END_YAM,
                         ( SELECT SUM(SELL_AMT)
                             FROM  BPIP020T
                             WHERE BOPT_ID = T1.BOPT_ID
@@ -857,7 +857,7 @@
                                 AND #{maxWctPrbbCd} >= TO_NUMBER(T1.WCT_PRBB_CD)
                                 ]]>
         </if>
-        <if test='sumSellAmt != null and sumSellAmt != "" and sumSellAmt != "0" '>
+        <if test='cntrAmt != null and cntrAmt != "" and cntrAmt != "0" '>
             AND NVL((
             SELECT  SUM(SELL_AMT)
             FROM BPIP020T
@@ -865,22 +865,22 @@
             <choose>
                 <when test="compareCd == 'above'">
                     <![CDATA[
-                                         ),0) >= #{sumSellAmt} * 100000000
+                                         ),0) >= #{cntrAmt} * 100000000
                                         ]]>
                 </when>
                 <when test="compareCd == 'below'">
                     <![CDATA[
-                                         ),0) <= #{sumSellAmt} * 100000000
+                                         ),0) <= #{cntrAmt} * 100000000
                                         ]]>
                 </when>
                 <when test="compareCd == 'over'">
                     <![CDATA[
-                                         ),0) > #{sumSellAmt} * 100000000
+                                         ),0) > #{cntrAmt} * 100000000
                                         ]]>
                 </when>
                 <when test="compareCd == 'under'">
                     <![CDATA[
-                                         ),0) < #{sumSellAmt} * 100000000
+                                         ),0) < #{cntrAmt} * 100000000
                                         ]]>
                 </when>
             </choose>

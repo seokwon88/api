@@ -167,6 +167,11 @@ public class WeekJobReportVO {
      */
     private String actPlanCont;
 
+    /**
+     * 계약금액
+     */
+    private long cntrAmt;
+
     public String getBsnsClsfCd() {
         return bsnsClsfCd;
     }
@@ -431,12 +436,20 @@ public class WeekJobReportVO {
         this.spclCont = spclCont;
     }
 
+    public long getCntrAmt() {
+        return cntrAmt;
+    }
+
+    public void setCntrAmt(long cntrAmt) {
+        this.cntrAmt = cntrAmt;
+    }
+
     @Override
     public String toString() {
         return "WeekJobReportVO [bsnsClsfCd=" + bsnsClsfCd + ", bsnsClsfCdNm=" + bsnsClsfCdNm + ", lastCustId=" + lastCustId
                 + ", lastCustNm=" + lastCustNm + ", prjtId=" + prjtId + ", prjtNm=" + prjtNm + ", boptId=" + boptId
                 + ", boptNm=" + boptNm + ", ordeCustId=" + ordeCustId + ", ordeCustNm=" + ordeCustNm + ", cntrDate="
-                + cntrDate + ", cntrTrsfStartYam=" + cntrTrsfStartYam + ", cntrTrsfEndYam=" + cntrTrsfEndYam
+                + cntrDate + ", cntrAmt=" + cntrAmt + ", cntrTrsfStartYam=" + cntrTrsfStartYam + ", cntrTrsfEndYam=" + cntrTrsfEndYam
                 + ", regActStartDate=" + regActStartDate + ", regActEndDate=" + regActEndDate + ", sumSellAmt="
                 + sumSellAmt + ", wctPrbbCd=" + wctPrbbCd + ", wctPrbbCdNm=" + wctPrbbCdNm + ", minWctPrbbCd="
                 + minWctPrbbCd + ", maxWctPrbbCd=" + maxWctPrbbCd + ", slsDeptId=" + slsDeptId + ", slsDeptNm="
