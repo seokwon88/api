@@ -54,7 +54,7 @@ public class YearDeptResultAllVO {
 
     private String bplnDstCd;
 
-    private String bsnsRslDtlDstCd;
+    private String brslDtlDstCd;
 
     public List<YearDeptResultVO> getBsnsUIList() {
         return bsnsUIList;
@@ -152,12 +152,12 @@ public class YearDeptResultAllVO {
         this.bplnDstCd = bplnDstCd;
     }
 
-    public String getBsnsRslDtlDstCd() {
-        return bsnsRslDtlDstCd;
+    public String getBrslDtlDstCd() {
+        return brslDtlDstCd;
     }
 
-    public void setBsnsRslDtlDstCd(String bsnsRslDtlDstCd) {
-        this.bsnsRslDtlDstCd = bsnsRslDtlDstCd;
+    public void setBrslDtlDstCd(String brslDtlDstCd) {
+        this.brslDtlDstCd = brslDtlDstCd;
     }
 
     @Override
@@ -166,7 +166,7 @@ public class YearDeptResultAllVO {
                 + ", bsnsESBList=" + bsnsESBList + ", bsnsECMList=" + bsnsECMList + ", bsnsMGList=" + bsnsMGList
                 + ", bsnsILSList=" + bsnsILSList + ", bsnsETCList=" + bsnsETCList + ", cudList=" + cudList
                 + ", totalSumList=" + totalSumList + ", critYear=" + critYear + ", deptId=" + deptId + ", bplnDstCd="
-                + bplnDstCd + ", bsnsRslDtlDstCd=" + bsnsRslDtlDstCd + "]";
+                + bplnDstCd + ", brslDtlDstCd=" + brslDtlDstCd + "]";
     }
 
 }

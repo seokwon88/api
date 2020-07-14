@@ -10,12 +10,12 @@ public class BusinessResultVO {
     /**
      * 실적구분코드
      */
-    private String bsnsRslDtlDstCd;
+    private String brslDtlDstCd;
 
     /**
      * 실적구분코드명
      */
-    private String bsnsRslDtlDstCdNm;
+    private String brslDtlDstCdNm;
 
     /**
      * 연간목표실적
@@ -242,20 +242,20 @@ public class BusinessResultVO {
         this.bsnsClsfCd = bsnsClsfCd;
     }
 
-    public String getBsnsRslDtlDstCd() {
-        return bsnsRslDtlDstCd;
+    public String getBrslDtlDstCd() {
+        return brslDtlDstCd;
     }
 
-    public void setBsnsRslDtlDstCd(String bsnsRslDtlDstCd) {
-        this.bsnsRslDtlDstCd = bsnsRslDtlDstCd;
+    public void setBrslDtlDstCd(String brslDtlDstCd) {
+        this.brslDtlDstCd = brslDtlDstCd;
     }
 
-    public String getBsnsRslDtlDstCdNm() {
-        return bsnsRslDtlDstCdNm;
+    public String getBrslDtlDstCdNm() {
+        return brslDtlDstCdNm;
     }
 
-    public void setBsnsRslDtlDstCdNm(String bsnsRslDtlDstCdNm) {
-        this.bsnsRslDtlDstCdNm = bsnsRslDtlDstCdNm;
+    public void setBrslDtlDstCdNm(String brslDtlDstCdNm) {
+        this.brslDtlDstCdNm = brslDtlDstCdNm;
     }
 
     public Long getYrlyGoalRslAmt() {
@@ -612,8 +612,8 @@ public class BusinessResultVO {
 
     @Override
     public String toString() {
-        return "BusinessResultVO [bsnsClsfCd=" + bsnsClsfCd + ", bsnsRslDtlDstCd=" + bsnsRslDtlDstCd
-                + ", bsnsRslDtlDstCdNm=" + bsnsRslDtlDstCdNm + ", yrlyGoalRslAmt=" + yrlyGoalRslAmt + ", yrlyFcstRslAmt="
+        return "BusinessResultVO [bsnsClsfCd=" + bsnsClsfCd + ", brslDtlDstCd=" + brslDtlDstCd
+                + ", brslDtlDstCdNm=" + brslDtlDstCdNm + ", yrlyGoalRslAmt=" + yrlyGoalRslAmt + ", yrlyFcstRslAmt="
                 + yrlyFcstRslAmt + ", yrlyBrslRslAmt=" + yrlyBrslRslAmt + ", stdGoalRslAmt=" + stdGoalRslAmt
                 + ", stdFcstRslAmt=" + stdFcstRslAmt + ", stdBrslRslAmt=" + stdBrslRslAmt + ", acmlGoalRslAmt="
                 + acmlGoalRslAmt + ", acmlFcstRslAmt=" + acmlFcstRslAmt + ", acmlBrslRslAmt=" + acmlBrslRslAmt

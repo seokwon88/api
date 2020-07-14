@@ -91,14 +91,14 @@ public class BizResultService {
 
         List<SalesReportVO> list = new ArrayList<>();
 
-        if(businessResultSearchVO.getBsnsRslDtlDstCd() != null) {
-            if(businessResultSearchVO.getBsnsRslDtlDstCd().equals("BU") || businessResultSearchVO.getBsnsRslDtlDstCd().equals("CU") || businessResultSearchVO.getBsnsRslDtlDstCd().equals("DU")){
+        if(businessResultSearchVO.getBrslDtlDstCd() != null) {
+            if(businessResultSearchVO.getBrslDtlDstCd().equals("BU") || businessResultSearchVO.getBrslDtlDstCd().equals("CU") || businessResultSearchVO.getBrslDtlDstCd().equals("DU")){
                 businessResultSearchVO.setIsUnsold("Y");
             }
 
-            if(businessResultSearchVO.getBsnsRslDtlDstCd().substring(0,1).equals("A")) {
+            if(businessResultSearchVO.getBrslDtlDstCd().substring(0,1).equals("A")) {
                 list = bizResultDAO.selectWCTSalesReportList(businessResultSearchVO);
-            }else if(businessResultSearchVO.getBsnsRslDtlDstCd().substring(0,1).equals("B") || businessResultSearchVO.getBsnsRslDtlDstCd().substring(0,1).equals("C")) {
+            }else if(businessResultSearchVO.getBrslDtlDstCd().substring(0,1).equals("B") || businessResultSearchVO.getBrslDtlDstCd().substring(0,1).equals("C")) {
                 list = bizResultDAO.selectBuySellSalesReportList(businessResultSearchVO);
             }
         }else {

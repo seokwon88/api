@@ -31,31 +31,31 @@
                 </if>
                 H10.BRSL_DST_CD, H10.BRSL_SEQC, -- 사업실적구분코드
                 <![CDATA[
-                       SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'P' THEN RSL_AMT ELSE 0 END) AS YRLY_GOAL_RSL_AMT, -- 연간_목표
-                       SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'T' THEN RSL_AMT ELSE 0 END) AS YRLY_OPPTY_RSL_AMT, -- 연간_기회(확률미적용)
-                       SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'F' THEN RSL_AMT ELSE 0 END) AS YRLY_FCST_RSL_AMT, -- 연간_예상(확률적용)
-                       SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'R' THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
-                       SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'P' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_GOAL_RSL_AMT, -- 기준월_목표
-                       SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'T' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_OPPTY_RSL_AMT, -- 기준월_기회(확률미적용)
-                       SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_FCST_RSL_AMT, -- 기준월_예상(확률적용)
-                       SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_BRSL_RSL_AMT, -- 기준월_실적
-                       SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'P' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_GOAL_RSL_AMT, -- 누적_목표 (1월~기준월)
-                       SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'T' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_OPPTY_RSL_AMT, -- 누적_기회(확률미적용) (1월~기준월)
-                       SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_FCST_RSL_AMT, -- 누적_예상(확률적용) (1월~기준월)
-                       SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_BRSL_RSL_AMT, -- 누적_실적 (1월~기준월)
-                       SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'P' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) AS RSDN_GOAL_RSL_AMT, -- 잔여_누적목표 (1월~잔여종료월)
-                       SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'T' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) AS RSDN_OPPTY_RSL_AMT, -- 잔여_기회(확률미적용) (잔여시작월~잔여종료월의 기회)
+                       SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'P' THEN RSL_AMT ELSE 0 END) AS YRLY_GOAL_RSL_AMT, -- 연간_목표
+                       SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'T' THEN RSL_AMT ELSE 0 END) AS YRLY_OPPTY_RSL_AMT, -- 연간_기회(확률미적용)
+                       SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' THEN RSL_AMT ELSE 0 END) AS YRLY_FCST_RSL_AMT, -- 연간_예상(확률적용)
+                       SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
+                       SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'P' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_GOAL_RSL_AMT, -- 기준월_목표
+                       SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'T' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_OPPTY_RSL_AMT, -- 기준월_기회(확률미적용)
+                       SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_FCST_RSL_AMT, -- 기준월_예상(확률적용)
+                       SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_BRSL_RSL_AMT, -- 기준월_실적
+                       SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'P' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_GOAL_RSL_AMT, -- 누적_목표 (1월~기준월)
+                       SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'T' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_OPPTY_RSL_AMT, -- 누적_기회(확률미적용) (1월~기준월)
+                       SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_FCST_RSL_AMT, -- 누적_예상(확률적용) (1월~기준월)
+                       SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_BRSL_RSL_AMT, -- 누적_실적 (1월~기준월)
+                       SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'P' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) AS RSDN_GOAL_RSL_AMT, -- 잔여_누적목표 (1월~잔여종료월)
+                       SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'T' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) AS RSDN_OPPTY_RSL_AMT, -- 잔여_기회(확률미적용) (잔여시작월~잔여종료월의 기회)
                        CASE WHEN #{fromDate} < #{rsdnStartDate} THEN -- (기준월 < 잔여시작월)이면, 잔여시작월~잔여종료일 조회 ELSE 기준월+1~잔여종료일 조회
-                            SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (잔여시작월~잔여종료월의 예상)
+                            SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (잔여시작월~잔여종료월의 예상)
                        ELSE
-                            SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN TO_CHAR(ADD_MONTHS(TO_DATE(#{fromDate},'YYYYMM'),1),'YYYYMM') AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (기준월+1~잔여종료월의 예상)
-                            + SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'U' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (잔여시작월~기준월의 Unsold)
+                            SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN TO_CHAR(ADD_MONTHS(TO_DATE(#{fromDate},'YYYYMM'),1),'YYYYMM') AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (기준월+1~잔여종료월의 예상)
+                            + SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'U' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (잔여시작월~기준월의 Unsold)
                        END AS RSDN_FCST_RSL_AMT -- 잔여_예상(확률적용)
                 ]]>
                 -- ★★Comma 이동 END (반영 후 지울 것)
                 FROM BRST120V RV,
                 ( SELECT DEPT_SEQC, DEPT_ID, DEPT_NM, -- DEPT_LVL, HGRK_DEPT_ID
-                    C.BRSL_SEQC, C.BRSL_DST_CD, C.BSNS_RSL_DTL_DST_CD, -- 사업실적구분코드, 사업실적상세구분코드
+                    C.BRSL_SEQC, C.BRSL_DST_CD, C.BRSL_DTL_DST_CD, -- 사업실적구분코드, 사업실적상세구분코드
                     <![CDATA[
                                    CASE WHEN DEPT_LVL = 1 THEN DEPT_ID ELSE SUBSTRB(DEPT_ID_PATH,2,INSTRB(DEPT_ID_PATH,'@',1,2)-2) END AS DEPT_L1_ID,
                                    CASE WHEN DEPT_LVL = 1 THEN DEPT_NM ELSE SUBSTRB(DEPT_NM_PATH,2,INSTRB(DEPT_NM_PATH,'@',1,2)-2) END AS DEPT_L1_NM,
@@ -81,10 +81,10 @@
                         CONNECT BY PRIOR B.DEPT_ID = B.HGRK_DEPT_ID AND PRIOR CRIT_YEAR = CRIT_YEAR) ) )
                         ORDER SIBLINGS BY DEPT_SORT_SEQC ) H,
                     ( SELECT HC10.SORT_SEQC AS BRSL_SEQC,
-                        C10.COM_CD AS BSNS_RSL_DTL_DST_CD, C10.COM_CD_NM AS BSNS_RSL_DTL_DST_CD_NM, -- 사업실적상세구분코드
+                        C10.COM_CD AS BRSL_DTL_DST_CD, C10.COM_CD_NM AS BRSL_DTL_DST_CD_NM, -- 사업실적상세구분코드
                         HC10.COM_CD AS BRSL_DST_CD, HC10.COM_CD_NM AS BRSL_DST_CD_NM -- 사업실적구분코드
                         FROM ACOM020T C20, ACOM010T C10, ACOM010T HC10
-                        WHERE C20.CLMN_NM = 'BSNS_RSL_DTL_DST_CD'
+                        WHERE C20.CLMN_NM = 'BRSL_DTL_DST_CD'
                         AND C20.COM_GRP_CD = C10.COM_GRP_CD
                         AND C10.USE_YN = 'Y'
                         AND C10.HGRK_COM_GRP_CD = HC10.COM_GRP_CD
@@ -92,7 +92,7 @@
                 ) H10
                 WHERE SUBSTR(RV.CRIT_YAM(+),1,4) = #{critYear}  -- ★조회조건 기준연도
                 AND H10.DEPT_ID = RV.DEPT_ID(+)
-                AND H10.BSNS_RSL_DTL_DST_CD = RV.BSNS_RSL_DTL_DST_CD(+)
+                AND H10.BRSL_DTL_DST_CD = RV.BRSL_DTL_DST_CD(+)
                 GROUP BY H10.DEPT_L1_ID, H10.DEPT_L1_NM
                 <if test='subDept == "Y" '>
                     ,H10.DEPT_L2_ID, H10.DEPT_L2_NM, H10.DEPT_ID, H10.DEPT_NM, H10.DEPT_SEQC -- ★하위부서 포함
@@ -125,33 +125,33 @@
                 SELECT H30.DEPT_ID, H30.DEPT_NM, H30.DEPT_SEQC, H30.EMP_ID, -- 실적부서, 실적사원
                        H30.BRSL_DST_CD, H30.BRSL_SEQC,  -- 사업실적구분코드
                 <![CDATA[
-                       SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'P' THEN RSL_AMT ELSE 0 END) AS YRLY_GOAL_RSL_AMT, -- 연간_목표
-                       SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'T' THEN RSL_AMT ELSE 0 END) AS YRLY_OPPTY_RSL_AMT, -- 연간_기회(확률미적용)
-                       SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'F' THEN RSL_AMT ELSE 0 END) AS YRLY_FCST_RSL_AMT, -- 연간_예상(확률적용)
-                       SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'R' THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
-                       SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'P' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_GOAL_RSL_AMT, -- 기준월_목표
-                       SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'T' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_OPPTY_RSL_AMT, -- 기준월_기회(확률미적용)
-                       SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_FCST_RSL_AMT, -- 기준월_예상(확률적용)
-                       SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_BRSL_RSL_AMT, -- 기준월_실적
-                       SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'P' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_GOAL_RSL_AMT, -- 누적_목표 (1월~기준월)
-                       SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'T' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_OPPTY_RSL_AMT, -- 누적_기회(확률미적용) (1월~기준월)
-                       SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_FCST_RSL_AMT, -- 누적_예상(확률적용) (1월~기준월)
-                       SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_BRSL_RSL_AMT, -- 누적_실적 (1월~기준월)
-                       SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'P' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) AS RSDN_GOAL_RSL_AMT, -- 잔여_누적목표 (1월~잔여종료월)
-                       SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'T' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) AS RSDN_OPPTY_RSL_AMT, -- 잔여_기회(확률미적용) (잔여시작월~잔여종료월의 기회)
+                       SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'P' THEN RSL_AMT ELSE 0 END) AS YRLY_GOAL_RSL_AMT, -- 연간_목표
+                       SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'T' THEN RSL_AMT ELSE 0 END) AS YRLY_OPPTY_RSL_AMT, -- 연간_기회(확률미적용)
+                       SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' THEN RSL_AMT ELSE 0 END) AS YRLY_FCST_RSL_AMT, -- 연간_예상(확률적용)
+                       SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
+                       SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'P' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_GOAL_RSL_AMT, -- 기준월_목표
+                       SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'T' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_OPPTY_RSL_AMT, -- 기준월_기회(확률미적용)
+                       SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_FCST_RSL_AMT, -- 기준월_예상(확률적용)
+                       SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_BRSL_RSL_AMT, -- 기준월_실적
+                       SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'P' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_GOAL_RSL_AMT, -- 누적_목표 (1월~기준월)
+                       SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'T' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_OPPTY_RSL_AMT, -- 누적_기회(확률미적용) (1월~기준월)
+                       SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_FCST_RSL_AMT, -- 누적_예상(확률적용) (1월~기준월)
+                       SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_BRSL_RSL_AMT, -- 누적_실적 (1월~기준월)
+                       SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'P' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) AS RSDN_GOAL_RSL_AMT, -- 잔여_누적목표 (1월~잔여종료월)
+                       SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'T' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) AS RSDN_OPPTY_RSL_AMT, -- 잔여_기회(확률미적용) (잔여시작월~잔여종료월의 기회)
                        CASE WHEN #{fromDate} < #{rsdnStartDate} THEN -- (기준월 < 잔여시작월)이면, 잔여시작월~잔여종료일 조회 ELSE 기준월+1~잔여종료일 조회
-                            SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (잔여시작월~잔여종료월의 예상)
+                            SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (잔여시작월~잔여종료월의 예상)
                        ELSE
-                            SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN TO_CHAR(ADD_MONTHS(TO_DATE(#{fromDate},'YYYYMM'),1),'YYYYMM') AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (기준월+1~잔여종료월의 예상)
-                            + SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'U' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (잔여시작월~기준월의 Unsold)
+                            SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN TO_CHAR(ADD_MONTHS(TO_DATE(#{fromDate},'YYYYMM'),1),'YYYYMM') AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (기준월+1~잔여종료월의 예상)
+                            + SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'U' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (잔여시작월~기준월의 Unsold)
                        END AS RSDN_FCST_RSL_AMT -- 잔여_예상(확률적용)
                 ]]>
         -- ★★Comma 이동 END (반영 후 지울 것)
                   FROM BRST130V RV,
                       ( SELECT H3.DEPT_ID, H3.DEPT_NM, H3.DEPT_SEQC, H3.EMP_ID,
-                               BRSL_SEQC, BRSL_DST_CD, BRSL_DST_CD_NM, BSNS_RSL_DTL_DST_CD, BSNS_RSL_DTL_DST_CD_NM -- 사업실적구분코드, 사업실적상세구분코드
+                               BRSL_SEQC, BRSL_DST_CD, BRSL_DST_CD_NM, BRSL_DTL_DST_CD, BRSL_DTL_DST_CD_NM -- 사업실적구분코드, 사업실적상세구분코드
                           FROM
-                              ( SELECT P.DEPT_ID, H.DEPT_NM, H.DEPT_SEQC, P.EMP_ID --, BSNS_CLSF_CD, BSNS_RSL_DTL_DST_CD, RSL_AMT
+                              ( SELECT P.DEPT_ID, H.DEPT_NM, H.DEPT_SEQC, P.EMP_ID --, BSNS_CLSF_CD, BRSL_DTL_DST_CD, RSL_AMT
                                   FROM BRST130V P,
                                       ( SELECT ROWNUM AS DEPT_SEQC, DEPT_ID, DEPT_NM --▶, ORG_CRT_DATE, ORG_CLOSE_DATE
                                           FROM HMST110T A
@@ -168,10 +168,10 @@
                                    AND P.DEPT_ID = H.DEPT_ID
                                 GROUP BY P.DEPT_ID, H.DEPT_NM, H.DEPT_SEQC, P.EMP_ID ) H3,
                               ( SELECT HC10.SORT_SEQC AS BRSL_SEQC,
-                                       C10.COM_CD AS BSNS_RSL_DTL_DST_CD, C10.COM_CD_NM AS BSNS_RSL_DTL_DST_CD_NM, -- 사업실적상세구분코드
+                                       C10.COM_CD AS BRSL_DTL_DST_CD, C10.COM_CD_NM AS BRSL_DTL_DST_CD_NM, -- 사업실적상세구분코드
                                        HC10.COM_CD AS BRSL_DST_CD, HC10.COM_CD_NM AS BRSL_DST_CD_NM -- 사업실적구분코드
                                   FROM ACOM020T C20, ACOM010T C10, ACOM010T HC10
-                                 WHERE C20.CLMN_NM = 'BSNS_RSL_DTL_DST_CD'
+                                 WHERE C20.CLMN_NM = 'BRSL_DTL_DST_CD'
                                    AND C20.COM_GRP_CD = C10.COM_GRP_CD
                                   AND C10.USE_YN = 'Y'
                                   AND C10.HGRK_COM_GRP_CD = HC10.COM_GRP_CD
@@ -180,7 +180,7 @@
                  WHERE SUBSTR(RV.CRIT_YAM(+),1,4) = #{critYear}  -- ★조회조건 기준연도
                    AND H30.DEPT_ID = RV.DEPT_ID(+)
                    AND H30.EMP_ID = RV.EMP_ID(+)
-                   AND H30.BSNS_RSL_DTL_DST_CD = RV.BSNS_RSL_DTL_DST_CD(+)
+                   AND H30.BRSL_DTL_DST_CD = RV.BRSL_DTL_DST_CD(+)
                 GROUP BY H30.DEPT_ID, H30.DEPT_NM, H30.DEPT_SEQC, H30.EMP_ID,
                       H30.BRSL_DST_CD, H30.BRSL_SEQC
                 )
@@ -196,7 +196,7 @@
 
         WITH
         RV AS (
-            SELECT CRIT_YAM, BSNS_CLSF_CD, BSNS_RSL_DTL_DST_CD, RSL_AMT
+            SELECT CRIT_YAM, BSNS_CLSF_CD, BRSL_DTL_DST_CD, RSL_AMT
               FROM BRST120V
              WHERE SUBSTR(CRIT_YAM,1,4) = #{critYear}  -- ★조회조건 기준연도
                AND DEPT_ID IN (SELECT DEPT_ID FROM HMST110T
@@ -214,30 +214,30 @@
                  SELECT BC.BSNS_CLSF_CD, BC.BSNS_CLSF_CD_NM, BC.BSNS_SEQC, -- 사업분류코드 --◀2020-02-24
                         BC.BRSL_DST_CD, BC.BRSL_DST_CD_NM, BC.BRSL_SEQC, -- 사업실적구분코드 --◀2020-02-24
                     <![CDATA[
-                        SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'P' THEN RSL_AMT ELSE 0 END) AS YRLY_GOAL_RSL_AMT, -- 연간_목표
-                        SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'T' THEN RSL_AMT ELSE 0 END) AS YRLY_OPPTY_RSL_AMT, -- 연간_기회(확률미적용)
-                        SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'F' THEN RSL_AMT ELSE 0 END) AS YRLY_FCST_RSL_AMT, -- 연간_예상(확률적용)
-                        SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'R' THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
-                        SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'P' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_GOAL_RSL_AMT, -- 기준월_목표
-                        SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'T' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_OPPTY_RSL_AMT, -- 기준월_기회(확률미적용)
-                        SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_FCST_RSL_AMT, -- 기준월_예상(확률적용)
-                        SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_BRSL_RSL_AMT, -- 기준월_실적
-                        SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'P' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_GOAL_RSL_AMT, -- 누적_목표 (1월~기준월)
-                        SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'T' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_OPPTY_RSL_AMT, -- 누적_기회(확률미적용) (1월~기준월)
-                        SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_FCST_RSL_AMT, -- 누적_예상(확률적용) (1월~기준월)
-                        SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_BRSL_RSL_AMT, -- 누적_실적 (1월~기준월)
-                        SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'P' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) AS RSDN_GOAL_RSL_AMT, -- 잔여_누적목표 (1월~잔여종료월)
-                        SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'T' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) AS RSDN_OPPTY_RSL_AMT, -- 잔여_기회(확률미적용) (잔여시작월~잔여종료월의 기회)
+                        SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'P' THEN RSL_AMT ELSE 0 END) AS YRLY_GOAL_RSL_AMT, -- 연간_목표
+                        SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'T' THEN RSL_AMT ELSE 0 END) AS YRLY_OPPTY_RSL_AMT, -- 연간_기회(확률미적용)
+                        SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' THEN RSL_AMT ELSE 0 END) AS YRLY_FCST_RSL_AMT, -- 연간_예상(확률적용)
+                        SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
+                        SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'P' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_GOAL_RSL_AMT, -- 기준월_목표
+                        SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'T' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_OPPTY_RSL_AMT, -- 기준월_기회(확률미적용)
+                        SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_FCST_RSL_AMT, -- 기준월_예상(확률적용)
+                        SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_BRSL_RSL_AMT, -- 기준월_실적
+                        SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'P' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_GOAL_RSL_AMT, -- 누적_목표 (1월~기준월)
+                        SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'T' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_OPPTY_RSL_AMT, -- 누적_기회(확률미적용) (1월~기준월)
+                        SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_FCST_RSL_AMT, -- 누적_예상(확률적용) (1월~기준월)
+                        SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_BRSL_RSL_AMT, -- 누적_실적 (1월~기준월)
+                        SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'P' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) AS RSDN_GOAL_RSL_AMT, -- 잔여_누적목표 (1월~잔여종료월)
+                        SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'T' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) AS RSDN_OPPTY_RSL_AMT, -- 잔여_기회(확률미적용) (잔여시작월~잔여종료월의 기회)
                         CASE WHEN #{fromDate} < #{rsdnStartDate} THEN -- (기준월 < 잔여시작월)이면, 잔여시작월~잔여종료일 조회 ELSE 기준월+1~잔여종료일 조회
-                             SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (잔여시작월~잔여종료월의 예상)
+                             SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (잔여시작월~잔여종료월의 예상)
                         ELSE
-                             SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN TO_CHAR(ADD_MONTHS(TO_DATE(#{fromDate},'YYYYMM'),1),'YYYYMM') AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (기준월+1~잔여종료월의 예상)
-                             + SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'U' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (잔여시작월~기준월의 Unsold)
+                             SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN TO_CHAR(ADD_MONTHS(TO_DATE(#{fromDate},'YYYYMM'),1),'YYYYMM') AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (기준월+1~잔여종료월의 예상)
+                             + SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'U' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (잔여시작월~기준월의 Unsold)
                         END AS RSDN_FCST_RSL_AMT -- 잔여_예상(확률적용)
                     ]]>
                    FROM RV,
                         ( SELECT B.BSNS_SEQC, B.BSNS_CLSF_CD, B.BSNS_CLSF_CD_NM, --◀2020-02-24
-                                 C.BRSL_SEQC, C.BRSL_DST_CD, C.BRSL_DST_CD_NM, C.BSNS_RSL_DTL_DST_CD --◀2020-02-24
+                                 C.BRSL_SEQC, C.BRSL_DST_CD, C.BRSL_DST_CD_NM, C.BRSL_DTL_DST_CD --◀2020-02-24
                             FROM
                                  ( SELECT SORT_SEQC AS BSNS_SEQC,
                                           BSNS_CLSF_CD, BSNS_CLSF_CD_NM --◀2020-02-24
@@ -246,10 +246,10 @@
                                       AND EXISTS (SELECT 1 FROM RV WHERE BSNS_CLSF_CD = T.BSNS_CLSF_CD) -- 목표 또는 기회 또는 실적이 존재하는 사업분류 (2020-01)
                                  ) B,
                                  ( SELECT HC10.SORT_SEQC AS BRSL_SEQC,
-                                          C10.COM_CD BSNS_RSL_DTL_DST_CD, --C10.COM_CD_NM BSNS_RSL_DTL_DST_CD_NM,
+                                          C10.COM_CD BRSL_DTL_DST_CD, --C10.COM_CD_NM BRSL_DTL_DST_CD_NM,
                                           HC10.COM_CD BRSL_DST_CD, HC10.COM_CD_NM BRSL_DST_CD_NM --◀2020-02-24
                                      FROM ACOM020T C20, ACOM010T C10, ACOM010T HC10
-                                    WHERE C20.CLMN_NM = 'BSNS_RSL_DTL_DST_CD'
+                                    WHERE C20.CLMN_NM = 'BRSL_DTL_DST_CD'
                                       AND C20.COM_GRP_CD = C10.COM_GRP_CD
                                       AND C10.USE_YN = 'Y'
                                       AND C10.HGRK_COM_GRP_CD = HC10.COM_GRP_CD
@@ -257,7 +257,7 @@
                                  ) C
                         ) BC
                   WHERE BC.BSNS_CLSF_CD = RV.BSNS_CLSF_CD(+)
-                    AND BC.BSNS_RSL_DTL_DST_CD = RV.BSNS_RSL_DTL_DST_CD(+)
+                    AND BC.BRSL_DTL_DST_CD = RV.BRSL_DTL_DST_CD(+)
                  GROUP BY BC.BSNS_CLSF_CD, BC.BSNS_CLSF_CD_NM,  BC.BSNS_SEQC, --◀2020-02-24
                           BC.BRSL_DST_CD, BC.BRSL_DST_CD_NM, BC.BRSL_SEQC --◀2020-02-24
                 )
@@ -290,29 +290,29 @@
                     BC.BSNS_CLSF_CD, BC.BSNS_CLSF_CD_NM, --★조회조건: 사업분류코드(택1) --◀2020-02-24
                 </if>
                 <![CDATA[
-                        SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'P' THEN RSL_AMT ELSE 0 END) AS YRLY_GOAL_RSL_AMT, -- 연간_목표
-                        SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'T' THEN RSL_AMT ELSE 0 END) AS YRLY_OPPTY_RSL_AMT, -- 연간_기회(확률미적용)
-                        SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'F' THEN RSL_AMT ELSE 0 END) AS YRLY_FCST_RSL_AMT, -- 연간_예상(확률적용)
-                        SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'R' THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
-                        SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'P' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_GOAL_RSL_AMT, -- 기준월_목표
-                        SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'T' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_OPPTY_RSL_AMT, -- 기준월_기회(확률미적용)
-                        SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_FCST_RSL_AMT, -- 기준월_예상(확률적용)
-                        SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_BRSL_RSL_AMT, -- 기준월_실적
-                        SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'P' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_GOAL_RSL_AMT, -- 누적_목표 (1월~기준월)
-                        SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'T' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_OPPTY_RSL_AMT, -- 누적_기회(확률미적용) (1월~기준월)
-                        SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_FCST_RSL_AMT, -- 누적_예상(확률적용) (1월~기준월)
-                        SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_BRSL_RSL_AMT, -- 누적_실적 (1월~기준월)
-                        SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'P' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) AS RSDN_GOAL_RSL_AMT, -- 잔여_누적목표 (1월~잔여종료월)
-                        SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'T' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) AS RSDN_OPPTY_RSL_AMT, -- 잔여_기회(확률미적용) (잔여시작월~잔여종료월의 기회)
+                        SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'P' THEN RSL_AMT ELSE 0 END) AS YRLY_GOAL_RSL_AMT, -- 연간_목표
+                        SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'T' THEN RSL_AMT ELSE 0 END) AS YRLY_OPPTY_RSL_AMT, -- 연간_기회(확률미적용)
+                        SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' THEN RSL_AMT ELSE 0 END) AS YRLY_FCST_RSL_AMT, -- 연간_예상(확률적용)
+                        SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
+                        SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'P' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_GOAL_RSL_AMT, -- 기준월_목표
+                        SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'T' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_OPPTY_RSL_AMT, -- 기준월_기회(확률미적용)
+                        SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_FCST_RSL_AMT, -- 기준월_예상(확률적용)
+                        SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) AS STD_BRSL_RSL_AMT, -- 기준월_실적
+                        SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'P' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_GOAL_RSL_AMT, -- 누적_목표 (1월~기준월)
+                        SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'T' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_OPPTY_RSL_AMT, -- 누적_기회(확률미적용) (1월~기준월)
+                        SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_FCST_RSL_AMT, -- 누적_예상(확률적용) (1월~기준월)
+                        SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) AS ACML_BRSL_RSL_AMT, -- 누적_실적 (1월~기준월)
+                        SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'P' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) AS RSDN_GOAL_RSL_AMT, -- 잔여_누적목표 (1월~잔여종료월)
+                        SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'T' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) AS RSDN_OPPTY_RSL_AMT, -- 잔여_기회(확률미적용) (잔여시작월~잔여종료월의 기회)
                         CASE WHEN #{fromDate} < #{rsdnStartDate} THEN -- (기준월 < 잔여시작월)이면, 잔여시작월~잔여종료일 조회 ELSE 기준월+1~잔여종료일 조회
-                             SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (잔여시작월~잔여종료월의 예상)
+                             SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (잔여시작월~잔여종료월의 예상)
                         ELSE
-                             SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN TO_CHAR(ADD_MONTHS(TO_DATE(#{fromDate},'YYYYMM'),1),'YYYYMM') AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (기준월+1~잔여종료월의 예상)
-                             + SUM(CASE WHEN SUBSTR(RV.BSNS_RSL_DTL_DST_CD,2,1) = 'U' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (잔여시작월~기준월의 Unsold)
+                             SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN TO_CHAR(ADD_MONTHS(TO_DATE(#{fromDate},'YYYYMM'),1),'YYYYMM') AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (기준월+1~잔여종료월의 예상)
+                             + SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'U' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{fromDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (잔여시작월~기준월의 Unsold)
                         END AS RSDN_FCST_RSL_AMT -- 잔여_예상(확률적용)
                  ]]>
                 FROM
-                ( SELECT CRIT_YAM, BSNS_CLSF_CD, PROD_DST_CD, BSNS_RSL_DTL_DST_CD, RSL_AMT
+                ( SELECT CRIT_YAM, BSNS_CLSF_CD, PROD_DST_CD, BRSL_DTL_DST_CD, RSL_AMT
                     FROM BRST120V
                     WHERE SUBSTR(CRIT_YAM,1,4) = #{critYear}  -- ★조회조건: 기준연도
                     <if test='bsnsClsfCd != "" and bsnsClsfCd != null '>
@@ -323,7 +323,7 @@
                     START WITH DEPT_ID = #{deptId} AND CRIT_YEAR = #{critYear}  -- ★조회조건: 영업부서+기준연도
                     CONNECT BY PRIOR DEPT_ID = HGRK_DEPT_ID AND PRIOR CRIT_YEAR = CRIT_YEAR)
                 ) RV,
-                ( SELECT C.BRSL_SEQC, C.BRSL_DST_CD, C.BRSL_DST_CD_NM, C.BSNS_RSL_DTL_DST_CD, --◀2020-02-24
+                ( SELECT C.BRSL_SEQC, C.BRSL_DST_CD, C.BRSL_DST_CD_NM, C.BRSL_DTL_DST_CD, --◀2020-02-24
                         B.BSNS_SEQC, B.BSNS_CLSF_CD, B.BSNS_CLSF_CD_NM, --◀2020-02-24
                         D.PROD_SEQC, D.PROD_DST_CD, D.PROD_DST_CD_NM --◀2020-02-24
                         FROM
@@ -343,10 +343,10 @@
                             AND C10.USE_YN = 'Y'
                         ) D,
                         ( SELECT HC10.SORT_SEQC AS BRSL_SEQC,
-                            C10.COM_CD BSNS_RSL_DTL_DST_CD, --C10.COM_CD_NM BSNS_RSL_DTL_DST_CD_NM,
+                            C10.COM_CD BRSL_DTL_DST_CD, --C10.COM_CD_NM BRSL_DTL_DST_CD_NM,
                             HC10.COM_CD BRSL_DST_CD, HC10.COM_CD_NM BRSL_DST_CD_NM --◀2020-02-24
                             FROM ACOM020T C20, ACOM010T C10, ACOM010T HC10
-                            WHERE C20.CLMN_NM = 'BSNS_RSL_DTL_DST_CD'
+                            WHERE C20.CLMN_NM = 'BRSL_DTL_DST_CD'
                             AND C20.COM_GRP_CD = C10.COM_GRP_CD
                             AND C10.USE_YN = 'Y'
                             AND C10.HGRK_COM_GRP_CD = HC10.COM_GRP_CD
@@ -354,7 +354,7 @@
                         ) C
                 ) BC
                 WHERE BC.BSNS_CLSF_CD = RV.BSNS_CLSF_CD(+)
-                AND BC.BSNS_RSL_DTL_DST_CD = RV.BSNS_RSL_DTL_DST_CD(+)
+                AND BC.BRSL_DTL_DST_CD = RV.BRSL_DTL_DST_CD(+)
                 AND BC.PROD_DST_CD = RV.PROD_DST_CD(+)
                 GROUP BY BC.BRSL_DST_CD, BC.BRSL_DST_CD_NM, BC.BRSL_SEQC, -- 사업실적구분코드 --◀2020-02-24
                 <if test='bsnsClsfCd != "" and bsnsClsfCd != null '>
@@ -705,13 +705,13 @@
                JAN_AMT, FEB_AMT, MAR_AMT, APR_AMT, MAY_AMT, JUN_AMT,
                JUL_AMT, AUG_AMT, SEP_AMT, OCT_AMT, NOV_AMT, DEC_AMT
         FROM
-              ( SELECT CC.BRSL_DST_CD, A.BSNS_RSL_DTL_DST_CD, --CC.BSNS_RSL_DTL_DST_CD_NM, CC.BRSL_DST_CD,
+              ( SELECT CC.BRSL_DST_CD, A.BRSL_DTL_DST_CD, --CC.BRSL_DTL_DST_CD_NM, CC.BRSL_DST_CD,
                        SUM(JAN_AMT) JAN_AMT, SUM(FEB_AMT) FEB_AMT, SUM(MAR_AMT) MAR_AMT, SUM(APR_AMT) APR_AMT, SUM(MAY_AMT) MAY_AMT, SUM(JUN_AMT) JUN_AMT,
                        SUM(JUL_AMT) JUL_AMT, SUM(AUG_AMT) AUG_AMT ,SUM(SEP_AMT) SEP_AMT, SUM(OCT_AMT) OCT_AMT, SUM(NOV_AMT) NOV_AMT, SUM(DEC_AMT) DEC_AMT
                   FROM BRST100V A,   --연도별부서실적
-                     ( SELECT C10.COM_CD BSNS_RSL_DTL_DST_CD, C10.COM_CD_NM BSNS_RSL_DTL_DST_CD_NM, C10.HGRK_COM_CD AS BRSL_DST_CD
+                     ( SELECT C10.COM_CD BRSL_DTL_DST_CD, C10.COM_CD_NM BRSL_DTL_DST_CD_NM, C10.HGRK_COM_CD AS BRSL_DST_CD
                          FROM ACOM020T C20, ACOM010T C10
-                        WHERE C20.CLMN_NM = 'BSNS_RSL_DTL_DST_CD' --사업실적상세구분코드
+                        WHERE C20.CLMN_NM = 'BRSL_DTL_DST_CD' --사업실적상세구분코드
                           AND C20.COM_GRP_CD = C10.COM_GRP_CD
                           AND C10.USE_YN = 'Y'
                      ) CC
@@ -725,8 +725,8 @@
                          WHERE C20.CLMN_NM = 'BPLN_CLSF_CD'
                            AND C10.COM_CD = #{bplnClsfCd} --★조회조건: 사업계획분류코드
                            AND C20.COM_GRP_CD = C10.COM_GRP_CD )
-                AND A.BSNS_RSL_DTL_DST_CD LIKE CONCAT('%', #{bplnClsfCd}) --★조회조건: 사업계획분류코드
-                AND A.BSNS_RSL_DTL_DST_CD = CC.BSNS_RSL_DTL_DST_CD
+                AND A.BRSL_DTL_DST_CD LIKE CONCAT('%', #{bplnClsfCd}) --★조회조건: 사업계획분류코드
+                AND A.BRSL_DTL_DST_CD = CC.BRSL_DTL_DST_CD
         <if test='bsnsClsfCd != null and bsnsClsfCd != "" '>
             AND BSNS_CLSF_CD = #{bsnsClsfCd} --★조회조건: 사업분류
         </if>
@@ -740,8 +740,8 @@
                             WHERE SELL_OCR_YN = 'Y' -- 매출발생부서
                             START WITH DEPT_ID = #{deptId} AND CRIT_YEAR = #{critYear} --★조회조건: 영업부서
                             CONNECT BY PRIOR DEPT_ID = HGRK_DEPT_ID AND PRIOR CRIT_YEAR = CRIT_YEAR)
-         GROUP BY CC.BRSL_DST_CD, A.BSNS_RSL_DTL_DST_CD --, CC.BSNS_RSL_DTL_DST_CD_NM, CC.BRSL_DST_CD
-         ORDER BY CC.BRSL_DST_CD, A.BSNS_RSL_DTL_DST_CD
+         GROUP BY CC.BRSL_DST_CD, A.BRSL_DTL_DST_CD --, CC.BRSL_DTL_DST_CD_NM, CC.BRSL_DST_CD
+         ORDER BY CC.BRSL_DST_CD, A.BRSL_DTL_DST_CD
        ) V,
        ( SELECT SORT_SEQC AS RSL_DST_SEQC, --정렬순서를 가져오기 위해 FUNCTION을 사용하지 않고 직접 Query
                 C10.COM_CD BRSL_DST_CD, C10.COM_CD_NM BRSL_DST_CD_NM

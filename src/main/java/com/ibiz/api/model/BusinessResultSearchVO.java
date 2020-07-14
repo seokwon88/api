@@ -50,7 +50,7 @@ public class BusinessResultSearchVO {
     /**
      * 사업실적구분코드
      */
-    private String bsnsRslDtlDstCd;
+    private String brslDtlDstCd;
 
     /**
      * 영업대표ID
@@ -209,12 +209,12 @@ public class BusinessResultSearchVO {
         this.bsnsClsfCd = bsnsClsfCd;
     }
 
-    public String getBsnsRslDtlDstCd() {
-        return bsnsRslDtlDstCd;
+    public String getBrslDtlDstCd() {
+        return brslDtlDstCd;
     }
 
-    public void setBsnsRslDtlDstCd(String bsnsRslDtlDstCd) {
-        this.bsnsRslDtlDstCd = bsnsRslDtlDstCd;
+    public void setBrslDtlDstCd(String brslDtlDstCd) {
+        this.brslDtlDstCd = brslDtlDstCd;
     }
 
     public String getEmpId() {

@@ -36,7 +36,7 @@ public class YearDeptResultVO {
      */
     @NotNull
     @Size(max=4, message=ExceptionCode.OUTOFSIZE_EXCEPTION+" 사업실적상세구분코드는 4자리 이하여야합니다." )
-    private String bsnsRslDtlDstCd;
+    private String brslDtlDstCd;
 
     /**
      * 사업분류코드
@@ -224,12 +224,12 @@ public class YearDeptResultVO {
         this.bplnDstCd = bplnDstCd;
     }
 
-    public String getBsnsRslDtlDstCd() {
-        return bsnsRslDtlDstCd;
+    public String getBrslDtlDstCd() {
+        return brslDtlDstCd;
     }
 
-    public void setBsnsRslDtlDstCd(String bsnsRslDtlDstCd) {
-        this.bsnsRslDtlDstCd = bsnsRslDtlDstCd;
+    public void setBrslDtlDstCd(String brslDtlDstCd) {
+        this.brslDtlDstCd = brslDtlDstCd;
     }
 
     public String getBsnsClsfCd() {
@@ -459,7 +459,7 @@ public class YearDeptResultVO {
     @Override
     public String toString() {
         return "YearDeptResultVO [critYear=" + critYear + ", deptId=" + deptId + ", bplnDstCd=" + bplnDstCd
-                + ", bsnsRslDtlDstCd=" + bsnsRslDtlDstCd + ", bsnsClsfCd=" + bsnsClsfCd + ", prodDstCd=" + prodDstCd
+                + ", brslDtlDstCd=" + brslDtlDstCd + ", bsnsClsfCd=" + bsnsClsfCd + ", prodDstCd=" + prodDstCd
                 + ", godsClsfCd=" + godsClsfCd + ", janAmt=" + janAmt + ", febAmt=" + febAmt + ", marAmt=" + marAmt
                 + ", aprAmt=" + aprAmt + ", mayAmt=" + mayAmt + ", junAmt=" + junAmt + ", julAmt=" + julAmt
                 + ", augAmt=" + augAmt + ", sepAmt=" + sepAmt + ", octAmt=" + octAmt + ", novAmt=" + novAmt

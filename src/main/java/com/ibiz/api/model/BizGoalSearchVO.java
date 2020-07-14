@@ -20,7 +20,7 @@ public class BizGoalSearchVO {
     /**
      * 사업실적상세구분코드
      */
-    private String bsnsRslDtlDstCd;
+    private String brslDtlDstCd;
 
     /**
      * 사업분류코드
@@ -85,12 +85,12 @@ public class BizGoalSearchVO {
         this.bplnDstCd = bplnDstCd;
     }
 
-    public String getBsnsRslDtlDstCd() {
-        return bsnsRslDtlDstCd;
+    public String getBrslDtlDstCd() {
+        return brslDtlDstCd;
     }
 
-    public void setBsnsRslDtlDstCd(String bsnsRslDtlDstCd) {
-        this.bsnsRslDtlDstCd = bsnsRslDtlDstCd;
+    public void setBrslDtlDstCd(String brslDtlDstCd) {
+        this.brslDtlDstCd = brslDtlDstCd;
     }
 
     public String getBsnsClsfCd() {
@@ -160,7 +160,7 @@ public class BizGoalSearchVO {
     @Override
     public String toString() {
         return "BizGoalSearchVO [year=" + year + ", slsDeptId=" + slsDeptId + ", bplnDstCd=" + bplnDstCd
-                + ", bsnsRslDtlDstCd=" + bsnsRslDtlDstCd + ", bsnsClsfCd=" + bsnsClsfCd + ", brslDstCd=" + brslDstCd
+                + ", brslDtlDstCd=" + brslDtlDstCd + ", bsnsClsfCd=" + bsnsClsfCd + ", brslDstCd=" + brslDstCd
                 + ", empId=" + empId + ", manageTarget=" + manageTarget + ", amtUnitCd=" + amtUnitCd
                 + ", openMgmtTgtCd=" + openMgmtTgtCd + ", lowerDeptYN=" + lowerDeptYN + ", adminBplnDstCd="
                 + adminBplnDstCd + "]";

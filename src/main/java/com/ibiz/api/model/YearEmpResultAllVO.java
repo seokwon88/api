@@ -50,7 +50,7 @@ public class YearEmpResultAllVO {
 
     private String bplnDstCd;
 
-    private String bsnsRslDtlDstCd;
+    private String brslDtlDstCd;
 
     private String empId;
 
@@ -142,12 +142,12 @@ public class YearEmpResultAllVO {
         this.bplnDstCd = bplnDstCd;
     }
 
-    public String getBsnsRslDtlDstCd() {
-        return bsnsRslDtlDstCd;
+    public String getBrslDtlDstCd() {
+        return brslDtlDstCd;
     }
 
-    public void setBsnsRslDtlDstCd(String bsnsRslDtlDstCd) {
-        this.bsnsRslDtlDstCd = bsnsRslDtlDstCd;
+    public void setBrslDtlDstCd(String brslDtlDstCd) {
+        this.brslDtlDstCd = brslDtlDstCd;
     }
 
     public String getEmpId() {
@@ -163,7 +163,7 @@ public class YearEmpResultAllVO {
         return "YearEmpResultAllVO [bsnsUIList=" + bsnsUIList + ", bsnsUXList=" + bsnsUXList + ", bsnsESBList="
                 + bsnsESBList + ", bsnsECMList=" + bsnsECMList + ", bsnsMGList=" + bsnsMGList + ", bsnsILSList="
                 + bsnsILSList + ", bsnsETCList=" + bsnsETCList + ", cudList=" + cudList + ", critYear=" + critYear
-                + ", deptId=" + deptId + ", bplnDstCd=" + bplnDstCd + ", bsnsRslDtlDstCd=" + bsnsRslDtlDstCd
+                + ", deptId=" + deptId + ", bplnDstCd=" + bplnDstCd + ", brslDtlDstCd=" + brslDtlDstCd
                 + ", empId=" + empId + "]";
     }
 

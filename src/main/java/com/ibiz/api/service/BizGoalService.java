@@ -65,11 +65,11 @@ public class BizGoalService {
         BizGoalSearchVO bizGoalSearchVO = (BizGoalSearchVO)requestPayload.getDto();
 
         List businessTargetForDeptMMList;
-        if (!bizGoalSearchVO.getBsnsRslDtlDstCd().equals("AR") && !bizGoalSearchVO.getBsnsRslDtlDstCd().equals("BR") && !bizGoalSearchVO.getBsnsRslDtlDstCd().equals("CR") && !bizGoalSearchVO.getBsnsRslDtlDstCd().equals("DR") && !bizGoalSearchVO.getBsnsRslDtlDstCd().equals("ER") && !bizGoalSearchVO.getBsnsRslDtlDstCd().equals("FR")) {
+        if (!bizGoalSearchVO.getBrslDtlDstCd().equals("AR") && !bizGoalSearchVO.getBrslDtlDstCd().equals("BR") && !bizGoalSearchVO.getBrslDtlDstCd().equals("CR") && !bizGoalSearchVO.getBrslDtlDstCd().equals("DR") && !bizGoalSearchVO.getBrslDtlDstCd().equals("ER") && !bizGoalSearchVO.getBrslDtlDstCd().equals("FR")) {
             businessTargetForDeptMMList = this.bizGoalDAO.selectMonthlyDeptStatsList(bizGoalSearchVO);
         } else {
             //20200131 *R은 S로 바꿔서 조회되지 않게 변경
-            /*String var4 = bizGoalSearchVO.getBsnsRslDtlDstCd();
+            /*String var4 = bizGoalSearchVO.getBrslDtlDstCd();
             byte var5 = -1;
             switch(var4.hashCode()) {
                 case 2128:
@@ -90,13 +90,13 @@ public class BizGoalService {
 
             switch(var5) {
                 case 0:
-                    bizGoalSearchVO.setBsnsRslDtlDstCd("BS");
+                    bizGoalSearchVO.setBrslDtlDstCd("BS");
                     break;
                 case 1:
-                    bizGoalSearchVO.setBsnsRslDtlDstCd("CS");
+                    bizGoalSearchVO.setBrslDtlDstCd("CS");
                     break;
                 case 2:
-                    bizGoalSearchVO.setBsnsRslDtlDstCd("DS");
+                    bizGoalSearchVO.setBrslDtlDstCd("DS");
             }*/
 
             businessTargetForDeptMMList = this.bizGoalDAO.selectMonthlyDeptStatsList(bizGoalSearchVO);
@@ -121,11 +121,11 @@ public class BizGoalService {
 
 
         List businessTargetForEmpMMList;
-        if (!bizGoalSearchVO.getBsnsRslDtlDstCd().equals("AR") && !bizGoalSearchVO.getBsnsRslDtlDstCd().equals("BR") && !bizGoalSearchVO.getBsnsRslDtlDstCd().equals("CR") && !bizGoalSearchVO.getBsnsRslDtlDstCd().equals("DR") && !bizGoalSearchVO.getBsnsRslDtlDstCd().equals("ER") && !bizGoalSearchVO.getBsnsRslDtlDstCd().equals("FR")) {
+        if (!bizGoalSearchVO.getBrslDtlDstCd().equals("AR") && !bizGoalSearchVO.getBrslDtlDstCd().equals("BR") && !bizGoalSearchVO.getBrslDtlDstCd().equals("CR") && !bizGoalSearchVO.getBrslDtlDstCd().equals("DR") && !bizGoalSearchVO.getBrslDtlDstCd().equals("ER") && !bizGoalSearchVO.getBrslDtlDstCd().equals("FR")) {
             businessTargetForEmpMMList = this.bizGoalDAO.selectMonthlyEmployeeStatsList(bizGoalSearchVO);
         } else {
             //20200131 *R은 S로 바꿔서 조회되지 않게 변경
-            /*String var4 = bizGoalSearchVO.getBsnsRslDtlDstCd();
+            /*String var4 = bizGoalSearchVO.getBrslDtlDstCd();
             byte var5 = -1;
             switch(var4.hashCode()) {
                 case 2128:
@@ -146,13 +146,13 @@ public class BizGoalService {
 
             switch(var5) {
                 case 0:
-                    bizGoalSearchVO.setBsnsRslDtlDstCd("BS");
+                    bizGoalSearchVO.setBrslDtlDstCd("BS");
                     break;
                 case 1:
-                    bizGoalSearchVO.setBsnsRslDtlDstCd("CS");
+                    bizGoalSearchVO.setBrslDtlDstCd("CS");
                     break;
                 case 2:
-                    bizGoalSearchVO.setBsnsRslDtlDstCd("DS");
+                    bizGoalSearchVO.setBrslDtlDstCd("DS");
             }*/
 
             businessTargetForEmpMMList = this.bizGoalDAO.selectMonthlyEmployeeStatsList(bizGoalSearchVO);
@@ -176,7 +176,7 @@ public class BizGoalService {
         BizGoalSearchVO bizGoalSearchVO = (BizGoalSearchVO)requestPayload.getDto();
 
         //20200131 *R은 S로 바꿔서 조회되지 않게 변경
-        /*String var3 = bizGoalSearchVO.getBsnsRslDtlDstCd();
+        /*String var3 = bizGoalSearchVO.getBrslDtlDstCd();
         byte var4 = -1;
         switch(var3.hashCode()) {
             case 2128:
@@ -197,18 +197,18 @@ public class BizGoalService {
 
         switch(var4) {
             case 0:
-                bizGoalSearchVO.setBsnsRslDtlDstCd("BS");
+                bizGoalSearchVO.setBrslDtlDstCd("BS");
                 break;
             case 1:
-                bizGoalSearchVO.setBsnsRslDtlDstCd("CS");
+                bizGoalSearchVO.setBrslDtlDstCd("CS");
                 break;
             case 2:
-                bizGoalSearchVO.setBsnsRslDtlDstCd("DS");
+                bizGoalSearchVO.setBrslDtlDstCd("DS");
         }*/
 
 
         List<YearDeptResultVO> list = this.bizGoalDAO.selectMonthlyBizGroupStatsList(bizGoalSearchVO);
-        if (String.valueOf(this.calendar.get(1)).equals(bizGoalSearchVO.getYear()) && (bizGoalSearchVO.getBsnsRslDtlDstCd().equals("AR") || bizGoalSearchVO.getBsnsRslDtlDstCd().equals("BS") || bizGoalSearchVO.getBsnsRslDtlDstCd().equals("CS") || bizGoalSearchVO.getBsnsRslDtlDstCd().equals("DS") || bizGoalSearchVO.getBsnsRslDtlDstCd().equals("ER") || bizGoalSearchVO.getBsnsRslDtlDstCd().equals("FR"))) {
+        if (String.valueOf(this.calendar.get(1)).equals(bizGoalSearchVO.getYear()) && (bizGoalSearchVO.getBrslDtlDstCd().equals("AR") || bizGoalSearchVO.getBrslDtlDstCd().equals("BS") || bizGoalSearchVO.getBrslDtlDstCd().equals("CS") || bizGoalSearchVO.getBrslDtlDstCd().equals("DS") || bizGoalSearchVO.getBrslDtlDstCd().equals("ER") || bizGoalSearchVO.getBrslDtlDstCd().equals("FR"))) {
             Iterator var7 = list.iterator();
 
             while(var7.hasNext()) {
@@ -238,8 +238,8 @@ public class BizGoalService {
         new ArrayList();
         bizGoalSearchVO.setBplnDstCd("F1");
 
-        if (bizGoalSearchVO.getBsnsRslDtlDstCd() != null) {
-            String var4 = bizGoalSearchVO.getBsnsRslDtlDstCd();
+        if (bizGoalSearchVO.getBrslDtlDstCd() != null) {
+            String var4 = bizGoalSearchVO.getBrslDtlDstCd();
             byte var5 = -1;
             switch(var4.hashCode()) {
                 case 2095:
@@ -265,16 +265,16 @@ public class BizGoalService {
 
             switch(var5) {
                 case 0:
-                    bizGoalSearchVO.setBsnsRslDtlDstCd("AF");
+                    bizGoalSearchVO.setBrslDtlDstCd("AF");
                     break;
                 case 1:
-                    bizGoalSearchVO.setBsnsRslDtlDstCd("BF");
+                    bizGoalSearchVO.setBrslDtlDstCd("BF");
                     break;
                 case 2:
-                    bizGoalSearchVO.setBsnsRslDtlDstCd("CF");
+                    bizGoalSearchVO.setBrslDtlDstCd("CF");
                     break;
                 case 3:
-                    bizGoalSearchVO.setBsnsRslDtlDstCd("FF");
+                    bizGoalSearchVO.setBrslDtlDstCd("FF");
             }
         }
 
@@ -304,7 +304,7 @@ public class BizGoalService {
             searchVO.setManageTarget("SDPT");
             searchVO.setSlsDeptId(yearDeptResultAllVO.getCudList().get(0).getDeptId());
             searchVO.setBplnDstCd(yearDeptResultAllVO.getCudList().get(0).getBplnDstCd());
-            searchVO.setBsnsRslDtlDstCd(yearDeptResultAllVO.getCudList().get(0).getBsnsRslDtlDstCd());
+            searchVO.setBrslDtlDstCd(yearDeptResultAllVO.getCudList().get(0).getBrslDtlDstCd());
 
             if(this.bizGoalDAO.selectisExistsBizGoal(searchVO) > 0 ){
                 this.bizGoalDAO.deleteMonthlyDeptGoal((YearDeptResultVO) yearDeptResultAllVO.getCudList().get(0));
@@ -339,7 +339,7 @@ public class BizGoalService {
             model.setCritYear(yearDeptResultAllVO.getCritYear());
             model.setDeptId(yearDeptResultAllVO.getDeptId());
             model.setBplnDstCd(yearDeptResultAllVO.getBplnDstCd());
-            model.setBsnsRslDtlDstCd(yearDeptResultAllVO.getBsnsRslDtlDstCd());
+            model.setBrslDtlDstCd(yearDeptResultAllVO.getBrslDtlDstCd());
             this.bizGoalDAO.deleteMonthlyDeptGoal(model);
         }
 
@@ -358,7 +358,7 @@ public class BizGoalService {
             searchVO.setManageTarget("SPRN");
             searchVO.setSlsDeptId(yearEmpResultAllVO.getCudList().get(0).getDeptId());
             searchVO.setBplnDstCd(yearEmpResultAllVO.getCudList().get(0).getBplnDstCd());
-            searchVO.setBsnsRslDtlDstCd(yearEmpResultAllVO.getCudList().get(0).getBsnsRslDtlDstCd());
+            searchVO.setBrslDtlDstCd(yearEmpResultAllVO.getCudList().get(0).getBrslDtlDstCd());
             searchVO.setEmpId(yearEmpResultAllVO.getCudList().get(0).getEmpId());
 
             if(this.bizGoalDAO.selectisExistsBizGoal(searchVO) > 0 ){
@@ -395,7 +395,7 @@ public class BizGoalService {
             model.setDeptId(yearEmpResultAllVO.getDeptId());
             model.setEmpId(yearEmpResultAllVO.getEmpId());
             model.setBplnDstCd(yearEmpResultAllVO.getBplnDstCd());
-            model.setBsnsRslDtlDstCd(yearEmpResultAllVO.getBsnsRslDtlDstCd());
+            model.setBrslDtlDstCd(yearEmpResultAllVO.getBrslDtlDstCd());
             this.bizGoalDAO.deleteMonthlyEmpGoal(model);
         }
 
@@ -425,7 +425,7 @@ public class BizGoalService {
             searchVO.setBplnDstCd("P1");
             searchVO.setSlsDeptId(yearDeptResultAllVO.getCudList().get(0).getDeptId());
             searchVO.setBplnDstCd(yearDeptResultAllVO.getCudList().get(0).getBplnDstCd());
-            searchVO.setBsnsRslDtlDstCd(yearDeptResultAllVO.getCudList().get(0).getBsnsRslDtlDstCd());
+            searchVO.setBrslDtlDstCd(yearDeptResultAllVO.getCudList().get(0).getBrslDtlDstCd());
 
             if(this.bizGoalDAO.selectisExistsBizGoal(searchVO) > 0 ){
                 yearDeptResultAllVO.getCudList().get(0).setBplnDstCd("P1");
@@ -461,7 +461,7 @@ public class BizGoalService {
             model.setCritYear(yearDeptResultAllVO.getCritYear());
             model.setDeptId(yearDeptResultAllVO.getDeptId());
             model.setBplnDstCd(yearDeptResultAllVO.getBplnDstCd());
-            model.setBsnsRslDtlDstCd(yearDeptResultAllVO.getBsnsRslDtlDstCd());
+            model.setBrslDtlDstCd(yearDeptResultAllVO.getBrslDtlDstCd());
             this.bizGoalDAO.deleteGoalDcdMonthlyDept(model);
         }
 
@@ -490,7 +490,7 @@ public class BizGoalService {
             searchVO.setBplnDstCd("P1");
             searchVO.setSlsDeptId(yearEmpResultAllVO.getCudList().get(0).getDeptId());
             searchVO.setBplnDstCd(yearEmpResultAllVO.getCudList().get(0).getBplnDstCd());
-            searchVO.setBsnsRslDtlDstCd(yearEmpResultAllVO.getCudList().get(0).getBsnsRslDtlDstCd());
+            searchVO.setBrslDtlDstCd(yearEmpResultAllVO.getCudList().get(0).getBrslDtlDstCd());
             searchVO.setEmpId(yearEmpResultAllVO.getCudList().get(0).getEmpId());
 
             if(this.bizGoalDAO.selectisExistsBizGoal(searchVO) > 0 ){
@@ -528,7 +528,7 @@ public class BizGoalService {
             model.setDeptId(yearEmpResultAllVO.getDeptId());
             model.setEmpId(yearEmpResultAllVO.getEmpId());
             model.setBplnDstCd(yearEmpResultAllVO.getBplnDstCd());
-            model.setBsnsRslDtlDstCd(yearEmpResultAllVO.getBsnsRslDtlDstCd());
+            model.setBrslDtlDstCd(yearEmpResultAllVO.getBrslDtlDstCd());
             this.bizGoalDAO.deleteGoalDcdMonthlyEmp(model);
         }
 
