@@ -226,6 +226,36 @@ public class SalesReportVO {
      */
     private Integer totalCnt;
 
+    // 매출금액기회 총액
+    private long totalSellOpptyRslAmt;
+
+    // 매입금액기회 총액
+    private long totalBuyOpptyRslAmt;
+
+    // 매출금액확률적용 총액
+    private long totalSellFcstRslAmt;
+
+    // 매입금액확률적용 총액
+    private long totalBuyFcstRslAmt;
+
+    // 매출금액 실적 총액
+    private long totalSellRslAmt;
+
+    // 매입금액 실적 총액
+    private long totalBuyRslAmt;
+
+    // 매출금액 기회전체 총액
+    private long totalOpptySellRslAmt;
+
+    // 매입금액 기회전체 총액
+    private long totalOpptyBuyRslAmt;
+
+    // 매출금액 누적실적 총액
+    private long totalAcmlSellRslAmt;
+
+    // 매입금액 누적실적 총액
+    private long totalAcmlBuyRslAmt;
+
     public String getBoptId() {
         return boptId;
     }
@@ -594,24 +624,83 @@ public class SalesReportVO {
         this.totalCnt = totalCnt;
     }
 
-    @Override
-    public String toString() {
-        return "SalesReportVO [boptId=" + boptId + ", prjtId=" + prjtId + ", prjtNm=" + prjtNm
-                + ", bsnsClsfCd=" + bsnsClsfCd + ", lastCustId=" + lastCustId + ", lastCustNm=" + lastCustNm
-                + ", wctPrbbCd=" + wctPrbbCd + ", wctPrbbCdNm=" + wctPrbbCdNm + ", deptId=" + deptId + ", deptNm=" + deptNm
-                + ", empId=" + empId + ", empNm=" + empNm + ", wctDcdDate=" + wctDcdDate + ", boptStatCd=" + boptStatCd
-                + ", boptStatCdNm=" + boptStatCdNm + ", boptEndTypeCd=" + boptEndTypeCd + ", boptEndTypeCdNm=" + boptEndTypeCdNm
-                + ", issueCnt=" + issueCnt + ", wctCritYam=" + wctCritYam + ", cntrDate=" + cntrDate + ", fcstYam="
-                + fcstYam + ", wctOpptyRslAmt=" + wctOpptyRslAmt + ", wctFcstRslAmt=" + wctFcstRslAmt + ", wctRslAmt="
-                + wctRslAmt + ", sellCritYam=" + sellCritYam + ", sellOpptyRslAmt=" + sellOpptyRslAmt
-                + ", sellFcstRslAmt=" + sellFcstRslAmt + ", sellRslAmt=" + sellRslAmt + ", nsleOpptyRslAmt="
-                + nsleOpptyRslAmt + ", nsleFcstRslAmt=" + nsleFcstRslAmt + ", nsleRslAmt=" + nsleRslAmt
-                + ", opptyWctRslAmt=" + opptyWctRslAmt + ", opptySellRslAmt=" + opptySellRslAmt + ", opptyBuyRslAmt="
-                + opptyBuyRslAmt + ", opptyNsleRslAmt=" + opptyNsleRslAmt + ", acmlWctRslAmt=" + acmlWctRslAmt
-                + ", acmlSellRslAmt=" + acmlSellRslAmt + ", acmlBuyRslAmt=" + acmlBuyRslAmt + ", acmlNsleRslAmt="
-                + acmlNsleRslAmt + ", buyCritYam=" + buyCritYam + ", buyOpptyRslAmt=" + buyOpptyRslAmt
-                + ", buyFcstRslAmt=" + buyFcstRslAmt + ", buyRslAmt=" + buyRslAmt + ", slsDeptNm=" + slsDeptNm
-                + ", slsEmpNm=" + slsEmpNm + "]";
+    public long getTotalSellOpptyRslAmt() {
+        return totalSellOpptyRslAmt;
     }
 
+    public void setTotalSellOpptyRslAmt(long totalSellOpptyRslAmt) {
+        this.totalSellOpptyRslAmt = totalSellOpptyRslAmt;
+    }
+
+    public long getTotalBuyOpptyRslAmt() {
+        return totalBuyOpptyRslAmt;
+    }
+
+    public void setTotalBuyOpptyRslAmt(long totalBuyOpptyRslAmt) {
+        this.totalBuyOpptyRslAmt = totalBuyOpptyRslAmt;
+    }
+
+    public long getTotalSellFcstRslAmt() {
+        return totalSellFcstRslAmt;
+    }
+
+    public void setTotalSellFcstRslAmt(long totalSellFcstRslAmt) {
+        this.totalSellFcstRslAmt = totalSellFcstRslAmt;
+    }
+
+    public long getTotalBuyFcstRslAmt() {
+        return totalBuyFcstRslAmt;
+    }
+
+    public void setTotalBuyFcstRslAmt(long totalBuyFcstRslAmt) {
+        this.totalBuyFcstRslAmt = totalBuyFcstRslAmt;
+    }
+
+    public long getTotalSellRslAmt() {
+        return totalSellRslAmt;
+    }
+
+    public void setTotalSellRslAmt(long totalSellRslAmt) {
+        this.totalSellRslAmt = totalSellRslAmt;
+    }
+
+    public long getTotalBuyRslAmt() {
+        return totalBuyRslAmt;
+    }
+
+    public void setTotalBuyRslAmt(long totalBuyRslAmt) {
+        this.totalBuyRslAmt = totalBuyRslAmt;
+    }
+
+    public long getTotalOpptySellRslAmt() {
+        return totalOpptySellRslAmt;
+    }
+
+    public void setTotalOpptySellRslAmt(long totalOpptySellRslAmt) {
+        this.totalOpptySellRslAmt = totalOpptySellRslAmt;
+    }
+
+    public long getTotalOpptyBuyRslAmt() {
+        return totalOpptyBuyRslAmt;
+    }
+
+    public void setTotalOpptyBuyRslAmt(long totalOpptyBuyRslAmt) {
+        this.totalOpptyBuyRslAmt = totalOpptyBuyRslAmt;
+    }
+
+    public long getTotalAcmlSellRslAmt() {
+        return totalAcmlSellRslAmt;
+    }
+
+    public void setTotalAcmlSellRslAmt(long totalAcmlSellRslAmt) {
+        this.totalAcmlSellRslAmt = totalAcmlSellRslAmt;
+    }
+
+    public long getTotalAcmlBuyRslAmt() {
+        return totalAcmlBuyRslAmt;
+    }
+
+    public void setTotalAcmlBuyRslAmt(long totalAcmlBuyRslAmt) {
+        this.totalAcmlBuyRslAmt = totalAcmlBuyRslAmt;
+    }
 }

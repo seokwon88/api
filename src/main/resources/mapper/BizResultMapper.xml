@@ -385,7 +385,13 @@
             BUY_FCST_RSL_AMT, -- 매입금액_확률적용
             SELL_RSL_AMT, -- 매출금액_실적
             BUY_RSL_AMT, -- 매입금액_실적
-            ISSUE_CNT, BOPT_ID, BOPT_NM, BOPT_END_TYPE_CD, BOPT_END_TYPE_CD_NM, COM_CD_NUM_VAL
+            ISSUE_CNT, BOPT_ID, BOPT_NM, BOPT_END_TYPE_CD, BOPT_END_TYPE_CD_NM, COM_CD_NUM_VAL,
+            SUM(SELL_OPPTY_RSL_AMT) OVER() AS TOTAL_SELL_OPPTY_RSL_AMT, -- 매출금액_기회 총액
+            SUM(BUY_OPPTY_RSL_AMT) OVER() AS TOTAL_BUY_OPPTY_RSL_AMT, -- 매입금액_기회 총액
+            SUM(SELL_FCST_RSL_AMT) OVER() AS TOTAL_SELL_FCST_RSL_AMT, -- 매출금액_확률적용 총액
+            SUM(BUY_FCST_RSL_AMT) OVER() AS TOTAL_BUY_FCST_RSL_AMT, -- 매입금액_확률적용 총액
+            SUM(SELL_RSL_AMT) OVER() AS TOTAL_SELL_RSL_AMT,  -- 매출금액_실적 총액
+            SUM(BUY_RSL_AMT) OVER() AS TOTAL_BUY_RSL_AMT  -- 매입금액_실적 총액
         FROM
         (
             SELECT P.LAST_CUST_ID, M.CUST_NM LAST_CUST_NM, P.PRJT_ID, P.PRJT_NM,
@@ -533,7 +539,17 @@
             ACML_SELL_RSL_AMT, -- 매출금액_누적실적
             ACML_BUY_RSL_AMT, -- 매입금액_누적실적
             ISSUE_CNT,  -- 사업이슈개수
-            WCT_PRBB_VAL
+            WCT_PRBB_VAL,
+            SUM(SELL_OPPTY_RSL_AMT) OVER() AS TOTAL_SELL_OPPTY_RSL_AMT, -- 매출금액_기회 총액
+            SUM(BUY_OPPTY_RSL_AMT) OVER() AS TOTAL_BUY_OPPTY_RSL_AMT, -- 매입금액_기회 총액
+            SUM(SELL_FCST_RSL_AMT) OVER() AS TOTAL_SELL_FCST_RSL_AMT, -- 매출금액_확률적용 총액
+            SUM(BUY_FCST_RSL_AMT) OVER() AS TOTAL_BUY_FCST_RSL_AMT, -- 매입금액_확률적용 총액
+            SUM(SELL_RSL_AMT) OVER() AS TOTAL_SELL_RSL_AMT,  -- 매출금액_실적 총액
+            SUM(BUY_RSL_AMT) OVER() AS TOTAL_BUY_RSL_AMT,  -- 매입금액_실적 총액
+            SUM(OPPTY_SELL_RSL_AMT) OVER() AS TOTAL_OPPTY_SELL_RSL_AMT, -- 매출금액_기회전체 총액
+            SUM(OPPTY_BUY_RSL_AMT) OVER() AS TOTAL_OPPTY_BUY_RSL_AMT, -- 매입금액_기회전체 총액
+            SUM(ACML_SELL_RSL_AMT) OVER() AS TOTAL_ACML_SELL_RSL_AMT, -- 매출금액_누적실적 총액
+            SUM(ACML_BUY_RSL_AMT) OVER() AS TOTAL_ACML_BUY_RSL_AMT -- 매입금액_누적실적 총액
         FROM
         (
             SELECT P.LAST_CUST_ID, M.CUST_NM LAST_CUST_NM, P.PRJT_ID, P.PRJT_NM, P.BOPT_ID,
