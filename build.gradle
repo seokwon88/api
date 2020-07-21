@@ -54,3 +54,6 @@ dependencyManagement {
 test {
     useJUnitPlatform()
 }
+bootJar {
+    archiveFileName = 'ibiz-sales-report-7500.jar'
+}
