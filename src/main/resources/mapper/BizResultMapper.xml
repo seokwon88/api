@@ -93,6 +93,9 @@
                 WHERE SUBSTR(RV.CRIT_YAM(+),1,4) = #{critYear}  -- ★조회조건 기준연도
                 AND H10.DEPT_ID = RV.DEPT_ID(+)
                 AND H10.BRSL_DTL_DST_CD = RV.BRSL_DTL_DST_CD(+)
+                <if test='bsnsClsfCd != null and bsnsClsfCd != "" '>
+                    AND RV.BSNS_CLSF_CD = #{bsnsClsfCd}  -- ★조회조건 사업분류
+                </if>
                 GROUP BY H10.DEPT_L1_ID, H10.DEPT_L1_NM
                 <if test='subDept == "Y" '>
                     ,H10.DEPT_L2_ID, H10.DEPT_L2_NM, H10.DEPT_ID, H10.DEPT_NM, H10.DEPT_SEQC -- ★하위부서 포함
@@ -181,6 +184,9 @@
                    AND H30.DEPT_ID = RV.DEPT_ID(+)
                    AND H30.EMP_ID = RV.EMP_ID(+)
                    AND H30.BRSL_DTL_DST_CD = RV.BRSL_DTL_DST_CD(+)
+                    <if test='bsnsClsfCd != null and bsnsClsfCd != "" '>
+                        AND RV.BSNS_CLSF_CD = #{bsnsClsfCd}  -- ★조회조건 사업분류
+                    </if>
                 GROUP BY H30.DEPT_ID, H30.DEPT_NM, H30.DEPT_SEQC, H30.EMP_ID,
                       H30.BRSL_DST_CD, H30.BRSL_SEQC
                 )
