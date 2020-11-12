@@ -926,6 +926,10 @@
         ON T000.BOPT_ID = T250.BOPT_ID
         WHERE 1 = 1
         AND T250.BOPT_ID = #{boptId}
+        <![CDATA[
+            AND TO_CHAR(T250.REG_DT, 'YYYYMMDD') >= #{regActStartDate}
+            AND TO_CHAR(T250.REG_DT, 'YYYYMMDD') <= #{regActEndDate}
+            ]]>
         ORDER BY T250.REG_DT DESC, T250.CHG_DT DESC
     </select>
 
