@@ -13,6 +13,7 @@ public enum ErrorCode {
     ACCESS_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "202", "The access token is expired"),
     SQL_INVALID(HttpStatus.BAD_REQUEST, "203", "The request is bad"),
 
+    NOTNULL_EXCEPTION(HttpStatus.UNAUTHORIZED, ExceptionCode.NOTNULL_EXCEPTION, ExceptionCode.NOTNULL_EXCEPTION_MESSAGE),
     DELETE_DENIED_ERROR(HttpStatus.UNAUTHORIZED, "333", "삭제가 불가능합니다"),
     UPDATE_DENIED_ERROR(HttpStatus.UNAUTHORIZED, "333", "수정이 불가능합니다");
 
