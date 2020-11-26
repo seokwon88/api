@@ -259,7 +259,16 @@ public class BizResultService {
             bizProjectInfo.setStartDate(bizProjectInfoVO.getStartDate());
             bizProjectInfo.setEndDate(bizProjectInfoVO.getEndDate());
 
-            list.get(i).setBizProjectReportList(bizResultDAO.selectBizPrjtRprtBkdnList(bizProjectInfo));
+            List<BizProjectReportVO> reportList = bizResultDAO.selectBizPrjtRprtBkdnList(bizProjectInfo);
+
+            list.get(i).setBizProjectReportList(reportList);
+
+            if(reportList.size() > 0){
+                list.get(i).setRprtYn("Y");
+            }else{
+                list.get(i).setRprtYn("N");
+            }
+
         }
 
         return list;
@@ -333,9 +342,11 @@ public class BizResultService {
             }
 
             for(BizProjectReportVO bizProjectReportVO : bizProjectInfoVO.getBizProjectReportList()){
-                bizProjectReportVO.setBsnsPrgsStatCd(bizProjectInfoVO.getBsnsPrgsStatCd());
                 bizProjectReportVO.setChgEmpId(bizProjectInfoVO.getChgEmpId());
 
+                if(bizProjectReportVO.getBsnsPrgsStatCd() == null){
+                    bizProjectReportVO.setBsnsPrgsStatCd(bizProjectInfoVO.getBsnsPrgsStatCd());
+                }
                 if(bizProjectReportVO.getPrjtId() == null){
                     bizProjectReportVO.setPrjtId(bizProjectInfoVO.getPrjtId());
                     bizProjectReportVO.setSeq(bizProjectInfoVO.getSeq());
