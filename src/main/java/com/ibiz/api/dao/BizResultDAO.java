@@ -101,4 +101,56 @@ public class BizResultDAO {
         mybatis.delete("BizResultMapper.deleteMonthlyWork", monthlyWorkVO);
     }
 
+
+
+    //사업프로젝트 기본 리스트 조회
+    public List<BizProjectInfoVO> selectBizPrjtInfoList(BizProjectInfoVO bizProjectInfoVO) throws Exception {
+        return mybatis.selectList( "BizResultMapper.selectBizPrjtInfoList", bizProjectInfoVO);
+    }
+
+    //사업프로젝트 보고내역 리스트 조회
+    public List<BizProjectReportVO> selectBizPrjtRprtBkdnList(BizProjectInfoVO bizProjectInfoVO) throws Exception {
+        return mybatis.selectList( "BizResultMapper.selectBizPrjtRprtBkdnList", bizProjectInfoVO);
+    }
+
+    //사업프로젝트 기본 상세 조회
+    public BizProjectInfoVO selectBizPrjtInfo(BizProjectInfoVO bizProjectInfoVO) throws Exception {
+        return mybatis.selectOne( "BizResultMapper.selectBizPrjtInfo", bizProjectInfoVO);
+    }
+
+    //사업프로젝트 MAX SEQ
+    public BizProjectInfoVO selectBizPrjtSeq(BizProjectInfoVO bizProjectInfoVO) throws Exception {
+        return mybatis.selectOne( "BizResultMapper.selectBizPrjtSeq", bizProjectInfoVO);
+    }
+
+    //사업프로젝트 기본 등록
+    public void insertBizPrjtInfo(BizProjectInfoVO bizProjectInfoVO) throws Exception {
+        mybatis.insert( "BizResultMapper.insertBizPrjtInfo", bizProjectInfoVO);
+    }
+
+    //사업프로젝트 보고내역 등록
+    public void insertBizPrjtRprtBkdnInfo(BizProjectReportVO bizProjectReportVO) throws Exception {
+        mybatis.insert( "BizResultMapper.insertBizPrjtRprtBkdnInfo", bizProjectReportVO);
+    }
+
+    //사업프로젝트 기본 수정
+    public void updateBizPrjtInfo(BizProjectInfoVO bizProjectInfoVO) throws Exception {
+        mybatis.update( "BizResultMapper.updateBizPrjtInfo", bizProjectInfoVO);
+    }
+
+    //사업프로젝트 보고내역 수정
+    public void updateBizPrjtRprtBkdnInfo(BizProjectReportVO bizProjectReportVO) throws Exception {
+        mybatis.update( "BizResultMapper.updateBizPrjtRprtBkdnInfo", bizProjectReportVO);
+    }
+
+    //사업프로젝트 기본 삭제
+    public void deleteBizPrjtInfo(BizProjectInfoVO bizProjectInfoVO) throws Exception {
+        mybatis.delete("BizResultMapper.deleteBizPrjtInfo", bizProjectInfoVO);
+    }
+
+    //사업프로젝트 보고내역 삭제
+    public void deleteBizPrjtRprtBkdnInfo(BizProjectReportVO bizProjectReportVO) throws Exception {
+        mybatis.delete("BizResultMapper.deleteBizPrjtRprtBkdnInfo", bizProjectReportVO);
+    }
+
 }

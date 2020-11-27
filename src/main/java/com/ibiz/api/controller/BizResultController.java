@@ -150,4 +150,52 @@ public class BizResultController extends BaseController {
         return super.composePayload(new Payload<MonthlyWorkVO>(bizResultService.deleteMonthlyWork(requestPayload)));
     }
 
+
+
+    //사업프로젝트 리스트 조회
+    @PostMapping("/selectBizPrjtInfoList")
+    public ResponseEntity<String> selectBizPrjtInfoList(@RequestParam("payload") String payload) throws Exception {
+        log.info("Call Controller : " + this.getClass().getName() + ".selectBizPrjtInfoList");
+        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<BizProjectInfoVO>>(){});
+
+        return super.composePayload(new Payload<List>(bizResultService.selectBizPrjtInfoList(requestPayload)));
+    }
+
+    //사업프로젝트 기본 상세 조회
+    @PostMapping("/selectBizPrjtInfo")
+    public ResponseEntity<String> selectBizPrjtInfo(@RequestParam("payload") String payload) throws Exception {
+        log.info("Call Controller : " + this.getClass().getName() + ".selectBizPrjtInfo");
+        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<BizProjectInfoVO>>(){});
+
+        return super.composePayload(new Payload<BizProjectInfoVO>(bizResultService.selectBizPrjtInfo(requestPayload)));
+    }
+
+    //사업프로젝트 기본 등록
+    @PostMapping("/insertBizPrjtInfo")
+    public ResponseEntity<String> insertBizPrjtInfo(@RequestParam("payload") String payload) throws Exception {
+        log.info("Call Controller : " + this.getClass().getName() + ".insertBizPrjtInfo");
+        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<BizProjectInfoVO>>(){});
+
+        return super.composePayload(new Payload<BizProjectInfoVO>(bizResultService.insertBizPrjtInfo(requestPayload)));
+    }
+
+    //사업프로젝트 기본 수정
+    @PostMapping("/updateBizPrjtInfo")
+    public ResponseEntity<String> updateBizPrjtInfo(@RequestParam("payload") String payload) throws Exception {
+        log.info("Call Controller : " + this.getClass().getName() + ".updateBizPrjtInfo");
+        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<BizProjectInfoVO>>(){});
+
+        return super.composePayload(new Payload<BizProjectInfoVO>(bizResultService.updateBizPrjtInfo(requestPayload)));
+    }
+
+    //사업프로젝트 기본 삭제
+    @PostMapping("/deleteBizPrjtInfo")
+    public ResponseEntity<String> deleteBizPrjtInfo(@RequestParam("payload") String payload) throws Exception {
+        log.info("Call Controller : " + this.getClass().getName() + ".deleteBizPrjtInfo");
+        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<BizProjectInfoVO>>(){});
+
+        return super.composePayload(new Payload<BizProjectInfoVO>(bizResultService.deleteBizPrjtInfo(requestPayload)));
+    }
+
+
 }

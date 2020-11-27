@@ -1,6 +1,7 @@
 package com.ibiz.api.service;
 
 import com.ibiz.api.dao.BizResultDAO;
+import com.ibiz.api.exception.NotNullException;
 import com.ibiz.api.exception.UpdateDeniedException;
 import com.ibiz.api.model.*;
 import lombok.extern.slf4j.Slf4j;
@@ -240,6 +241,147 @@ public class BizResultService {
         bizResultDAO.deleteMonthlyWork(monthlyWorkVO);
 
         return monthlyWorkVO;
+    }
+
+    //사업프로젝트 리스트 조회
+    @Transactional
+    public List<BizProjectInfoVO> selectBizPrjtInfoList(Payload<BizProjectInfoVO> requestPayload) throws Exception {
+        log.info("Call Service : " + this.getClass().getName() + ".selectBizPrjtInfoList");
+        BizProjectInfoVO bizProjectInfoVO = requestPayload.getDto();
+
+        List<BizProjectInfoVO> list = bizResultDAO.selectBizPrjtInfoList(bizProjectInfoVO);
+
+        for(int i = 0 ; i < list.size() ; i++){
+            BizProjectInfoVO bizProjectInfo = new BizProjectInfoVO();
+            bizProjectInfo.setPrjtId(list.get(i).getPrjtId());
+            bizProjectInfo.setSeq(list.get(i).getSeq());
+            bizProjectInfo.setRprtYn("Y");
+            bizProjectInfo.setStartDate(bizProjectInfoVO.getStartDate());
+            bizProjectInfo.setEndDate(bizProjectInfoVO.getEndDate());
+
+            List<BizProjectReportVO> reportList = bizResultDAO.selectBizPrjtRprtBkdnList(bizProjectInfo);
+
+            list.get(i).setBizProjectReportList(reportList);
+
+            if(reportList.size() > 0){
+                list.get(i).setRprtYn("Y");
+            }else{
+                list.get(i).setRprtYn("N");
+            }
+
+        }
+
+        return list;
+    }
+
+    //사업프로젝트 기본 상세 조회
+    @Transactional
+    public BizProjectInfoVO selectBizPrjtInfo(Payload<BizProjectInfoVO> requestPayload) throws Exception {
+        log.info("Call Service : " + this.getClass().getName() + ".selectBizPrjtInfo");
+        AccountVO accountVO = requestPayload.getAccountVO();
+        BizProjectInfoVO bizProjectInfoVO = requestPayload.getDto();
+
+        bizProjectInfoVO = bizResultDAO.selectBizPrjtInfo(bizProjectInfoVO);
+        bizProjectInfoVO.setBizProjectReportList(bizResultDAO.selectBizPrjtRprtBkdnList(bizProjectInfoVO));
+
+        return bizProjectInfoVO;
+    }
+
+    //사업프로젝트 기본 등록
+    @Transactional
+    public BizProjectInfoVO insertBizPrjtInfo(Payload<BizProjectInfoVO> requestPayload) throws Exception {
+        log.info("Call Service : " + this.getClass().getName() + ".insertBizPrjtInfo");
+        AccountVO accountVO = requestPayload.getAccountVO();
+        BizProjectInfoVO bizProjectInfoVO = requestPayload.getDto();
+
+        bizProjectInfoVO.setRegEmpId(accountVO.getEmpId());
+        bizProjectInfoVO.setChgEmpId(accountVO.getEmpId());
+
+        try{
+            //MAX SEQ
+            int seq = bizResultDAO.selectBizPrjtSeq(bizProjectInfoVO).getSeq();
+            seq+=1;
+
+            // 사업프로젝트 등록
+            bizProjectInfoVO.setSeq(seq);
+            bizResultDAO.insertBizPrjtInfo(bizProjectInfoVO);
+
+            //사업보고내역 등록
+            for(BizProjectReportVO bizProjectReportVO : bizProjectInfoVO.getBizProjectReportList()){
+                bizProjectReportVO.setPrjtId(bizProjectInfoVO.getPrjtId());
+                bizProjectReportVO.setSeq(seq);
+                bizProjectReportVO.setBsnsPrgsStatCd(bizProjectInfoVO.getBsnsPrgsStatCd());
+                bizProjectReportVO.setChgEmpId(bizProjectInfoVO.getChgEmpId());
+
+                bizResultDAO.insertBizPrjtRprtBkdnInfo(bizProjectReportVO);
+            }
+
+        }catch (Exception e){
+            throw new NotNullException(bizProjectInfoVO);
+        }
+
+        return bizProjectInfoVO;
+    }
+
+    //사업프로젝트 기본 수정
+    @Transactional
+    public BizProjectInfoVO updateBizPrjtInfo(Payload<BizProjectInfoVO> requestPayload) throws Exception {
+        log.info("Call Service : " + this.getClass().getName() + ".updateBizPrjtInfo");
+        AccountVO accountVO = requestPayload.getAccountVO();
+        BizProjectInfoVO bizProjectInfoVO = requestPayload.getDto();
+
+        bizProjectInfoVO.setChgEmpId(accountVO.getEmpId());
+
+        try{
+            // 사업프로젝트 수정
+            bizResultDAO.updateBizPrjtInfo(bizProjectInfoVO);
+
+            // 사업보고내역 수정
+            for(BizProjectReportVO bizProjectReportVO : bizProjectInfoVO.getBizPrjtRprtDelList()){
+                bizResultDAO.deleteBizPrjtRprtBkdnInfo(bizProjectReportVO);
+            }
+
+            for(BizProjectReportVO bizProjectReportVO : bizProjectInfoVO.getBizProjectReportList()){
+                bizProjectReportVO.setChgEmpId(bizProjectInfoVO.getChgEmpId());
+
+                if(bizProjectReportVO.getBsnsPrgsStatCd() == null){
+                    bizProjectReportVO.setBsnsPrgsStatCd(bizProjectInfoVO.getBsnsPrgsStatCd());
+                }
+                if(bizProjectReportVO.getPrjtId() == null){
+                    bizProjectReportVO.setPrjtId(bizProjectInfoVO.getPrjtId());
+                    bizProjectReportVO.setSeq(bizProjectInfoVO.getSeq());
+                    bizResultDAO.insertBizPrjtRprtBkdnInfo(bizProjectReportVO);
+                }else{
+                    bizResultDAO.updateBizPrjtRprtBkdnInfo(bizProjectReportVO);
+                }
+
+            }
+
+
+        }catch (Exception e){
+            throw new NotNullException(bizProjectInfoVO);
+        }
+
+        return bizProjectInfoVO;
+    }
+
+    //사업프로젝트 삭제
+    @Transactional
+    public BizProjectInfoVO deleteBizPrjtInfo(Payload<BizProjectInfoVO> requestPayload) throws Exception {
+        log.info("Call Service : " + this.getClass().getName() + ".deleteBizPrjtInfo");
+        AccountVO accountVO = requestPayload.getAccountVO();
+        BizProjectInfoVO bizProjectInfoVO = requestPayload.getDto();
+        BizProjectReportVO bizProjectReportVO = new BizProjectReportVO();
+
+        bizProjectReportVO.setPrjtId(bizProjectInfoVO.getPrjtId());
+        bizProjectReportVO.setSeq(bizProjectInfoVO.getSeq() );
+
+        bizResultDAO.deleteBizPrjtRprtBkdnInfo(bizProjectReportVO);
+
+        bizResultDAO.deleteBizPrjtInfo(bizProjectInfoVO);
+
+
+        return bizProjectInfoVO;
     }
 
 }
