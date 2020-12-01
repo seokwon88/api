@@ -142,12 +142,12 @@ public class BizProjectInfoVO {
     private String prjtStatCdNm;
 
     /**
-     * 프로젝트시작기간
+     * 사업수행시작일자
      */
     private String bexcStartDate;
 
     /**
-     * 프로젝트종료기간
+     * 사업수행종료일자
      */
     private String bexcEndDate;
 
