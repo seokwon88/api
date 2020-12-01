@@ -1061,7 +1061,7 @@
                         SELECT DISTINCT A.PRJT_ID, IBIZ_PRJT_NM(A.PRJT_ID) AS PRJT_NM, A.SEQ,
                             LAST_CUST_ID, IBIZ_CUST_NM(LAST_CUST_ID) AS LAST_CUST_NM,
                             PRJT_TYPE_CD, IBIZ_COM_CD_NM('PRJT_TYPE_CD', PRJT_TYPE_CD) AS PRJT_TYPE_CD_NM,
-                            BEXC_START_DATE, BEXC_END_DATE, SLS_DEPT_ID, IBIZ_DEPT_NM(SLS_DEPT_ID) AS SLS_DEPT_NM,
+                            B.BEXC_START_DATE, B.BEXC_END_DATE, SLS_DEPT_ID, IBIZ_DEPT_NM(SLS_DEPT_ID) AS SLS_DEPT_NM,
                             SLS_EMP_ID, IBIZ_EMP_NM(SLS_EMP_ID) AS SLS_EMP_NM,
                             PRJT_STAT_CD, IBIZ_COM_CD_NM('PRJT_STAT_CD', PRJT_STAT_CD) AS PRJT_STAT_CD_NM,
                             BSNS_DEPT_ID, IBIZ_DEPT_NM(BSNS_DEPT_ID) AS BSNS_DEPT_NM,
@@ -1071,7 +1071,7 @@
                             CHG_EMP_ID, IBIZ_EMP_NM(CHG_EMP_ID) AS CHG_EMP_NM, CHG_DT, E.SORT_SEQC
                         FROM BPRJ000T A
                         LEFT JOIN (SELECT PRJT_ID, LAST_CUST_ID, PRJT_TYPE_CD, BEXC_START_DATE, BEXC_END_DATE, SLS_DEPT_ID, SLS_EMP_ID, PRJT_STAT_CD FROM APRJ000T) B ON A.PRJT_ID = B.PRJT_ID
-                        LEFT JOIN (SELECT PRJT_ID, SEQ, BSNS_RPRT_START_DATE, BSNS_RPRT_END_DATE, RPRT_YN FROM BPRJ010T) D ON A.PRJT_ID = D.PRJT_ID AND A.SEQ = D.SEQ
+                        LEFT JOIN (SELECT PRJT_ID, SEQ, BSNS_RPRT_START_DATE, BSNS_RPRT_END_DATE, RPRT_YN, BSNS_PRGS_STAT_CD FROM BPRJ010T) D ON A.PRJT_ID = D.PRJT_ID AND A.SEQ = D.SEQ
                         LEFT JOIN (SELECT COM_CD, COM_CD_NM, SORT_SEQC FROM ACOM010T WHERE COM_GRP_CD = (SELECT COM_GRP_CD FROM ACOM020T WHERE CLMN_NM = 'BSNS_PRGS_STAT_CD' )) E ON A.BSNS_PRGS_STAT_CD = E.COM_CD
                         WHERE 1= 1
                             <if test="prjtId != null and prjtId != ''">
@@ -1114,12 +1114,12 @@
                             </if>
                             <if test="startDate != null and startDate != ''">
                                 <![CDATA[
-                                         AND ( BSNS_RPRT_START_DATE >= #{startDate} OR BSNS_RPRT_END_DATE >= #{startDate} ) --★ 보고기간
+                                         AND ( BSNS_RPRT_START_DATE >= #{startDate} OR BSNS_RPRT_END_DATE >= #{startDate} OR (D.BSNS_PRGS_STAT_CD = 'H' AND RPRT_YN = 'Y') ) --★ 보고기간
                                     ]]>
                             </if>
                             <if test="endDate != null and endDate != ''">
                                 <![CDATA[
-                                         AND ( BSNS_RPRT_START_DATE <= #{endDate} OR BSNS_RPRT_END_DATE <= #{endDate}) --★ 보고기간
+                                         AND ( BSNS_RPRT_START_DATE <= #{endDate} OR BSNS_RPRT_END_DATE <= #{endDate} OR (D.BSNS_PRGS_STAT_CD = 'H' AND RPRT_YN = 'Y') ) --★ 보고기간
                                     ]]>
                             </if>
                         <choose>
@@ -1159,12 +1159,12 @@
         </if>
         <if test="startDate != null and startDate != ''">
             <![CDATA[
-                    AND ( BSNS_RPRT_START_DATE >= #{startDate} OR BSNS_RPRT_END_DATE >= #{startDate} )
+                    AND ( BSNS_RPRT_START_DATE >= #{startDate} OR BSNS_RPRT_END_DATE >= #{startDate}  OR (BSNS_PRGS_STAT_CD = 'H' AND RPRT_YN = 'Y') )
                 ]]>
         </if>
         <if test="endDate != null and endDate != ''">
             <![CDATA[
-                    AND ( BSNS_RPRT_START_DATE <= #{endDate} OR BSNS_RPRT_END_DATE <= #{endDate})
+                    AND ( BSNS_RPRT_START_DATE <= #{endDate} OR BSNS_RPRT_END_DATE <= #{endDate}  OR (BSNS_PRGS_STAT_CD = 'H' AND RPRT_YN = 'Y') )
                 ]]>
         </if>
             AND UPPER(PRJT_ID) = UPPER(#{prjtId})
@@ -1179,6 +1179,7 @@
         SELECT DISTINCT PRJT_ID, IBIZ_PRJT_NM(PRJT_ID) AS PRJT_NM, SEQ,
             BSNS_DEPT_ID, IBIZ_DEPT_NM(BSNS_DEPT_ID) AS BSNS_DEPT_NM,
             BSNS_EMP_ID, IBIZ_EMP_NM(BSNS_EMP_ID) AS BSNS_EMP_NM,
+            BEXC_START_DATE, BEXC_END_DATE,
             BSNS_PRGS_STAT_CD, IBIZ_COM_CD_NM('BSNS_PRGS_STAT_CD', BSNS_PRGS_STAT_CD) AS BSNS_PRGS_STAT_CD_NM,
             REG_EMP_ID, IBIZ_EMP_NM(REG_EMP_ID) AS REG_EMP_NM, REG_DT,
             CHG_EMP_ID, IBIZ_EMP_NM(CHG_EMP_ID) AS CHG_EMP_NM, CHG_DT
@@ -1238,6 +1239,8 @@
             SEQ,
             BSNS_DEPT_ID,
             BSNS_EMP_ID,
+            BEXC_START_DATE,
+            BEXC_END_DATE,
             BSNS_PRGS_STAT_CD,
             REG_EMP_ID,
             REG_DT,
@@ -1249,6 +1252,8 @@
             #{seq},
             #{bsnsDeptId},
             #{bsnsEmpId},
+            #{bexcStartDate},
+            #{bexcEndDate},
             #{bsnsPrgsStatCd},
             #{regEmpId},
             SYSDATE,
@@ -1312,6 +1317,8 @@
         UPDATE BPRJ000T
         SET BSNS_DEPT_ID = #{bsnsDeptId},
             BSNS_EMP_ID = #{bsnsEmpId},
+            BEXC_START_DATE = #{bexcStartDate},
+            BEXC_END_DATE = #{bexcEndDate},
             BSNS_PRGS_STAT_CD = #{bsnsPrgsStatCd},
             CHG_EMP_ID = #{chgEmpId},
             CHG_DT = SYSDATE
