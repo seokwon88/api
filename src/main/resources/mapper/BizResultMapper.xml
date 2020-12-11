@@ -1150,7 +1150,7 @@
     <select id="selectBizPrjtRprtBkdnList"
             parameterType="com.ibiz.api.model.BizProjectInfoVO"
             resultType="com.ibiz.api.model.BizProjectReportVO">
-        SELECT DISTINCT PRJT_ID, SEQ, BSNS_RPRT_START_DATE, BSNS_RPRT_END_DATE, RPRT_YN, RPRT_CONT,
+        SELECT PRJT_ID, SEQ, BSNS_RPRT_START_DATE, BSNS_RPRT_END_DATE, RPRT_YN, RPRT_CONT,
             BSNS_PRGS_STAT_CD, IBIZ_COM_CD_NM('BSNS_PRGS_STAT_CD', BSNS_PRGS_STAT_CD) AS BSNS_PRGS_STAT_CD_NM,
             CHG_EMP_ID, IBIZ_EMP_NM(CHG_EMP_ID) AS CHG_EMP_NM, CHG_DT
         FROM BPRJ010T
