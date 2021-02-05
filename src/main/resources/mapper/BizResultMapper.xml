@@ -577,8 +577,8 @@
             SUM(Q.SELL_AMT) AS OPPTY_SELL_RSL_AMT, -- 매출금액_기회전체
             SUM(Q.BUY_AMT) AS OPPTY_BUY_RSL_AMT, -- 매입금액_기회전체
             <![CDATA[
-               SUM(CASE WHEN P.BOPT_STAT_CD='E' AND Q.FCST_YAM<=#{fcstYam} THEN Q.SELL_AMT ELSE 0 END) AS ACML_SELL_RSL_AMT, -- 매출금액_누적실적
-               SUM(CASE WHEN P.BOPT_STAT_CD='E' AND Q.FCST_YAM<=#{fcstYam} THEN Q.BUY_AMT ELSE 0 END) AS ACML_BUY_RSL_AMT, -- 매입금액_누적실적
+               SUM(CASE WHEN P.BOPT_STAT_CD='E' AND Q.FCST_YAM<=#{toDate} THEN Q.SELL_AMT ELSE 0 END) AS ACML_SELL_RSL_AMT, -- 매출금액_누적실적
+               SUM(CASE WHEN P.BOPT_STAT_CD='E' AND Q.FCST_YAM<=#{toDate} THEN Q.BUY_AMT ELSE 0 END) AS ACML_BUY_RSL_AMT, -- 매입금액_누적실적
 
             ]]>
             (SELECT COUNT(BSNS_ISSUE_ID)
