@@ -53,7 +53,8 @@
                        END AS RSDN_FCST_RSL_AMT -- 잔여_예상(확률적용)
                 ]]>
                 -- ★★Comma 이동 END (반영 후 지울 것)
-                FROM BRST120V RV,
+                FROM BRST120V_VER2 --실시간 매출매입 반영 VIEW
+                --FROM BRST120V RV,
                 ( SELECT DEPT_SEQC, DEPT_ID, DEPT_NM, -- DEPT_LVL, HGRK_DEPT_ID
                     C.BRSL_SEQC, C.BRSL_DST_CD, C.BRSL_DTL_DST_CD, -- 사업실적구분코드, 사업실적상세구분코드
                     <![CDATA[
