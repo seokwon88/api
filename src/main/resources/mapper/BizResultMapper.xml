@@ -53,7 +53,7 @@
                        END AS RSDN_FCST_RSL_AMT -- 잔여_예상(확률적용)
                 ]]>
                 -- ★★Comma 이동 END (반영 후 지울 것)
-                FROM BRST120V_VER2 --실시간 매출매입 반영 VIEW
+                FROM BRST120V_VER2 RV, --실시간 매출매입 반영 VIEW
                 --FROM BRST120V RV,
                 ( SELECT DEPT_SEQC, DEPT_ID, DEPT_NM, -- DEPT_LVL, HGRK_DEPT_ID
                     C.BRSL_SEQC, C.BRSL_DST_CD, C.BRSL_DTL_DST_CD, -- 사업실적구분코드, 사업실적상세구분코드
@@ -151,12 +151,13 @@
                        END AS RSDN_FCST_RSL_AMT -- 잔여_예상(확률적용)
                 ]]>
         -- ★★Comma 이동 END (반영 후 지울 것)
-                  FROM BRST130V RV,
+                  --FROM BRST130V RV,
+                    FROM BRST130V_VER2 RV,
                       ( SELECT H3.DEPT_ID, H3.DEPT_NM, H3.DEPT_SEQC, H3.EMP_ID,
                                BRSL_SEQC, BRSL_DST_CD, BRSL_DST_CD_NM, BRSL_DTL_DST_CD, BRSL_DTL_DST_CD_NM -- 사업실적구분코드, 사업실적상세구분코드
                           FROM
                               ( SELECT P.DEPT_ID, H.DEPT_NM, H.DEPT_SEQC, P.EMP_ID --, BSNS_CLSF_CD, BRSL_DTL_DST_CD, RSL_AMT
-                                  FROM BRST130V P,
+                                  FROM BRST130T P,
                                       ( SELECT ROWNUM AS DEPT_SEQC, DEPT_ID, DEPT_NM --▶, ORG_CRT_DATE, ORG_CLOSE_DATE
                                           FROM HMST110T A
                                          WHERE (SELL_OCR_YN = 'Y' AND DEPT_LVL_CD = '5') -- 영업팀
@@ -204,7 +205,7 @@
         WITH
         RV AS (
             SELECT CRIT_YAM, BSNS_CLSF_CD, BRSL_DTL_DST_CD, RSL_AMT
-              FROM BRST120V
+              FROM BRST120V_VER2
              WHERE SUBSTR(CRIT_YAM,1,4) = #{critYear}  -- ★조회조건 기준연도
                AND DEPT_ID IN (SELECT DEPT_ID FROM HMST110T
                                 WHERE SELL_OCR_YN = 'Y' -- 매출발생부서
@@ -320,7 +321,7 @@
                  ]]>
                 FROM
                 ( SELECT CRIT_YAM, BSNS_CLSF_CD, PROD_DST_CD, BRSL_DTL_DST_CD, RSL_AMT
-                    FROM BRST120V
+                    FROM BRST120V_VER2
                     WHERE SUBSTR(CRIT_YAM,1,4) = #{critYear}  -- ★조회조건: 기준연도
                     <if test='bsnsClsfCd != "" and bsnsClsfCd != null '>
                     AND BSNS_CLSF_CD = #{bsnsClsfCd} --★조회조건: 사업분류코드(택1) --◀2020-02-24
