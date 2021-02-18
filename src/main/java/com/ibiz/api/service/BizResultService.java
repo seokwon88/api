@@ -384,4 +384,17 @@ public class BizResultService {
         return bizProjectInfoVO;
     }
 
+    //실적상세리스트
+    @Transactional
+    public List<SalesReportVO> selectSalesRealReportDetailList(Payload<BusinessResultSearchVO> requestPayload) throws Exception {
+        log.info("Call Service : " + this.getClass().getName() + ".selectSalesRealReportDetailList");
+        BusinessResultSearchVO businessResultSearchVO = requestPayload.getDto();
+
+        List<SalesReportVO> list = new ArrayList<>();
+
+        list = bizResultDAO.selectSalesRealReportDetailList(businessResultSearchVO);
+
+        return list;
+    }
+
 }

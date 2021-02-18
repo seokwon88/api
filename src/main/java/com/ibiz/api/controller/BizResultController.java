@@ -197,5 +197,13 @@ public class BizResultController extends BaseController {
         return super.composePayload(new Payload<BizProjectInfoVO>(bizResultService.deleteBizPrjtInfo(requestPayload)));
     }
 
+    //ERP상세리스트
+    @PostMapping("/selectSalesRealReportDetailList")
+    public ResponseEntity<String> selectSalesRealReportDetailList(@RequestParam("payload") String payload) throws Exception {
+        log.info("Call Controller : " + this.getClass().getName() + ".selectSalesRealReportDetailList");
+        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<BusinessResultSearchVO>>(){});
+
+        return super.composePayload(new Payload<List>(bizResultService.selectSalesRealReportDetailList(requestPayload)));
+    }
 
 }

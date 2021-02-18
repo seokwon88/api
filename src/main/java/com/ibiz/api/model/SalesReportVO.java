@@ -256,6 +256,32 @@ public class SalesReportVO {
     // 매입금액 누적실적 총액
     private long totalAcmlBuyRslAmt;
 
+    /**
+     * 사업부문
+     */
+    private String bsnsCfsfCd;
+
+    /**
+     * 상품구분
+     */
+    private String prodDstCdNm;
+
+    public String getProdDstCdNm() {
+        return prodDstCdNm;
+    }
+
+    public void setProdDstCdNm(String prodDstCdNm) {
+        this.prodDstCdNm = prodDstCdNm;
+    }
+
+    public String getBsnsCfsfCd() {
+        return bsnsCfsfCd;
+    }
+
+    public void setBsnsCfsfCd(String bsnsCfsfCd) {
+        this.bsnsCfsfCd = bsnsCfsfCd;
+    }
+
     public String getBoptId() {
         return boptId;
     }
