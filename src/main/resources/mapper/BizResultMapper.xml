@@ -1208,6 +1208,9 @@
             parameterType="com.ibiz.api.model.BusinessResultSearchVO"
             resultType="com.ibiz.api.model.SalesReportVO">
 
+
+            SELECT * FROM (
+            SELECT COUNT(1) OVER() AS TOTAL_CNT, ROWNUM AS ROWNUMBER, T.* FROM (
             SELECT *
             FROM
                 (
@@ -1218,13 +1221,15 @@
                     ,A.EMP_ID
                     ,A.EMP_NM
                     ,A.PRJT_ID
-                    ,PRJT_NM
+                    ,A.PRJT_NM
                     ,A.FCST_PAL_ID
                     ,A.BSNS_CLSF_CD
                     ,C.HGRK_COM_CD AS PROD_DST_CD
                     ,IBIZ_COM_CD_NM('PROD_DST_CD',C.HGRK_COM_CD) PROD_DST_CD_NM
                     ,SUBSTR(B.P_TYPE,1,2) AS PROD_TYPE_CD
                     ,SUBSTR(B.P_TYPE,2,2) AS GODS_CLSF_CD
+                    ,PRJT.LAST_CUST_ID,CUST.CUST_NM AS LAST_CUST_NM
+                    ,PRJT_TYPE_CD
                     ,ROUND(DECODE(B.RATE,NULL,A.SELL_AMT, A.SELL_AMT*B.RATE),0) AS SELL_RSL_AMT
                     ,ROUND(DECODE(B.BUY_RATE,NULL,A.BUY_AMT, A.BUY_AMT*B.BUY_RATE),0) AS BUY_RSL_AMT
                 FROM (
@@ -1269,26 +1274,31 @@
                     LEFT JOIN TT000V B
                     ON A.FCST_PAL_ID = B.FCST_PAL_ID
                     WHERE SELL_AMT/SUM_AMT IS NOT NULL
-                    --AND A.FCST_PAL_ID='2020000030'
 
                 )B
                 ON A.FCST_PAL_ID = B.FCST_PAL_ID
                 LEFT JOIN (SELECT * FROM ACOM010T WHERE COM_GRP_CD = 'PM04')C
                 ON SUBSTR(B.P_TYPE,1,2) = C.COM_CD
-                WHERE A.SELL_AMT IS NOT NULL
+                LEFT JOIN APRJ000T PRJT
+                ON A.PRJT_ID = PRJT.PRJT_ID
+                LEFT JOIN CMST000T CUST
+                ON PRJT.LAST_CUST_ID = CUST.CUST_ID
+
 
                 UNION ALL
 
                 --현재달은 이걸로 픽스
-                SELECT A.CRIT_YAM ,A.BLTO_DEPT_ID AS DEPT_ID ,DEPT_NM ,A.SLS_EMP_ID AS EMP_ID ,EMP_NM,PRJT_ID,PRJT_NM
+
+                --현재달은 이걸로 픽스
+                SELECT A.CRIT_YAM ,A.BLTO_DEPT_ID AS DEPT_ID ,DEPT_NM ,A.SLS_EMP_ID AS EMP_ID ,A.EMP_NM,A.PRJT_ID,A.PRJT_NM
                     ,A.FCST_PAL_ID,A.BSNS_CLSF_CD,C.HGRK_COM_CD AS PROD_DST_CD,IBIZ_COM_CD_NM('PROD_DST_CD',C.HGRK_COM_CD) PROD_DST_CD_NM
-                    ,SUBSTR(B.P_TYPE,1,2) AS PROD_TYPE_CD,SUBSTR(B.P_TYPE,2,2) AS GODS_CLSF_CD
+                    ,SUBSTR(B.P_TYPE,1,2) AS PROD_TYPE_CD,SUBSTR(B.P_TYPE,2,2) AS GODS_CLSF_CD,A.LAST_CUST_ID,CUST.CUST_NM AS LAST_CUST_NM, PRJT.PRJT_TYPE_CD
                     ,ROUND(DECODE(B.RATE,NULL,A.SELL_AMT, A.SELL_AMT*B.RATE),0) AS SELL_AMT
                     ,ROUND(DECODE(B.BUY_RATE,NULL,A.BUY_AMT, A.BUY_AMT*B.BUY_RATE),0) AS BUY_AMT
                 FROM (
 
                     SELECT
-                        A.CRIT_YAM,FCST_PAL_ID,BLTO_DEPT_ID,DEPT_NM,BSNS_CLSF_CD,SUM(SELL_AMT)AS SELL_AMT,SUM(BUY_AMT) AS BUY_AMT,SLS_EMP_ID,EMP_NM,PRJT_ID,PRJT_NM
+                        A.CRIT_YAM,FCST_PAL_ID,BLTO_DEPT_ID,DEPT_NM,BSNS_CLSF_CD,SUM(SELL_AMT)AS SELL_AMT,SUM(BUY_AMT) AS BUY_AMT,SLS_EMP_ID,EMP_NM,PRJT_ID,PRJT_NM,A.LAST_CUST_ID
                     FROM
                     (
                         SELECT
@@ -1301,6 +1311,7 @@
                             ,F.SLS_EMP_ID
                             ,EMP_NM
                             ,C.BSNS_CLSF_CD
+                            ,F.LAST_CUST_ID
                             ,CASE WHEN E.MAAC_PROFIT = 'PROF0001' THEN  SUM(NVL(RSL_AMT,0)) END AS SELL_AMT
                             ,CASE WHEN E.MAAC_PROFIT IN ('PROF0002','PROF0003','PROF0004','PROF0005') THEN  SUM(NVL(RSL_AMT,0)) END AS BUY_AMT
                         FROM SSIF530T A
@@ -1320,13 +1331,13 @@
                         ON F.SLS_EMP_ID = H.EMP_ID
 
                         WHERE 1=1
-                    <![CDATA[
-                        AND A.SND_DATE = (SELECT MAX(SND_DATE) FROM SSIF530T WHERE CRIT_YEAR = A.CRIT_YEAR AND CRIT_MONTH = A.CRIT_MONTH )
-                        AND A.CRIT_YEAR||A.CRIT_MONTH = TO_CHAR(SYSDATE,'YYYYMM')
-                    ]]>
-                        GROUP BY A.CRIT_YEAR||A.CRIT_MONTH ,F.SLS_DEPT_ID,C.BSNS_CLSF_CD, MAAC_PROFIT,FCST_PAL_ID,DEPT_NM,F.SLS_EMP_ID,EMP_NM,F.PRJT_ID,F.PRJT_NM
+                        <![CDATA[
+                            AND A.SND_DATE = (SELECT MAX(SND_DATE) FROM SSIF530T WHERE CRIT_YEAR = A.CRIT_YEAR AND CRIT_MONTH = A.CRIT_MONTH )
+                            AND A.CRIT_YEAR||A.CRIT_MONTH = TO_CHAR(SYSDATE,'YYYYMM')
+                        ]]>
+                        GROUP BY A.CRIT_YEAR||A.CRIT_MONTH ,F.SLS_DEPT_ID,C.BSNS_CLSF_CD, MAAC_PROFIT,FCST_PAL_ID,DEPT_NM,F.SLS_EMP_ID,EMP_NM,F.PRJT_ID,F.PRJT_NM ,F.LAST_CUST_ID
                     )A
-                    GROUP BY A.CRIT_YAM,FCST_PAL_ID,BLTO_DEPT_ID,BSNS_CLSF_CD,DEPT_NM,SLS_EMP_ID,EMP_NM,PRJT_ID,PRJT_NM
+                    GROUP BY A.CRIT_YAM,FCST_PAL_ID,BLTO_DEPT_ID,BSNS_CLSF_CD,DEPT_NM,SLS_EMP_ID,EMP_NM,PRJT_ID,PRJT_NM,A.LAST_CUST_ID
                 )A
                 LEFT JOIN
                 (
@@ -1342,10 +1353,15 @@
                     LEFT JOIN TT000V B
                     ON A.FCST_PAL_ID = B.FCST_PAL_ID
                     WHERE SELL_AMT/SUM_AMT IS NOT NULL
+                    --AND A.FCST_PAL_ID='2020000030'
                 )B
                 ON A.FCST_PAL_ID = B.FCST_PAL_ID
                 LEFT JOIN (SELECT * FROM ACOM010T WHERE COM_GRP_CD = 'PM04')C
                 ON SUBSTR(B.P_TYPE,1,2) = C.COM_CD
+                LEFT JOIN CMST000T CUST
+                ON A.LAST_CUST_ID = CUST.CUST_ID
+                LEFT JOIN APRJ000T PRJT
+                ON A.PRJT_ID = PRJT.PRJT_ID
             )A
             WHERE 1=1
             AND SELL_CRIT_YAM BETWEEN #{fromDate} AND #{toDate} -- 조회조건_기간-- 조회조건_기간
@@ -1378,6 +1394,28 @@
             <if test='prjtTypeCd != null and prjtTypeCd != "" '>
                 AND A.PRJT_TYPE_CD = #{prjtTypeCd}
             </if>
+
+                <if test='orderTypeCd == "CP" or ( orderTypeCd == null)'>
+                    ORDER BY LAST_CUST_NM, PRJT_NM--, CNTR_DATE  -- 정렬기준: 고객명+프로젝트명
+                </if>
+                <if test='orderTypeCd == "SD" '>
+                    ORDER BY SELL_CRIT_YAM, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 발생시기
+                </if>
+
+                <if test='orderTypeCd == "RA" '>
+                    <if test='brslDstCd == "B" '>
+                        ORDER BY SELL_RSL_AMT DESC, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 실적금액(매출)
+                    </if>
+                    <if test='brslDstCd == "C" '>
+                        ORDER BY BUY_RSL_AMT DESC, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 실적금액(매입)
+                    </if>
+                </if>
+
+                ) T
+            ) S
+            WHERE ROWNUMBER BETWEEN #{pageSize} * (#{pageNumber} - 1) + 1
+            AND #{pageSize} * (#{pageNumber} - 1) + #{pageSize}
+
 
     </select>
 
