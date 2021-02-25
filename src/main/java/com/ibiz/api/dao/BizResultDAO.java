@@ -76,10 +76,16 @@ public class BizResultDAO {
         return mybatis.selectList( "BizResultMapper.selectCritYearList");
     }
 
-    // erp실적상세조회
+    // erp실적 매출매입 상세조회
     public List<SalesReportVO> selectSalesRealReportDetailList(BusinessResultSearchVO businessResultSearchVO) {
         return mybatis.selectList( "BizResultMapper.selectSalesRealReportDetailList", businessResultSearchVO);
     }
+
+    // erp실적 수주 상세조회
+    public List<SalesReportVO> selectSalesRealWCTReportDetailList(BusinessResultSearchVO businessResultSearchVO) {
+        return mybatis.selectList( "BizResultMapper.selectSalesRealWCTReportDetailList", businessResultSearchVO);
+    }
+
 
     //월간보고서상세내역 조회
     public MonthlyWorkVO selectMonthlyWork(MonthlyWorkVO monthlyWorkVO) {

@@ -266,6 +266,9 @@ public class SalesReportVO {
      */
     private String prodDstCdNm;
 
+    // 수주(계약)금액
+    private long cntrAmt;
+
     public String getProdDstCdNm() {
         return prodDstCdNm;
     }
@@ -728,5 +731,13 @@ public class SalesReportVO {
 
     public void setTotalAcmlBuyRslAmt(long totalAcmlBuyRslAmt) {
         this.totalAcmlBuyRslAmt = totalAcmlBuyRslAmt;
+    }
+
+    public long getCntrAmt() {
+        return cntrAmt;
+    }
+
+    public void setCntrAmt(long cntrAmt) {
+        this.cntrAmt = cntrAmt;
     }
 }

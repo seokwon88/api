@@ -1203,7 +1203,7 @@
     </select>
 
 
-    <!-- ERP 실적조회 -->
+    <!-- ERP 실적 매출매입 조회 -->
     <select id="selectSalesRealReportDetailList"
             parameterType="com.ibiz.api.model.BusinessResultSearchVO"
             resultType="com.ibiz.api.model.SalesReportVO">
@@ -1353,7 +1353,6 @@
                     LEFT JOIN TT000V B
                     ON A.FCST_PAL_ID = B.FCST_PAL_ID
                     WHERE SELL_AMT/SUM_AMT IS NOT NULL
-                    --AND A.FCST_PAL_ID='2020000030'
                 )B
                 ON A.FCST_PAL_ID = B.FCST_PAL_ID
                 LEFT JOIN (SELECT * FROM ACOM010T WHERE COM_GRP_CD = 'PM04')C
@@ -1418,6 +1417,105 @@
 
 
     </select>
+
+
+
+    <!-- ERP 실적 수주 조회 -->
+    <select id="selectSalesRealWCTReportDetailList"
+            parameterType="com.ibiz.api.model.BusinessResultSearchVO"
+            resultType="com.ibiz.api.model.SalesReportVO">
+
+        SELECT * FROM (
+        SELECT COUNT(1) OVER() AS TOTAL_CNT, ROWNUM AS ROWNUMBER, T.* FROM (
+        SELECT *
+        FROM
+                (
+            SELECT SUBSTR(CNTR_DATE ,1,6) AS SELL_CRIT_YAM, C.BLTO_DEPT_ID AS SLS_DEPT_ID,DEPT.DEPT_NM,PRJT.SLS_EMP_ID,EMP.EMP_NM
+                    ,CNTR_ID
+                    ,A.PRJT_ID
+                    ,PRJT.PRJT_NM
+                    ,PRJT.PRJT_TYPE_CD
+                    ,A.FCST_PAL_ID
+                    ,'R1' BPLN_DST_CD -- R1.사업실적
+                    ,'AR' BRSL_DTL_DST_CD -- AR.수주실적
+                    ,BSNS_CLSF_CD
+                    ,F.HGRK_COM_CD AS PROD_DST_CD
+                    ,IBIZ_COM_CD_NM('PROD_DST_CD',F.HGRK_COM_CD) PROD_DST_CD_NM
+                    ,SUBSTR(E.P_TYPE,1,2) AS PROD_TYPE_CD
+                    ,SUBSTR(E.P_TYPE,2,2) AS GODS_CLSF_CD
+                    ,PRJT.LAST_CUST_ID,CUST.CUST_NM AS LAST_CUST_NM
+                    ,ROUND(DECODE(E.RATE,NULL,A.CNTR_AMT, A.CNTR_AMT*E.RATE),0) AS CNTR_AMT
+            FROM WMST000T A
+            LEFT JOIN APRJ000T B
+            ON A.PRJT_ID = B.PRJT_ID
+            LEFT JOIN HMST300T C
+            ON B.SLS_EMP_ID = C.EMP_ID
+            LEFT JOIN APRJ000T PRJT
+            ON A.PRJT_ID = PRJT.PRJT_ID
+            LEFT JOIN HMST300T EMP
+            ON A.SLS_EMP_ID = EMP.EMP_ID
+            LEFT JOIN HMST100T DEPT
+            ON EMP.BLTO_DEPT_ID = DEPT.DEPT_ID
+            LEFT JOIN (SELECT
+                B.FCST_PAL_ID,
+                B.P_TYPE,
+                SELL_AMT/SUM_AMT AS RATE,
+                DECODE(SUM_BUY_AMT,NVL(NULL,0),0,BUY_AMT/SUM_BUY_AMT) AS BUY_RATE
+            FROM (
+            SELECT FCST_PAL_ID,SUM(SELL_AMT) AS SUM_AMT,SUM(BUY_AMT) AS SUM_BUY_AMT
+            FROM TT000V GROUP BY FCST_PAL_ID
+            )A
+            LEFT JOIN TT000V B
+            ON A.FCST_PAL_ID = B.FCST_PAL_ID
+             WHERE SELL_AMT/SUM_AMT IS NOT NULL
+            )E
+            ON A.FCST_PAL_ID = E.FCST_PAL_ID
+            LEFT JOIN (SELECT * FROM ACOM010T WHERE COM_GRP_CD = 'PM04')F
+            ON SUBSTR(E.P_TYPE,1,2) = F.COM_CD
+            LEFT JOIN CMST000T CUST
+            ON PRJT.LAST_CUST_ID = CUST.CUST_ID
+        )A
+        WHERE 1=1
+        AND SELL_CRIT_YAM BETWEEN #{fromDate} AND #{toDate} -- 조회조건_기간
+        <if test='bsnsClsfCd != null and bsnsClsfCd != "" '>
+            AND BSNS_CLSF_CD = #{bsnsClsfCd} -- 조회조건_사업분류
+        </if>
+        <if test='slsEmpId != null'>
+            AND EMP_ID = #{slsEmpId} -- 조회조건_영업대표
+        </if>
+        <if test='slsDeptId != null and slsDeptId != "" '>
+        AND A.SLS_DEPT_ID  in (
+                                SELECT DEPT_ID FROM HMST110T
+                                WHERE SELL_OCR_YN = 'Y' -- 매출발생부서
+                                <![CDATA[
+                                        AND SUBSTR(ORG_CLOSE_DATE,1,4) >= #{critYear}
+                                ]]>
+                                AND CRIT_YEAR = #{critYear}
+                                START WITH
+                                DEPT_ID = #{slsDeptId}
+                                CONNECT BY
+                                PRIOR DEPT_ID = HGRK_DEPT_ID
+        )    -- 조회조건_영업부서
+        </if>
+        <if test='prjtTypeCd != null and prjtTypeCd != "" '>
+            AND A.PRJT_TYPE_CD = #{prjtTypeCd}
+        </if>
+
+                <if test='orderTypeCd == "CP" or ( orderTypeCd == null)'>
+                    ORDER BY LAST_CUST_NM, PRJT_NM  -- 정렬기준: 고객명+프로젝트명
+                </if>
+                <if test='orderTypeCd == "SD" '>
+                    ORDER BY SELL_CRIT_YAM, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 발생시기
+                </if>
+
+        ) T
+        ) S
+        WHERE ROWNUMBER BETWEEN #{pageSize} * (#{pageNumber} - 1) + 1
+        AND #{pageSize} * (#{pageNumber} - 1) + #{pageSize}
+
+
+    </select>
+
 
     <!--
 

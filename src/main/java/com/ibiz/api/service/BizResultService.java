@@ -392,7 +392,11 @@ public class BizResultService {
 
         List<SalesReportVO> list = new ArrayList<>();
 
-        list = bizResultDAO.selectSalesRealReportDetailList(businessResultSearchVO);
+        if(businessResultSearchVO.getBrslDstCd().equals("A")){
+            list = bizResultDAO.selectSalesRealWCTReportDetailList(businessResultSearchVO);
+        }else if(businessResultSearchVO.getBrslDstCd().equals("B") || businessResultSearchVO.getBrslDstCd().equals("C")){
+            list = bizResultDAO.selectSalesRealReportDetailList(businessResultSearchVO);
+        }
 
         return list;
     }
