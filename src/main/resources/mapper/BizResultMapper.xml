@@ -1381,7 +1381,7 @@
                                     SELECT DEPT_ID FROM HMST110T
                                     WHERE SELL_OCR_YN = 'Y' -- 매출발생부서
                                     <![CDATA[
-                                            AND SUBSTR(ORG_CLOSE_DATE,1,4) >= '2021'
+                                            AND SUBSTR(ORG_CLOSE_DATE,1,4) >= #{critYear}
                                     ]]>
                                     AND CRIT_YEAR = #{critYear}
                                     START WITH
