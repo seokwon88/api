@@ -1370,6 +1370,9 @@
             <if test='brslDstCd == "C" '>
                 AND BUY_RSL_AMT IS NOT NULL --매입
             </if>
+            <if test='prodDstCd != null and prodDstCd != "" '>
+                AND PROD_DST_CD = #{prodDstCd} -- 조회조건_상품구분
+            </if>
             <if test='bsnsClsfCd != null and bsnsClsfCd != "" '>
                 AND BSNS_CLSF_CD = #{bsnsClsfCd} -- 조회조건_사업분류
             </if>
@@ -1477,6 +1480,9 @@
         )A
         WHERE 1=1
         AND SELL_CRIT_YAM BETWEEN #{fromDate} AND #{toDate} -- 조회조건_기간
+        <if test='prodDstCd != null and prodDstCd != "" '>
+            AND PROD_DST_CD = #{prodDstCd} -- 조회조건_상품구분
+        </if>
         <if test='bsnsClsfCd != null and bsnsClsfCd != "" '>
             AND BSNS_CLSF_CD = #{bsnsClsfCd} -- 조회조건_사업분류
         </if>
