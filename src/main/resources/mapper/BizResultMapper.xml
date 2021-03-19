@@ -1223,6 +1223,7 @@
                     ,A.PRJT_ID
                     ,A.PRJT_NM
                     ,A.FCST_PAL_ID
+                    ,A.WCT_ID
                     ,A.BSNS_CLSF_CD
                     ,C.HGRK_COM_CD AS PROD_DST_CD
                     ,IBIZ_COM_CD_NM('PROD_DST_CD',C.HGRK_COM_CD) PROD_DST_CD_NM
@@ -1234,13 +1235,14 @@
                     ,ROUND(DECODE(B.BUY_RATE,NULL,A.BUY_AMT, A.BUY_AMT*B.BUY_RATE),0) AS BUY_RSL_AMT
                 FROM (
                         SELECT
-                            A.PRJT_ID,PRJT_NM,A.EMP_ID,A.EMP_NM,A.CRIT_YAM,FCST_PAL_ID,BLTO_DEPT_ID,BSNS_CLSF_CD,SUM(SELL_AMT)AS SELL_AMT,SUM(BUY_AMT) AS BUY_AMT,DEPT_NM
+                            A.PRJT_ID,PRJT_NM,A.EMP_ID,A.EMP_NM,A.CRIT_YAM,FCST_PAL_ID,BLTO_DEPT_ID,BSNS_CLSF_CD,SUM(SELL_AMT)AS SELL_AMT,SUM(BUY_AMT) AS BUY_AMT,DEPT_NM, WCT_ID
                         FROM
                         (
                             SELECT
                                 a.CRIT_YEAR||A.CRIT_MONTH AS CRIT_YAM ,A.PRJT_ID,PRJT_NM,F.EMP_ID,F.EMP_NM,FCST_PAL_ID,F.DEPT_ID AS BLTO_DEPT_ID,F.DEPT_NM,C.BSNS_CLSF_CD
                                 ,CASE WHEN E.MAAC_PROFIT = 'PROF0001' THEN  SUM(NVL(RSL_AMT,0)) END AS SELL_AMT
                                 ,CASE WHEN E.MAAC_PROFIT IN ('PROF0002','PROF0003','PROF0004','PROF0005') THEN  SUM(NVL(RSL_AMT,0)) END AS BUY_AMT
+                                ,B.WCT_ID
                             FROM SSIF530T A
                             LEFT JOIN (
                                         SELECT DISTINCT CRIT_YEAR,CRIT_MONTH,PRJT_ID,PRJT_NM,EMP_ID,EMP_NM,DEPT_ID,DEPT_NM FROM GMST500T
@@ -1259,9 +1261,9 @@
                                 AND A.SND_DATE = (SELECT MAX(SND_DATE) FROM SSIF530T WHERE CRIT_YEAR = A.CRIT_YEAR AND CRIT_MONTH = A.CRIT_MONTH )
                                 AND A.CRIT_YEAR||A.CRIT_MONTH < TO_CHAR(SYSDATE,'YYYYMM')
                             ]]>
-                            GROUP BY A.CRIT_YEAR||A.CRIT_MONTH,F.DEPT_ID,C.BSNS_CLSF_CD,MAAC_PROFIT,FCST_PAL_ID,A.PRJT_ID,F.EMP_ID,F.EMP_NM,PRJT_NM,DEPT_NM
+                            GROUP BY A.CRIT_YEAR||A.CRIT_MONTH,F.DEPT_ID,C.BSNS_CLSF_CD,MAAC_PROFIT,FCST_PAL_ID,A.PRJT_ID, B.WCT_ID, F.EMP_ID,F.EMP_NM,PRJT_NM,DEPT_NM
                         )A
-                        GROUP BY A.CRIT_YAM,FCST_PAL_ID,BLTO_DEPT_ID,BSNS_CLSF_CD,A.PRJT_ID,A.EMP_ID,A.EMP_NM,PRJT_NM,DEPT_NM
+                        GROUP BY A.CRIT_YAM,FCST_PAL_ID,BLTO_DEPT_ID,BSNS_CLSF_CD,A.PRJT_ID,A.WCT_ID,A.EMP_ID,A.EMP_NM,PRJT_NM,DEPT_NM
                 )A
                 LEFT JOIN
                 (
@@ -1291,19 +1293,20 @@
 
                 --현재달은 이걸로 픽스
                 SELECT A.CRIT_YAM ,A.BLTO_DEPT_ID AS DEPT_ID ,DEPT_NM ,A.SLS_EMP_ID AS EMP_ID ,A.EMP_NM,A.PRJT_ID,A.PRJT_NM
-                    ,A.FCST_PAL_ID,A.BSNS_CLSF_CD,C.HGRK_COM_CD AS PROD_DST_CD,IBIZ_COM_CD_NM('PROD_DST_CD',C.HGRK_COM_CD) PROD_DST_CD_NM
+                    ,A.FCST_PAL_ID, WCT_ID, A.BSNS_CLSF_CD,C.HGRK_COM_CD AS PROD_DST_CD,IBIZ_COM_CD_NM('PROD_DST_CD',C.HGRK_COM_CD) PROD_DST_CD_NM
                     ,SUBSTR(B.P_TYPE,1,2) AS PROD_TYPE_CD,SUBSTR(B.P_TYPE,2,2) AS GODS_CLSF_CD,A.LAST_CUST_ID,CUST.CUST_NM AS LAST_CUST_NM, PRJT.PRJT_TYPE_CD
                     ,ROUND(DECODE(B.RATE,NULL,A.SELL_AMT, A.SELL_AMT*B.RATE),0) AS SELL_AMT
                     ,ROUND(DECODE(B.BUY_RATE,NULL,A.BUY_AMT, A.BUY_AMT*B.BUY_RATE),0) AS BUY_AMT
                 FROM (
 
                     SELECT
-                        A.CRIT_YAM,FCST_PAL_ID,BLTO_DEPT_ID,DEPT_NM,BSNS_CLSF_CD,SUM(SELL_AMT)AS SELL_AMT,SUM(BUY_AMT) AS BUY_AMT,SLS_EMP_ID,EMP_NM,PRJT_ID,PRJT_NM,A.LAST_CUST_ID
+                        A.CRIT_YAM,FCST_PAL_ID,BLTO_DEPT_ID,DEPT_NM,BSNS_CLSF_CD,SUM(SELL_AMT)AS SELL_AMT,SUM(BUY_AMT) AS BUY_AMT,SLS_EMP_ID,EMP_NM,PRJT_ID,PRJT_NM,A.LAST_CUST_ID, WCT_ID
                     FROM
                     (
                         SELECT
                             a.CRIT_YEAR||A.CRIT_MONTH AS CRIT_YAM
                             ,FCST_PAL_ID
+                            ,B.WCT_ID
                             ,F.SLS_DEPT_ID AS BLTO_DEPT_ID
                             ,DEPT_NM
                             ,F.PRJT_ID
@@ -1335,9 +1338,9 @@
                             AND A.SND_DATE = (SELECT MAX(SND_DATE) FROM SSIF530T WHERE CRIT_YEAR = A.CRIT_YEAR AND CRIT_MONTH = A.CRIT_MONTH )
                             AND A.CRIT_YEAR||A.CRIT_MONTH = TO_CHAR(SYSDATE,'YYYYMM')
                         ]]>
-                        GROUP BY A.CRIT_YEAR||A.CRIT_MONTH ,F.SLS_DEPT_ID,C.BSNS_CLSF_CD, MAAC_PROFIT,FCST_PAL_ID,DEPT_NM,F.SLS_EMP_ID,EMP_NM,F.PRJT_ID,F.PRJT_NM ,F.LAST_CUST_ID
+                    GROUP BY A.CRIT_YEAR||A.CRIT_MONTH ,F.SLS_DEPT_ID,C.BSNS_CLSF_CD, MAAC_PROFIT,FCST_PAL_ID, B.WCT_ID, DEPT_NM,F.SLS_EMP_ID,EMP_NM,F.PRJT_ID,F.PRJT_NM ,F.LAST_CUST_ID
                     )A
-                    GROUP BY A.CRIT_YAM,FCST_PAL_ID,BLTO_DEPT_ID,BSNS_CLSF_CD,DEPT_NM,SLS_EMP_ID,EMP_NM,PRJT_ID,PRJT_NM,A.LAST_CUST_ID
+                    GROUP BY A.CRIT_YAM,FCST_PAL_ID,BLTO_DEPT_ID,BSNS_CLSF_CD,DEPT_NM,SLS_EMP_ID,EMP_NM,PRJT_ID, WCT_ID, PRJT_NM,A.LAST_CUST_ID
                 )A
                 LEFT JOIN
                 (
@@ -1364,6 +1367,7 @@
             )A
             WHERE 1=1
             AND SELL_CRIT_YAM BETWEEN #{fromDate} AND #{toDate} -- 조회조건_기간-- 조회조건_기간
+            AND WCT_ID IS NOT NULL
             <if test='brslDstCd == "B" '>
                 AND SELL_RSL_AMT IS NOT NULL  --매출
             </if>
