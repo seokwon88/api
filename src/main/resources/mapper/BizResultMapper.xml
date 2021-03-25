@@ -53,7 +53,7 @@
                        END AS RSDN_FCST_RSL_AMT -- 잔여_예상(확률적용)
                 ]]>
                 -- ★★Comma 이동 END (반영 후 지울 것)
-                FROM BRST120V_VER2 RV, --실시간 매출매입 반영 VIEW
+                FROM BRST120V RV, --실시간 매출매입 반영 VIEW
                 --FROM BRST120V RV,
                 ( SELECT DEPT_SEQC, DEPT_ID, DEPT_NM, -- DEPT_LVL, HGRK_DEPT_ID
                     C.BRSL_SEQC, C.BRSL_DST_CD, C.BRSL_DTL_DST_CD, -- 사업실적구분코드, 사업실적상세구분코드
@@ -152,7 +152,7 @@
                 ]]>
         -- ★★Comma 이동 END (반영 후 지울 것)
                   --FROM BRST130V RV,
-                    FROM BRST130V_VER2 RV,
+                    FROM BRST130V RV,
                       ( SELECT H3.DEPT_ID, H3.DEPT_NM, H3.DEPT_SEQC, H3.EMP_ID,
                                BRSL_SEQC, BRSL_DST_CD, BRSL_DST_CD_NM, BRSL_DTL_DST_CD, BRSL_DTL_DST_CD_NM -- 사업실적구분코드, 사업실적상세구분코드
                           FROM
@@ -205,7 +205,7 @@
         WITH
         RV AS (
             SELECT CRIT_YAM, BSNS_CLSF_CD, BRSL_DTL_DST_CD, RSL_AMT
-              FROM BRST120V_VER2
+              FROM BRST120V
              WHERE SUBSTR(CRIT_YAM,1,4) = #{critYear}  -- ★조회조건 기준연도
                AND DEPT_ID IN (SELECT DEPT_ID FROM HMST110T
                                 WHERE SELL_OCR_YN = 'Y' -- 매출발생부서
@@ -321,7 +321,7 @@
                  ]]>
                 FROM
                 ( SELECT CRIT_YAM, BSNS_CLSF_CD, PROD_DST_CD, BRSL_DTL_DST_CD, RSL_AMT
-                    FROM BRST120V_VER2
+                    FROM BRST120V
                     WHERE SUBSTR(CRIT_YAM,1,4) = #{critYear}  -- ★조회조건: 기준연도
                     <if test='bsnsClsfCd != "" and bsnsClsfCd != null '>
                     AND BSNS_CLSF_CD = #{bsnsClsfCd} --★조회조건: 사업분류코드(택1) --◀2020-02-24
@@ -1369,10 +1369,10 @@
             AND SELL_CRIT_YAM BETWEEN #{fromDate} AND #{toDate} -- 조회조건_기간-- 조회조건_기간
             AND WCT_ID IS NOT NULL
             <if test='brslDstCd == "B" '>
-                AND SELL_RSL_AMT IS NOT NULL  --매출
+                AND (SELL_RSL_AMT IS NOT NULL AND SELL_RSL_AMT != 0)   --매출
             </if>
             <if test='brslDstCd == "C" '>
-                AND BUY_RSL_AMT IS NOT NULL --매입
+                AND  (BUY_RSL_AMT IS NOT NULL AND BUY_RSL_AMT != 0)   --매입
             </if>
             <if test='prodDstCd != null and prodDstCd != "" '>
                 AND PROD_DST_CD = #{prodDstCd} -- 조회조건_상품구분
@@ -1483,6 +1483,7 @@
             ON PRJT.LAST_CUST_ID = CUST.CUST_ID
         )A
         WHERE 1=1
+        AND CNTR_AMT != 0
         AND SELL_CRIT_YAM BETWEEN #{fromDate} AND #{toDate} -- 조회조건_기간
         <if test='prodDstCd != null and prodDstCd != "" '>
             AND PROD_DST_CD = #{prodDstCd} -- 조회조건_상품구분
@@ -1516,6 +1517,9 @@
                 </if>
                 <if test='orderTypeCd == "SD" '>
                     ORDER BY SELL_CRIT_YAM, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 발생시기
+                </if>
+                <if test='orderTypeCd == "RA" '>
+                    ORDER BY CNTR_AMT DESC, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 실적금액
                 </if>
 
         ) T
