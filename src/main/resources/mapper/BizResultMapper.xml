@@ -1265,7 +1265,8 @@
                 LEFT JOIN
                 (
                     SELECT
-                        B.FCST_PAL_ID,B.P_TYPE,SELL_AMT/SUM_AMT AS RATE, DECODE(SUM_BUY_AMT,NVL(NULL,0),0,BUY_AMT/SUM_BUY_AMT) AS BUY_RATE
+                        B.FCST_PAL_ID,B.P_TYPE,SELL_AMT/SUM_AMT AS RATE,
+                        NVL(DECODE(SUM_BUY_AMT,NVL(NULL,0),0,BUY_AMT/SUM_BUY_AMT),0) AS BUY_RATE
                     FROM (
                         SELECT FCST_PAL_ID,SUM(SELL_AMT) AS SUM_AMT,SUM(BUY_AMT) AS SUM_BUY_AMT
                         FROM TT000V GROUP BY FCST_PAL_ID
@@ -1345,7 +1346,7 @@
                         B.FCST_PAL_ID,
                         B.P_TYPE,
                         SELL_AMT/SUM_AMT AS RATE,
-                        DECODE(SUM_BUY_AMT,NVL(NULL,0),0,BUY_AMT/SUM_BUY_AMT) AS BUY_RATE
+                        NVL(DECODE(SUM_BUY_AMT,NVL(NULL,0),0,BUY_AMT/SUM_BUY_AMT),0) AS BUY_RATE
                     FROM (
                             SELECT FCST_PAL_ID,SUM(SELL_AMT) AS SUM_AMT,SUM(BUY_AMT) AS SUM_BUY_AMT
                             FROM TT000V GROUP BY FCST_PAL_ID
@@ -1464,7 +1465,7 @@
                 B.FCST_PAL_ID,
                 B.P_TYPE,
                 SELL_AMT/SUM_AMT AS RATE,
-                DECODE(SUM_BUY_AMT,NVL(NULL,0),0,BUY_AMT/SUM_BUY_AMT) AS BUY_RATE
+                NVL(DECODE(SUM_BUY_AMT,NVL(NULL,0),0,BUY_AMT/SUM_BUY_AMT),0) AS BUY_RATE
             FROM (
             SELECT FCST_PAL_ID,SUM(SELL_AMT) AS SUM_AMT,SUM(BUY_AMT) AS SUM_BUY_AMT
             FROM TT000V GROUP BY FCST_PAL_ID
