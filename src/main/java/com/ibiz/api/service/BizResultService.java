@@ -252,25 +252,26 @@ public class BizResultService {
         List<BizProjectInfoVO> list = bizResultDAO.selectBizPrjtInfoList(bizProjectInfoVO);
 
         for(int i = 0 ; i < list.size() ; i++){
-            BizProjectInfoVO bizProjectInfo = new BizProjectInfoVO();
-            bizProjectInfo.setPrjtId(list.get(i).getPrjtId());
-            bizProjectInfo.setSeq(list.get(i).getSeq());
-            bizProjectInfo.setRprtYn("Y");
-            bizProjectInfo.setStartDate(bizProjectInfoVO.getStartDate());
-            bizProjectInfo.setEndDate(bizProjectInfoVO.getEndDate());
+            List<BizProjectReportVO> reportList = new ArrayList<>();
+            if(bizProjectInfoVO.getRprtYn() == null || bizProjectInfoVO.getRprtYn().equals("Y")){
+                BizProjectInfoVO bizProjectInfo = new BizProjectInfoVO();
+                bizProjectInfo.setPrjtId(list.get(i).getPrjtId());
+                bizProjectInfo.setSeq(list.get(i).getSeq());
+                bizProjectInfo.setRprtYn("Y");
+                bizProjectInfo.setStartDate(bizProjectInfoVO.getStartDate());
+                bizProjectInfo.setEndDate(bizProjectInfoVO.getEndDate());
 
-            List<BizProjectReportVO> reportList = bizResultDAO.selectBizPrjtRprtBkdnList(bizProjectInfo);
+                reportList = bizResultDAO.selectBizPrjtRprtBkdnList(bizProjectInfo);
 
-            list.get(i).setBizProjectReportList(reportList);
+                list.get(i).setBizProjectReportList(reportList);
+            }
 
             if(reportList.size() > 0){
                 list.get(i).setRprtYn("Y");
             }else{
                 list.get(i).setRprtYn("N");
             }
-
         }
-
         return list;
     }
 
