@@ -1392,7 +1392,7 @@
                 -- 매출/매입에 따라 예외구분코드분기필요
                 (
                     SELECT
-                        EXPT.CRIT_YEAR || EXPT.CRIT_MONTH AS CRIT_YAM, APRJ.SLS_DEPT_ID AS DEPT_ID, IBIZ_DEPT_NM(APRJ.SLS_DEPT_ID) AS DEPT_NM,
+                        EXPT.CRIT_YEAR || EXPT.CRIT_MONTH AS CRIT_YAM, F.DEPT_ID AS DEPT_ID, IBIZ_DEPT_NM(F.DEPT_ID) AS DEPT_NM,
                             APRJ.SLS_EMP_ID AS EMP_ID, IBIZ_EMP_NM(APRJ.SLS_EMP_ID) AS EMP_NM, EXPT.PRJT_ID, IBIZ_PRJT_NM(APRJ.PRJT_ID) AS PRJT_NM,
                             RSL.FCST_PAL_ID, NVL(RSL.WCT_ID,'EXPT') AS WCT_ID,
                                 '예외' AS PROD_DST_CD, '예외' AS PROD_DST_CD_NM,
@@ -1441,7 +1441,7 @@
             )A
             WHERE 1=1
             AND SELL_CRIT_YAM BETWEEN #{fromDate} AND #{toDate} -- 조회조건_기간-- 조회조건_기간
-            AND WCT_ID IS NOT NULL
+
             <if test='brslDstCd == "B" '>
                 AND (SELL_RSL_AMT IS NOT NULL AND SELL_RSL_AMT != 0)   --매출
             </if>
