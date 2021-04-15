@@ -46,17 +46,19 @@
                        SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'P' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) AS RSDN_GOAL_RSL_AMT, -- 잔여_누적목표 (1월~잔여종료월)
                        SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'T' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) AS RSDN_OPPTY_RSL_AMT, -- 잔여_기회(확률미적용) (잔여시작월~잔여종료월의 기회)
 
-                       CASE WHEN #{fromDate} < #{rsdnEndDate} THEN -- (기준월 < 잔여종료월)이면, 잔여시작월~잔여종료일 조회 ELSE 기준월+1~잔여종료일 조회
-                            SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (잔여시작월~잔여종료월의 예상)
+                       CASE WHEN #{fromDate} < #{rsdnEndDate} AND #{fromDate} = #{rsdnStartDate}  THEN -- (기준월 < 잔여종료월 이고 기준월 = 잔여시작월)이면
+                            SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate}+'01' AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (잔여시작월+'01'~잔여종료월의 예상)
                             + (
                                 SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) -- 기준월_예상(확률적용)
                                 - SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) -- 기준월_실적
                             )
-                       ELSE
+                       WHEN #{fromDate} = #{rsdnEndDate} AND #{fromDate} = #{rsdnStartDate}  THEN  -- (기준월 = 잔여종료월 이고 기준월 = 잔여시작월)
                             (
                                 SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) -- 기준월_예상(확률적용)
                                 - SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) -- 기준월_실적
                             )
+                       ELSE    -- (기준월 < 잔여종료월 이고 기준월 < 잔여시작월)
+                            SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (잔여시작월~잔여종료월의 예상)
                        END AS RSDN_FCST_RSL_AMT -- 잔여_예상(확률적용)
                 ]]>
                 -- ★★Comma 이동 END (반영 후 지울 것)
@@ -244,17 +246,19 @@
                         SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'P' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) AS RSDN_GOAL_RSL_AMT, -- 잔여_누적목표 (1월~잔여종료월)
                         SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'T' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) AS RSDN_OPPTY_RSL_AMT, -- 잔여_기회(확률미적용) (잔여시작월~잔여종료월의 기회)
 
-                       CASE WHEN #{fromDate} < #{rsdnEndDate} THEN -- (기준월 < 잔여종료월)이면, 잔여시작월~잔여종료일 조회 ELSE 기준월+1~잔여종료일 조회
-                            SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (잔여시작월~잔여종료월의 예상)
+                       CASE WHEN #{fromDate} < #{rsdnEndDate} AND #{fromDate} = #{rsdnStartDate}  THEN -- (기준월 < 잔여종료월 이고 기준월 = 잔여시작월)이면
+                            SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate}+'01' AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (잔여시작월+'01'~잔여종료월의 예상)
                             + (
                                 SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) -- 기준월_예상(확률적용)
                                 - SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) -- 기준월_실적
                             )
-                       ELSE
+                       WHEN #{fromDate} = #{rsdnEndDate} AND #{fromDate} = #{rsdnStartDate}  THEN  -- (기준월 = 잔여종료월 이고 기준월 = 잔여시작월)
                             (
                                 SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) -- 기준월_예상(확률적용)
                                 - SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) -- 기준월_실적
                             )
+                       ELSE   -- (기준월 < 잔여종료월 이고 기준월 < 잔여시작월)
+                            SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (잔여시작월~잔여종료월의 예상)
                        END AS RSDN_FCST_RSL_AMT -- 잔여_예상(확률적용)
                     ]]>
                    FROM RV,
@@ -327,17 +331,19 @@
                         SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'P' AND RV.CRIT_YAM BETWEEN #{janDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) AS RSDN_GOAL_RSL_AMT, -- 잔여_누적목표 (1월~잔여종료월)
                         SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'T' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) AS RSDN_OPPTY_RSL_AMT, -- 잔여_기회(확률미적용) (잔여시작월~잔여종료월의 기회)
 
-                       CASE WHEN #{fromDate} < #{rsdnEndDate} THEN -- (기준월 < 잔여종료월)이면, 잔여시작월~잔여종료일 조회 ELSE 기준월+1~잔여종료일 조회
-                            SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (잔여시작월~잔여종료월의 예상)
+                       CASE WHEN #{fromDate} < #{rsdnEndDate} AND #{fromDate} = #{rsdnStartDate}  THEN -- (기준월 < 잔여종료월 이고 기준월 = 잔여시작월)이면
+                            SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate}+'01' AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (잔여시작월+'01'~잔여종료월의 예상)
                             + (
                                 SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) -- 기준월_예상(확률적용)
                                 - SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) -- 기준월_실적
                             )
-                       ELSE
+                       WHEN #{fromDate} = #{rsdnEndDate} AND #{fromDate} = #{rsdnStartDate}  THEN  -- (기준월 = 잔여종료월 이고 기준월 = 잔여시작월)
                             (
                                 SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) -- 기준월_예상(확률적용)
                                 - SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM = #{fromDate} THEN RSL_AMT ELSE 0 END) -- 기준월_실적
                             )
+                       ELSE   -- (기준월 < 잔여종료월 이고 기준월 < 잔여시작월)
+                            SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'F' AND RV.CRIT_YAM BETWEEN #{rsdnStartDate} AND #{rsdnEndDate} THEN RSL_AMT ELSE 0 END) -- 잔여_예상(확률적용) (잔여시작월~잔여종료월의 예상)
                        END AS RSDN_FCST_RSL_AMT -- 잔여_예상(확률적용)
                  ]]>
                 FROM
