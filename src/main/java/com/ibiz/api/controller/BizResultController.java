@@ -66,6 +66,15 @@ public class BizResultController extends BaseController {
         return super.composePayload(new Payload<List>(bizResultService.selectSalesReportList(requestPayload)));
     }
 
+    //잔여예상 실적상세리스트
+    @PostMapping("/selectSalesReportRsdnList")
+    public ResponseEntity<String> selectSalesReportRsdnList(@RequestParam("payload") String payload) throws Exception {
+        log.info("Call Controller : " + this.getClass().getName() + ".selectSalesReportRsdnList");
+        Payload requestPayload = super.parsePayload(payload, new TypeToken<Payload<BusinessResultSearchVO>>(){});
+
+        return super.composePayload(new Payload<List>(bizResultService.selectSalesReportRsdnList(requestPayload)));
+    }
+
     //사업분류 콤보박스 리스트
     @PostMapping("/selectBsnsClsfList")
     public ResponseEntity<String> selectBsnsClsfList(@RequestParam("payload") String payload) throws Exception {

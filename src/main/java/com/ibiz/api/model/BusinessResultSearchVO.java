@@ -87,6 +87,8 @@ public class BusinessResultSearchVO {
      */
     private String rsdnEndDate;
 
+    // 기준연월
+    private String critDate;
 
     private String slsDeptId;
 
@@ -423,5 +425,13 @@ public class BusinessResultSearchVO {
 
     public void setPageSize(Integer pageSize) {
         this.pageSize = pageSize;
+    }
+
+    public String getCritDate() {
+        return critDate;
+    }
+
+    public void setCritDate(String critDate) {
+        this.critDate = critDate;
     }
 }

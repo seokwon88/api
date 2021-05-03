@@ -52,6 +52,16 @@ public class BizResultDAO {
         return mybatis.selectList("BizResultMapper.selectBuySellSalesReportList", businessResultSearchVO);
     }
 
+    //수주 잔여예상 영업부서 리스트 조회
+    public List<SalesReportVO> selectWCTSalesReportRsdnList(BusinessResultSearchVO businessResultSearchVO) {
+        return mybatis.selectList( "BizResultMapper.selectWCTSalesReportRsdnList", businessResultSearchVO);
+    }
+
+    //매입/매출 잔여예상 영업부서 리스트 조회
+    public List<SalesReportVO> selectBuySellSalesReportRsdnList(BusinessResultSearchVO businessResultSearchVO) {
+        return mybatis.selectList("BizResultMapper.selectBuySellSalesReportRsdnList", businessResultSearchVO);
+    }
+
     //실적 비교
     public List<BusinessResultVO> selectMonthlyCompareStatsList(BusinessResultSearchVO businessResultSearchVO) {
         return mybatis.selectList("BizResultMapper.selectMonthlyCompareStatsList", businessResultSearchVO);

@@ -405,140 +405,145 @@
     <select id="selectWCTSalesReportList"
             parameterType="com.ibiz.api.model.BusinessResultSearchVO"
             resultType="com.ibiz.api.model.SalesReportVO">
-        SELECT * FROM (
-        SELECT COUNT(1) OVER() AS TOTAL_CNT,  ROWNUM AS ROWNUMBER, T.* FROM (
-        SELECT  LAST_CUST_ID, LAST_CUST_NM, PRJT_ID, PRJT_NM, SLS_DEPT_ID, SLS_EMP_ID, SLS_EMP_NM,
-            CNTR_DATE, BSNS_CLSF_CD, BSNS_CLSF_CD_NM, -- 사업분류코드
-            WCT_PRBB_CD,  WCT_PRBB_CD_NM, -- 수주확률코드
-            BOPT_STAT_CD, BOPT_STAT_CD_NM, -- 사업기회상태코드
-            <if test='prodDstCd != null and prodDstCd != "" '>
-                PROD_DST_CD, PROD_DST_CD_NM,  -- 상품구분코드  -- ★상품실적현황인 경우
-            </if>
-            SELL_OPPTY_RSL_AMT, -- 매출금액_기회
-            BUY_OPPTY_RSL_AMT, -- 매입금액_기회
-            SELL_FCST_RSL_AMT, -- 매출금액_확률적용
-            BUY_FCST_RSL_AMT, -- 매입금액_확률적용
-            SELL_RSL_AMT, -- 매출금액_실적
-            BUY_RSL_AMT, -- 매입금액_실적
-            ISSUE_CNT, BOPT_ID, BOPT_NM, BOPT_END_TYPE_CD, BOPT_END_TYPE_CD_NM, COM_CD_NUM_VAL,
-            SUM(SELL_OPPTY_RSL_AMT) OVER() AS TOTAL_SELL_OPPTY_RSL_AMT, -- 매출금액_기회 총액
-            SUM(BUY_OPPTY_RSL_AMT) OVER() AS TOTAL_BUY_OPPTY_RSL_AMT, -- 매입금액_기회 총액
-            SUM(SELL_FCST_RSL_AMT) OVER() AS TOTAL_SELL_FCST_RSL_AMT, -- 매출금액_확률적용 총액
-            SUM(BUY_FCST_RSL_AMT) OVER() AS TOTAL_BUY_FCST_RSL_AMT, -- 매입금액_확률적용 총액
-            SUM(SELL_RSL_AMT) OVER() AS TOTAL_SELL_RSL_AMT,  -- 매출금액_실적 총액
-            SUM(BUY_RSL_AMT) OVER() AS TOTAL_BUY_RSL_AMT  -- 매입금액_실적 총액
-        FROM
-        (
-            SELECT P.LAST_CUST_ID, M.CUST_NM LAST_CUST_NM, P.PRJT_ID, P.PRJT_NM,
-                P.SLS_DEPT_ID, P.SLS_EMP_ID, H.EMP_NM SLS_EMP_NM,
-                P.CNTR_DATE,
-                BSNS_CLSF_CD, IBIZ_COM_CD_NM('BSNS_CLSF_CD',P.BSNS_CLSF_CD) BSNS_CLSF_CD_NM, -- 사업분류코드
-                WCT_PRBB_CD, IBIZ_COM_CD_NM('WCT_PRBB_CD',P.WCT_PRBB_CD) WCT_PRBB_CD_NM, -- 수주확률코드
-                BOPT_STAT_CD, IBIZ_COM_CD_NM('BOPT_STAT_CD',P.BOPT_STAT_CD) BOPT_STAT_CD_NM, -- 사업기회상태코드
-                <if test='prodDstCd != null and prodDstCd != "" '>
-                    P.PROD_DST_CD, IBIZ_COM_CD_NM('PROD_DST_CD',P.PROD_DST_CD) PROD_DST_CD_NM,  -- 상품구분코드  -- ★상품실적현황인 경우
-                </if>
-                --GODS_CLSF_CD, IBIZ_COM_CD_NM('GODS_CLSF_CD',B.GODS_CLSF_CD) GODS_CLSF_NM,  -- 제품분류코드
-                P.SELL_AMT AS SELL_OPPTY_RSL_AMT, -- 매출금액_기회
-                P.BUY_AMT AS BUY_OPPTY_RSL_AMT, -- 매입금액_기회
-                P.SELL_AMT*P.COM_CD_NUM_VAL  AS SELL_FCST_RSL_AMT, -- 매출금액_확률적용
-                P.BUY_AMT*P.COM_CD_NUM_VAL AS BUY_FCST_RSL_AMT, -- 매입금액_확률적용
-                DECODE(BOPT_STAT_CD,'E',P.SELL_AMT,0) AS SELL_RSL_AMT,  -- 매출금액_실적
-                DECODE(BOPT_STAT_CD,'E',P.BUY_AMT,0) AS BUY_RSL_AMT,  -- 매입금액_실적
-                (SELECT COUNT(BSNS_ISSUE_ID)
-                    FROM BPIP200T
-                    WHERE PRJT_ID = P.PRJT_ID
-                    AND ISSUE_DLNG_STAT_CD IN ('A','B','C','D') -- 이슈처리상태: A.등록, B.계획수립, C.처리중, D.결과검토
-                ) ISSUE_CNT,
-                P.BOPT_ID, P.BOPT_NM,
-                P.BOPT_END_TYPE_CD, IBIZ_COM_CD_NM('BOPT_END_TYPE_CD', P.BOPT_END_TYPE_CD) BOPT_END_TYPE_CD_NM,
-                P.COM_CD_NUM_VAL
-            FROM CMST000T M, HMST300T H,
-            (
-                SELECT C.LAST_CUST_ID, C.PRJT_ID, C.PRJT_NM, A.BOPT_ID, A.BOPT_NM, -- A.BOPT_NM,
-                A.SLS_DEPT_ID, A.SLS_EMP_ID,
-                A.CNTR_DATE, A.WCT_DCD_DATE, -- 계약일자, 수주확정일자
-                A.BOPT_END_TYPE_CD,
-                A.BSNS_CLSF_CD, A.WCT_PRBB_CD, A.BOPT_STAT_CD, S.COM_CD_NUM_VAL,
-                <if test='prodDstCd != null and prodDstCd != "" '>
-                    B.PROD_DST_CD, -- B.GODS_CLSF_CD, -- ★상품실적현황인 경우
-                </if>
-                NVL(SUM(B.SELL_AMT),0) SELL_AMT, -- 매출금액
-                NVL(SUM(B.BUY_AMT),0) BUY_AMT -- 매입금액
-                FROM BPIP000T A, BPIP020T B, APRJ000T C, ACOM010T S
-                WHERE A.BOPT_ID = B.BOPT_ID(+)
-                AND A.BOPT_STAT_CD != 'D1'
-                AND (A.BOPT_STAT_CD = 'E' -- 계약완료
-                OR (A.FCST_RFLC_YN = 'Y' -- 사업예상반영여부
-                AND A.BOPT_STAT_CD != 'F'))-- 사업기회종료 제외
-                AND A.PRJT_ID = C.PRJT_ID
-                AND C.PRJT_STAT_CD NOT LIKE 'F%' --F1.사업이관, F2.사업폐기
-                AND C.PRJT_STAT_CD NOT LIKE 'D%' --D1.일반삭제, D2.중복삭제
-                AND S.COM_GRP_CD = (SELECT COM_GRP_CD FROM ACOM020T WHERE CLMN_NM = 'WCT_PRBB_CD') -- 수주확률코드
-                AND A.WCT_PRBB_CD = S.COM_CD
-                <if test='prjtTypeCd != null and prjtTypeCd != "" '>
-                    AND C.PRJT_TYPE_CD = #{prjtTypeCd}
-                </if>
 
-                AND SUBSTR(A.CNTR_DATE,1,6) BETWEEN #{fromDate} AND #{toDate} -- 조회조건_기간
-                <if test='slsDeptId != null and slsDeptId != "" '>
-                    AND A.SLS_DEPT_ID  in (
-                    SELECT DEPT_ID FROM HMST110T
-                    WHERE SELL_OCR_YN = 'Y' -- 매출발생부서
-                    <![CDATA[
-                    AND SUBSTR(ORG_CLOSE_DATE,1,4) >= #{critYear}
-                    ]]>
-                    AND CRIT_YEAR = #{critYear}
-                    -- WHERE ORG_CLOSE_DATE >= TO_CHAR(SYSDATE,'YYYYMMDD')
-                    START WITH
-                    DEPT_ID = #{slsDeptId}
-                    CONNECT BY
-                    PRIOR DEPT_ID = HGRK_DEPT_ID
-                    )
+        SELECT * FROM (
+            SELECT COUNT(1) OVER() AS TOTAL_CNT,  ROWNUM AS ROWNUMBER, T.* FROM (
+                SELECT  LAST_CUST_ID, LAST_CUST_NM, PRJT_ID, PRJT_NM, SLS_DEPT_ID, SLS_EMP_ID, SLS_EMP_NM,
+                    CNTR_DATE, BSNS_CLSF_CD, BSNS_CLSF_CD_NM, -- 사업분류코드
+                    WCT_PRBB_CD,  WCT_PRBB_CD_NM, -- 수주확률코드
+                    BOPT_STAT_CD, BOPT_STAT_CD_NM, -- 사업기회상태코드
+                    <if test='prodDstCd != null and prodDstCd != "" '>
+                        PROD_DST_CD, PROD_DST_CD_NM,  -- 상품구분코드  -- ★상품실적현황인 경우
+                    </if>
+                    SELL_OPPTY_RSL_AMT, -- 매출금액_기회
+                    BUY_OPPTY_RSL_AMT, -- 매입금액_기회
+                    SELL_FCST_RSL_AMT, -- 매출금액_확률적용
+                    BUY_FCST_RSL_AMT, -- 매입금액_확률적용
+                    SELL_RSL_AMT, -- 매출금액_실적
+                    BUY_RSL_AMT, -- 매입금액_실적
+                    ISSUE_CNT, BOPT_ID, BOPT_NM, BOPT_END_TYPE_CD, BOPT_END_TYPE_CD_NM, COM_CD_NUM_VAL,
+                    SUM(SELL_OPPTY_RSL_AMT) OVER() AS TOTAL_SELL_OPPTY_RSL_AMT, -- 매출금액_기회 총액
+                    SUM(BUY_OPPTY_RSL_AMT) OVER() AS TOTAL_BUY_OPPTY_RSL_AMT, -- 매입금액_기회 총액
+                    SUM(SELL_FCST_RSL_AMT) OVER() AS TOTAL_SELL_FCST_RSL_AMT, -- 매출금액_확률적용 총액
+                    SUM(BUY_FCST_RSL_AMT) OVER() AS TOTAL_BUY_FCST_RSL_AMT, -- 매입금액_확률적용 총액
+                    SUM(SELL_RSL_AMT) OVER() AS TOTAL_SELL_RSL_AMT,  -- 매출금액_실적 총액
+                    SUM(BUY_RSL_AMT) OVER() AS TOTAL_BUY_RSL_AMT  -- 매입금액_실적 총액
+                FROM
+                (
+                    SELECT P.LAST_CUST_ID, M.CUST_NM LAST_CUST_NM, P.PRJT_ID, P.PRJT_NM,
+                        P.SLS_DEPT_ID, P.SLS_EMP_ID, H.EMP_NM SLS_EMP_NM,
+                        P.CNTR_DATE,
+                        BSNS_CLSF_CD, IBIZ_COM_CD_NM('BSNS_CLSF_CD',P.BSNS_CLSF_CD) BSNS_CLSF_CD_NM, -- 사업분류코드
+                        WCT_PRBB_CD, IBIZ_COM_CD_NM('WCT_PRBB_CD',P.WCT_PRBB_CD) WCT_PRBB_CD_NM, -- 수주확률코드
+                        BOPT_STAT_CD, IBIZ_COM_CD_NM('BOPT_STAT_CD',P.BOPT_STAT_CD) BOPT_STAT_CD_NM, -- 사업기회상태코드
+                        <if test='prodDstCd != null and prodDstCd != "" '>
+                            P.PROD_DST_CD, IBIZ_COM_CD_NM('PROD_DST_CD',P.PROD_DST_CD) PROD_DST_CD_NM,  -- 상품구분코드  -- ★상품실적현황인 경우
+                        </if>
+                        --GODS_CLSF_CD, IBIZ_COM_CD_NM('GODS_CLSF_CD',B.GODS_CLSF_CD) GODS_CLSF_NM,  -- 제품분류코드
+                        P.SELL_AMT AS SELL_OPPTY_RSL_AMT, -- 매출금액_기회
+                        P.BUY_AMT AS BUY_OPPTY_RSL_AMT, -- 매입금액_기회
+                        P.SELL_AMT*P.COM_CD_NUM_VAL  AS SELL_FCST_RSL_AMT, -- 매출금액_확률적용
+                        P.BUY_AMT*P.COM_CD_NUM_VAL AS BUY_FCST_RSL_AMT, -- 매입금액_확률적용
+                        DECODE(BOPT_STAT_CD,'E',P.SELL_AMT,0) AS SELL_RSL_AMT,  -- 매출금액_실적
+                        DECODE(BOPT_STAT_CD,'E',P.BUY_AMT,0) AS BUY_RSL_AMT,  -- 매입금액_실적
+                        (SELECT COUNT(BSNS_ISSUE_ID)
+                            FROM BPIP200T
+                            WHERE PRJT_ID = P.PRJT_ID
+                            AND ISSUE_DLNG_STAT_CD IN ('A','B','C','D') -- 이슈처리상태: A.등록, B.계획수립, C.처리중, D.결과검토
+                        ) ISSUE_CNT,
+                        P.BOPT_ID, P.BOPT_NM,
+                        P.BOPT_END_TYPE_CD, IBIZ_COM_CD_NM('BOPT_END_TYPE_CD', P.BOPT_END_TYPE_CD) BOPT_END_TYPE_CD_NM,
+                        P.COM_CD_NUM_VAL
+                    FROM CMST000T M, HMST300T H,
+                    (
+                        SELECT C.LAST_CUST_ID, C.PRJT_ID, C.PRJT_NM, A.BOPT_ID, A.BOPT_NM, -- A.BOPT_NM,
+                        A.SLS_DEPT_ID, A.SLS_EMP_ID,
+                        A.CNTR_DATE, A.WCT_DCD_DATE, -- 계약일자, 수주확정일자
+                        A.BOPT_END_TYPE_CD,
+                        GC.HGRK_COM_CD AS BSNS_CLSF_CD, --★사업분류코드
+                        A.WCT_PRBB_CD, A.BOPT_STAT_CD, S.COM_CD_NUM_VAL,
+                        <if test='prodDstCd != null and prodDstCd != "" '>
+                            B.PROD_DST_CD, -- B.GODS_CLSF_CD, -- ★상품실적현황인 경우
+                        </if>
+                        NVL(SUM(B.SELL_AMT),0) SELL_AMT, -- 매출금액
+                        NVL(SUM(B.BUY_AMT),0) BUY_AMT -- 매입금액
+                        FROM BPIP000T A, BPIP020T B, APRJ000T C, ACOM010T S, ACOM010T GC
+                        WHERE A.BOPT_ID = B.BOPT_ID(+)
+                        AND A.BOPT_STAT_CD != 'D1'
+                        AND (A.BOPT_STAT_CD = 'E' -- 계약완료
+                        OR (A.FCST_RFLC_YN = 'Y' -- 사업예상반영여부
+                        AND A.BOPT_STAT_CD != 'F'))-- 사업기회종료 제외
+                        AND A.PRJT_ID = C.PRJT_ID
+                        AND C.PRJT_STAT_CD NOT LIKE 'F%' --F1.사업이관, F2.사업폐기
+                        AND C.PRJT_STAT_CD NOT LIKE 'D%' --D1.일반삭제, D2.중복삭제
+                        AND S.COM_GRP_CD = (SELECT COM_GRP_CD FROM ACOM020T WHERE CLMN_NM = 'WCT_PRBB_CD') -- 수주확률코드
+                        AND A.WCT_PRBB_CD = S.COM_CD
+                        AND GC.COM_GRP_CD = (SELECT COM_GRP_CD FROM ACOM020T WHERE CLMN_NM = 'GODS_CLSF_CD')
+                        AND B.GODS_CLSF_CD = GC.COM_CD
+                        <if test='bsnsClsfCd != null and bsnsClsfCd != "" '>
+                            AND GC.HGRK_COM_CD = #{bsnsClsfCd}  --★조회조건_사업분류
+                        </if>
+                        <if test='prjtTypeCd != null and prjtTypeCd != "" '>
+                            AND C.PRJT_TYPE_CD = #{prjtTypeCd}
+                        </if>
+
+                        AND SUBSTR(A.CNTR_DATE,1,6) BETWEEN #{fromDate} AND #{toDate} -- 조회조건_기간
+                        <if test='slsDeptId != null and slsDeptId != "" '>
+                            AND A.SLS_DEPT_ID  in (
+                            SELECT DEPT_ID FROM HMST110T
+                            WHERE SELL_OCR_YN = 'Y' -- 매출발생부서
+                            <![CDATA[
+                            AND SUBSTR(ORG_CLOSE_DATE,1,4) >= #{critYear}
+                            ]]>
+                            AND CRIT_YEAR = #{critYear}
+                            -- WHERE ORG_CLOSE_DATE >= TO_CHAR(SYSDATE,'YYYYMMDD')
+                            START WITH
+                            DEPT_ID =  #{slsDeptId}
+                            CONNECT BY
+                            PRIOR DEPT_ID = HGRK_DEPT_ID
+                            )
+                        </if>
+                        <if test='slsEmpId != null'>
+                            AND A.SLS_EMP_ID = #{slsEmpId} -- 조회조건_영업대표
+                        </if>
+                        <if test='prodDstCd != null and prodDstCd != "" '>
+                            AND B.PROD_DST_CD = #{prodDstCd} -- ★조회조건_상품구분 -- ★상품실적현황인 경우
+                        </if>
+                        GROUP BY C.LAST_CUST_ID, C.PRJT_ID, C.PRJT_NM, A.BOPT_ID, A.BOPT_NM,
+                        A.SLS_DEPT_ID, A.SLS_EMP_ID,
+                        A.CNTR_DATE,  A.WCT_DCD_DATE, -- 계약일자, 수주확정일자
+                        A.BOPT_END_TYPE_CD,
+                        GC.HGRK_COM_CD, --★사업분류코드
+                        A.WCT_PRBB_CD, A.BOPT_STAT_CD, S.COM_CD_NUM_VAL
+                        <if test='prodDstCd != null and prodDstCd != "" '>
+                            ,B.PROD_DST_CD  -- ★상품실적현황인 경우
+                        </if>
+                    ) P
+                    WHERE P.LAST_CUST_ID = M.CUST_ID
+                    AND P.SLS_EMP_ID = H.EMP_ID
+                )
+                <if test='orderTypeCd == "CP" or ( orderTypeCd == null)'>
+                    ORDER BY LAST_CUST_NM, PRJT_NM, CNTR_DATE -- 정렬기준: 고객명+프로젝트명
                 </if>
-                <if test='slsEmpId != null'>
-                    AND A.SLS_EMP_ID = #{slsEmpId} -- 조회조건_영업대표
+                <if test='orderTypeCd == "SD" '>
+                    ORDER BY CNTR_DATE, LAST_CUST_NM, PRJT_NM -- 정렬기준: 발생시기
                 </if>
-                <if test='bsnsClsfCd != null and bsnsClsfCd != "" '>
-                    AND A.BSNS_CLSF_CD = #{bsnsClsfCd} -- 조회조건_사업분류
+                <if test='orderTypeCd == "WP" '>
+                    ORDER BY COM_CD_NUM_VAL DESC, CNTR_DATE, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 수주가능성
                 </if>
-                <if test='prodDstCd != null and prodDstCd != "" '>
-                    AND B.PROD_DST_CD = #{prodDstCd} -- ★조회조건_상품구분 -- ★상품실적현황인 경우
+                <if test='orderTypeCd == "TA" '>
+                    ORDER BY SELL_OPPTY_RSL_AMT DESC, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 기회금액(수주)
                 </if>
-                GROUP BY C.LAST_CUST_ID, C.PRJT_ID, C.PRJT_NM, A.BOPT_ID, A.BOPT_NM,
-                A.SLS_DEPT_ID, A.SLS_EMP_ID,
-                A.CNTR_DATE,  A.WCT_DCD_DATE, -- 계약일자, 수주확정일자
-                A.BOPT_END_TYPE_CD,
-                A.BSNS_CLSF_CD, A.WCT_PRBB_CD, A.BOPT_STAT_CD, S.COM_CD_NUM_VAL
-                <if test='prodDstCd != null and prodDstCd != "" '>
-                    ,B.PROD_DST_CD  -- ★상품실적현황인 경우
+                <if test='orderTypeCd == "FA" '>
+                    ORDER BY SELL_FCST_RSL_AMT DESC, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 확률금액(수주)
                 </if>
-            ) P
-            WHERE P.LAST_CUST_ID = M.CUST_ID
-            AND P.SLS_EMP_ID = H.EMP_ID
-        )
-        <if test='orderTypeCd == "CP" or ( orderTypeCd == null)'>
-            ORDER BY LAST_CUST_NM, PRJT_NM, CNTR_DATE -- 정렬기준: 고객명+프로젝트명
-        </if>
-        <if test='orderTypeCd == "SD" '>
-            ORDER BY CNTR_DATE, LAST_CUST_NM, PRJT_NM -- 정렬기준: 발생시기
-        </if>
-        <if test='orderTypeCd == "WP" '>
-            ORDER BY COM_CD_NUM_VAL DESC, CNTR_DATE, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 수주가능성
-        </if>
-        <if test='orderTypeCd == "TA" '>
-            ORDER BY SELL_OPPTY_RSL_AMT DESC, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 기회금액(수주)
-        </if>
-        <if test='orderTypeCd == "FA" '>
-            ORDER BY SELL_FCST_RSL_AMT DESC, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 확률금액(수주)
-        </if>
-        <if test='orderTypeCd == "RA" '>
-            ORDER BY SELL_RSL_AMT DESC, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 실적금액(수주)
-        </if>
-        <if test='orderTypeCd == "IC" '>
-            ORDER BY ISSUE_CNT DESC, LAST_CUST_NM, PRJT_NM
-        </if>
-        ) T
+                <if test='orderTypeCd == "RA" '>
+                    ORDER BY SELL_RSL_AMT DESC, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 실적금액(수주)
+                </if>
+                <if test='orderTypeCd == "IC" '>
+                    ORDER BY ISSUE_CNT DESC, LAST_CUST_NM, PRJT_NM
+                </if>
+            ) T
         ) S
         WHERE ROWNUMBER BETWEEN #{pageSize} * (#{pageNumber} - 1) + 1
         AND #{pageSize} * (#{pageNumber} - 1) + #{pageSize}
@@ -551,200 +556,789 @@
     <select id="selectBuySellSalesReportList"
             parameterType="com.ibiz.api.model.BusinessResultSearchVO"
             resultType="com.ibiz.api.model.SalesReportVO">
-        SELECT * FROM (
-        SELECT COUNT(1) OVER() AS TOTAL_CNT, ROWNUM AS ROWNUMBER, T.* FROM (
-        SELECT LAST_CUST_ID, LAST_CUST_NM, PRJT_ID, PRJT_NM, BOPT_ID,
-            SLS_DEPT_ID, SLS_EMP_ID, SLS_EMP_NM,
-            CNTR_DATE, FCST_YAM,
-            BSNS_CLSF_CD,  BSNS_CLSF_CD_NM, -- 사업분류코드
-            WCT_PRBB_CD,  WCT_PRBB_CD_NM, -- 수주확률코드
-            BOPT_STAT_CD, BOPT_STAT_CD_NM, -- 사업기회상태코드
-            <if test='prodDstCd != null and prodDstCd != "" '>
-                PROD_DST_CD, PROD_DST_CD_NM,  -- 상품구분코드  -- ★상품실적현황인 경우
-            </if>
-            --GODS_CLSF_CD, IBIZ_COM_CD_NM('GODS_CLSF_CD',B.GODS_CLSF_CD) GODS_CLSF_NM,  -- 제품분류코드
-            SELL_OPPTY_RSL_AMT, -- 매출금액_기회
-            BUY_OPPTY_RSL_AMT, -- 매입금액_기회
-            SELL_FCST_RSL_AMT,  -- 매출금액_확률적용 -- ★20190711 계약완료는 수주확률 적용하지 않음
-            BUY_FCST_RSL_AMT, -- 매입금액_확률적용 -- ★20190711 계약완료는 수주확률 적용하지 않음
-            SELL_RSL_AMT, -- 매출금액_실적
-            BUY_RSL_AMT, -- 매입금액_실적
-            OPPTY_SELL_RSL_AMT, -- 매출금액_기회전체
-            OPPTY_BUY_RSL_AMT, -- 매입금액_기회전체
-            ACML_SELL_RSL_AMT, -- 매출금액_누적실적
-            ACML_BUY_RSL_AMT, -- 매입금액_누적실적
-            ISSUE_CNT,  -- 사업이슈개수
-            WCT_PRBB_VAL,
-            SUM(SELL_OPPTY_RSL_AMT) OVER() AS TOTAL_SELL_OPPTY_RSL_AMT, -- 매출금액_기회 총액
-            SUM(BUY_OPPTY_RSL_AMT) OVER() AS TOTAL_BUY_OPPTY_RSL_AMT, -- 매입금액_기회 총액
-            SUM(SELL_FCST_RSL_AMT) OVER() AS TOTAL_SELL_FCST_RSL_AMT, -- 매출금액_확률적용 총액
-            SUM(BUY_FCST_RSL_AMT) OVER() AS TOTAL_BUY_FCST_RSL_AMT, -- 매입금액_확률적용 총액
-            SUM(SELL_RSL_AMT) OVER() AS TOTAL_SELL_RSL_AMT,  -- 매출금액_실적 총액
-            SUM(BUY_RSL_AMT) OVER() AS TOTAL_BUY_RSL_AMT,  -- 매입금액_실적 총액
-            SUM(OPPTY_SELL_RSL_AMT) OVER() AS TOTAL_OPPTY_SELL_RSL_AMT, -- 매출금액_기회전체 총액
-            SUM(OPPTY_BUY_RSL_AMT) OVER() AS TOTAL_OPPTY_BUY_RSL_AMT, -- 매입금액_기회전체 총액
-            SUM(ACML_SELL_RSL_AMT) OVER() AS TOTAL_ACML_SELL_RSL_AMT, -- 매출금액_누적실적 총액
-            SUM(ACML_BUY_RSL_AMT) OVER() AS TOTAL_ACML_BUY_RSL_AMT -- 매입금액_누적실적 총액
-        FROM
-        (
-            SELECT P.LAST_CUST_ID, M.CUST_NM LAST_CUST_NM, P.PRJT_ID, P.PRJT_NM, P.BOPT_ID,
-            P.SLS_DEPT_ID, P.SLS_EMP_ID, H.EMP_NM SLS_EMP_NM,
-            P.CNTR_DATE, P.FCST_YAM,
-            P.BSNS_CLSF_CD, IBIZ_COM_CD_NM('BSNS_CLSF_CD',P.BSNS_CLSF_CD) BSNS_CLSF_CD_NM, -- 사업분류코드
-            P.WCT_PRBB_CD, IBIZ_COM_CD_NM('WCT_PRBB_CD',P.WCT_PRBB_CD) WCT_PRBB_CD_NM, -- 수주확률코드
-            P.BOPT_STAT_CD, IBIZ_COM_CD_NM('BOPT_STAT_CD',P.BOPT_STAT_CD) BOPT_STAT_CD_NM, -- 사업기회상태코드
-            <if test='prodDstCd != null and prodDstCd != "" '>
-                P.PROD_DST_CD, IBIZ_COM_CD_NM('PROD_DST_CD',P.PROD_DST_CD) PROD_DST_CD_NM,  -- 상품구분코드  -- ★상품실적현황인 경우
-            </if>
-            --GODS_CLSF_CD, IBIZ_COM_CD_NM('GODS_CLSF_CD',B.GODS_CLSF_CD) GODS_CLSF_NM,  -- 제품분류코드
-            P.SELL_AMT AS SELL_OPPTY_RSL_AMT, -- 매출금액_기회
-            P.BUY_AMT AS BUY_OPPTY_RSL_AMT, -- 매입금액_기회
-            P.SELL_AMT*P.WCT_PRBB_VAL AS SELL_FCST_RSL_AMT, -- 매출금액_확률적용 -- ★20190711 계약완료는 수주확률 적용하지 않음
-            P.BUY_AMT*P.WCT_PRBB_VAL AS BUY_FCST_RSL_AMT, -- 매입금액_확률적용 -- ★20190711 계약완료는 수주확률 적용하지 않음
-            DECODE(P.BOPT_STAT_CD,'E',P.SELL_AMT,0) AS SELL_RSL_AMT, -- 매출금액_실적
-            DECODE(P.BOPT_STAT_CD,'E',P.BUY_AMT,0) AS BUY_RSL_AMT, -- 매입금액_실적
-            SUM(Q.SELL_AMT) AS OPPTY_SELL_RSL_AMT, -- 매출금액_기회전체
-            SUM(Q.BUY_AMT) AS OPPTY_BUY_RSL_AMT, -- 매입금액_기회전체
-            <![CDATA[
-               SUM(CASE WHEN P.BOPT_STAT_CD='E' AND Q.FCST_YAM<=#{toDate} THEN Q.SELL_AMT ELSE 0 END) AS ACML_SELL_RSL_AMT, -- 매출금액_누적실적
-               SUM(CASE WHEN P.BOPT_STAT_CD='E' AND Q.FCST_YAM<=#{toDate} THEN Q.BUY_AMT ELSE 0 END) AS ACML_BUY_RSL_AMT, -- 매입금액_누적실적
 
-            ]]>
-            (SELECT COUNT(BSNS_ISSUE_ID)
-                FROM BPIP200T
-                WHERE PRJT_ID = P.PRJT_ID
-                AND ISSUE_DLNG_STAT_CD IN ('A','B','C','D') -- 이슈처리상태: A.등록, B.계획수립, C.처리중, D.결과검토
-            ) ISSUE_CNT,  -- 사업이슈개수
-            P.WCT_PRBB_VAL
-            FROM CMST000T M, HMST300T H, BPIP020T Q,
-            ( -- 대상건 추출
-                SELECT C.LAST_CUST_ID, C.PRJT_ID, C.PRJT_NM, A.BOPT_ID, -- A.BOPT_NM,
-                A.SLS_DEPT_ID, A.SLS_EMP_ID,
-                A.CNTR_DATE, --A.WCT_DCD_DATE, -- 계약일자, 수주확정일자
-                B.FCST_YAM,
-                A.BSNS_CLSF_CD, A.WCT_PRBB_CD, A.BOPT_STAT_CD,
-                CASE WHEN A.BOPT_STAT_CD = 'E' THEN 1 ELSE S.COM_CD_NUM_VAL END WCT_PRBB_VAL, -- ★20190711 계약완료는 수주확률 적용하지 않음
+        SELECT * FROM (
+            SELECT COUNT(1) OVER() AS TOTAL_CNT, ROWNUM AS ROWNUMBER, T.* FROM (
+            SELECT LAST_CUST_ID, LAST_CUST_NM, PRJT_ID, PRJT_NM, BOPT_ID,
+                SLS_DEPT_ID, SLS_EMP_ID, SLS_EMP_NM,
+                CNTR_DATE, FCST_YAM,
+                BSNS_CLSF_CD,  BSNS_CLSF_CD_NM, -- 사업분류코드
+                WCT_PRBB_CD,  WCT_PRBB_CD_NM, -- 수주확률코드
+                BOPT_STAT_CD, BOPT_STAT_CD_NM, -- 사업기회상태코드
                 <if test='prodDstCd != null and prodDstCd != "" '>
-                    B.PROD_DST_CD, --B.GODS_CLSF_CD,	 -- ★상품실적현황인 경우
+                    PROD_DST_CD, PROD_DST_CD_NM,  -- 상품구분코드  -- ★상품실적현황인 경우
                 </if>
-                NVL(SUM(B.SELL_AMT),0) SELL_AMT, -- 매출금액
-                NVL(SUM(B.BUY_AMT),0) BUY_AMT -- 매입금액
-                FROM BPIP000T A, BPIP020T B, APRJ000T C, ACOM010T S
-                WHERE A.BOPT_ID = B.BOPT_ID(+)
-                <choose>
-                    <when test='isUnsold != null and isUnsold != "" '>
-                        AND (A.FCST_RFLC_YN = 'Y' AND A.BOPT_STAT_CD != 'E') -- 사업예상반영여부=Y, 사업기회상태!=계약완료 ★Unsold인 경우
-                    </when>
-                    <otherwise>
-                        AND (A.FCST_RFLC_YN = 'Y' OR A.BOPT_STAT_CD = 'E') -- 사업예상반영여부=Y, 사업기회상태=계약완료
-                    </otherwise>
-                </choose>
-                AND A.BOPT_STAT_CD != 'D1'
-                AND A.BOPT_STAT_CD != 'F' -- 사업기회종료 제외
-                AND (A.BOPT_STAT_CD = 'E' OR SUBSTR(A.CNTR_DATE,1,6) >= TO_CHAR(SYSDATE-30,'YYYYMM')) -- ★20190711 Sold이거나 Unsold(마감 고려 1개월 소급적용)
-                AND A.PRJT_ID = C.PRJT_ID
-                AND C.PRJT_STAT_CD NOT LIKE 'F%' --F1.사업이관, F2.사업폐기
-                AND C.PRJT_STAT_CD NOT LIKE 'D%' --D1.일반삭제, D2.중복삭제
-                AND S.COM_GRP_CD = (SELECT COM_GRP_CD FROM ACOM020T WHERE CLMN_NM = 'WCT_PRBB_CD') -- 수주확률코드
-                AND A.WCT_PRBB_CD = S.COM_CD
-                <if test='prjtTypeCd != null and prjtTypeCd != "" '>
-                    AND C.PRJT_TYPE_CD = #{prjtTypeCd}
+                --GODS_CLSF_CD, IBIZ_COM_CD_NM('GODS_CLSF_CD',B.GODS_CLSF_CD) GODS_CLSF_NM,  -- 제품분류코드
+                SELL_OPPTY_RSL_AMT, -- 매출금액_기회
+                BUY_OPPTY_RSL_AMT, -- 매입금액_기회
+                SELL_FCST_RSL_AMT,  -- 매출금액_확률적용 -- ★20190711 계약완료는 수주확률 적용하지 않음
+                BUY_FCST_RSL_AMT, -- 매입금액_확률적용 -- ★20190711 계약완료는 수주확률 적용하지 않음
+                SELL_RSL_AMT, -- 매출금액_실적
+                BUY_RSL_AMT, -- 매입금액_실적
+                OPPTY_SELL_RSL_AMT, -- 매출금액_기회전체
+                OPPTY_BUY_RSL_AMT, -- 매입금액_기회전체
+                ACML_SELL_RSL_AMT, -- 매출금액_누적실적
+                ACML_BUY_RSL_AMT, -- 매입금액_누적실적
+                ISSUE_CNT,  -- 사업이슈개수
+                WCT_PRBB_VAL,
+                SUM(SELL_OPPTY_RSL_AMT) OVER() AS TOTAL_SELL_OPPTY_RSL_AMT, -- 매출금액_기회 총액
+                SUM(BUY_OPPTY_RSL_AMT) OVER() AS TOTAL_BUY_OPPTY_RSL_AMT, -- 매입금액_기회 총액
+                SUM(SELL_FCST_RSL_AMT) OVER() AS TOTAL_SELL_FCST_RSL_AMT, -- 매출금액_확률적용 총액
+                SUM(BUY_FCST_RSL_AMT) OVER() AS TOTAL_BUY_FCST_RSL_AMT, -- 매입금액_확률적용 총액
+                SUM(SELL_RSL_AMT) OVER() AS TOTAL_SELL_RSL_AMT,  -- 매출금액_실적 총액
+                SUM(BUY_RSL_AMT) OVER() AS TOTAL_BUY_RSL_AMT,  -- 매입금액_실적 총액
+                SUM(OPPTY_SELL_RSL_AMT) OVER() AS TOTAL_OPPTY_SELL_RSL_AMT, -- 매출금액_기회전체 총액
+                SUM(OPPTY_BUY_RSL_AMT) OVER() AS TOTAL_OPPTY_BUY_RSL_AMT, -- 매입금액_기회전체 총액
+                SUM(ACML_SELL_RSL_AMT) OVER() AS TOTAL_ACML_SELL_RSL_AMT, -- 매출금액_누적실적 총액
+                SUM(ACML_BUY_RSL_AMT) OVER() AS TOTAL_ACML_BUY_RSL_AMT -- 매입금액_누적실적 총액
+            FROM
+            (
+                SELECT P.LAST_CUST_ID, M.CUST_NM LAST_CUST_NM, P.PRJT_ID, P.PRJT_NM, P.BOPT_ID,
+                P.SLS_DEPT_ID, P.SLS_EMP_ID, H.EMP_NM SLS_EMP_NM,
+                P.CNTR_DATE, P.FCST_YAM,
+                P.BSNS_CLSF_CD, IBIZ_COM_CD_NM('BSNS_CLSF_CD',P.BSNS_CLSF_CD) BSNS_CLSF_CD_NM, -- 사업분류코드
+                P.WCT_PRBB_CD, IBIZ_COM_CD_NM('WCT_PRBB_CD',P.WCT_PRBB_CD) WCT_PRBB_CD_NM, -- 수주확률코드
+                P.BOPT_STAT_CD, IBIZ_COM_CD_NM('BOPT_STAT_CD',P.BOPT_STAT_CD) BOPT_STAT_CD_NM, -- 사업기회상태코드
+                <if test='prodDstCd != null and prodDstCd != "" '>
+                    P.PROD_DST_CD, IBIZ_COM_CD_NM('PROD_DST_CD',P.PROD_DST_CD) PROD_DST_CD_NM,  -- 상품구분코드  -- ★상품실적현황인 경우
                 </if>
-                AND B.FCST_YAM BETWEEN #{fromDate} AND #{toDate} -- 조회조건_기간
-                <if test='slsDeptId != null and slsDeptId != "" '>
-                    AND A.SLS_DEPT_ID  in (
-                    SELECT DEPT_ID FROM HMST110T
-                    WHERE SELL_OCR_YN = 'Y' -- 매출발생부서
-                    <![CDATA[
-                    AND SUBSTR(ORG_CLOSE_DATE,1,4) >= #{critYear}
-                    ]]>
-                    AND CRIT_YEAR = #{critYear}
-                    START WITH
-                    DEPT_ID = #{slsDeptId}
-                    CONNECT BY
-                    PRIOR DEPT_ID = HGRK_DEPT_ID
-                    )    -- 조회조건_영업부서
+                --GODS_CLSF_CD, IBIZ_COM_CD_NM('GODS_CLSF_CD',B.GODS_CLSF_CD) GODS_CLSF_NM,  -- 제품분류코드
+                P.SELL_AMT AS SELL_OPPTY_RSL_AMT, -- 매출금액_기회
+                P.BUY_AMT AS BUY_OPPTY_RSL_AMT, -- 매입금액_기회
+                P.SELL_AMT*P.WCT_PRBB_VAL AS SELL_FCST_RSL_AMT, -- 매출금액_확률적용 -- ★20190711 계약완료는 수주확률 적용하지 않음
+                P.BUY_AMT*P.WCT_PRBB_VAL AS BUY_FCST_RSL_AMT, -- 매입금액_확률적용 -- ★20190711 계약완료는 수주확률 적용하지 않음
+                DECODE(P.BOPT_STAT_CD,'E',P.SELL_AMT,0) AS SELL_RSL_AMT, -- 매출금액_실적
+                DECODE(P.BOPT_STAT_CD,'E',P.BUY_AMT,0) AS BUY_RSL_AMT, -- 매입금액_실적
+                SUM(Q.SELL_AMT) AS OPPTY_SELL_RSL_AMT, -- 매출금액_기회전체
+                SUM(Q.BUY_AMT) AS OPPTY_BUY_RSL_AMT, -- 매입금액_기회전체
+                <![CDATA[
+                   SUM(CASE WHEN P.BOPT_STAT_CD='E' AND Q.FCST_YAM<=#{toDate} THEN Q.SELL_AMT ELSE 0 END) AS ACML_SELL_RSL_AMT, -- 매출금액_누적실적
+                   SUM(CASE WHEN P.BOPT_STAT_CD='E' AND Q.FCST_YAM<=#{toDate} THEN Q.BUY_AMT ELSE 0 END) AS ACML_BUY_RSL_AMT, -- 매입금액_누적실적
+
+                ]]>
+                (SELECT COUNT(BSNS_ISSUE_ID)
+                    FROM BPIP200T
+                    WHERE PRJT_ID = P.PRJT_ID
+                    AND ISSUE_DLNG_STAT_CD IN ('A','B','C','D') -- 이슈처리상태: A.등록, B.계획수립, C.처리중, D.결과검토
+                ) ISSUE_CNT,  -- 사업이슈개수
+                P.WCT_PRBB_VAL
+                FROM CMST000T M, HMST300T H, BPIP020T Q,
+                ( -- 대상건 추출
+                    SELECT C.LAST_CUST_ID, C.PRJT_ID, C.PRJT_NM, A.BOPT_ID, -- A.BOPT_NM,
+                    A.SLS_DEPT_ID, A.SLS_EMP_ID,
+                    A.CNTR_DATE, --A.WCT_DCD_DATE, -- 계약일자, 수주확정일자
+                    B.FCST_YAM,
+                    GC.HGRK_COM_CD AS BSNS_CLSF_CD, --★사업분류코드
+                    A.WCT_PRBB_CD, A.BOPT_STAT_CD,
+                    CASE WHEN A.BOPT_STAT_CD = 'E' THEN 1 ELSE S.COM_CD_NUM_VAL END WCT_PRBB_VAL, -- ★20190711 계약완료는 수주확률 적용하지 않음
+                    <if test='prodDstCd != null and prodDstCd != "" '>
+                        B.PROD_DST_CD, --B.GODS_CLSF_CD,	 -- ★상품실적현황인 경우
+                    </if>
+                    NVL(SUM(B.SELL_AMT),0) SELL_AMT, -- 매출금액
+                    NVL(SUM(B.BUY_AMT),0) BUY_AMT -- 매입금액
+                    FROM BPIP000T A, BPIP020T B, APRJ000T C, ACOM010T S, ACOM010T GC
+                    WHERE A.BOPT_ID = B.BOPT_ID(+)
+                    <choose>
+                        <when test='isUnsold != null and isUnsold != "" '>
+                            AND (A.FCST_RFLC_YN = 'Y' AND A.BOPT_STAT_CD != 'E') -- 사업예상반영여부=Y, 사업기회상태!=계약완료 ★Unsold인 경우
+                        </when>
+                        <otherwise>
+                            AND (A.FCST_RFLC_YN = 'Y' OR A.BOPT_STAT_CD = 'E') -- 사업예상반영여부=Y, 사업기회상태=계약완료
+                        </otherwise>
+                    </choose>
+                    AND A.BOPT_STAT_CD != 'D1'
+                    AND A.BOPT_STAT_CD != 'F' -- 사업기회종료 제외
+                    AND (A.BOPT_STAT_CD = 'E' OR SUBSTR(A.CNTR_DATE,1,6) >= TO_CHAR(SYSDATE-30,'YYYYMM')) -- ★20190711 Sold이거나 Unsold(마감 고려 1개월 소급적용)
+                    AND A.PRJT_ID = C.PRJT_ID
+                    AND C.PRJT_STAT_CD NOT LIKE 'F%' --F1.사업이관, F2.사업폐기
+                    AND C.PRJT_STAT_CD NOT LIKE 'D%' --D1.일반삭제, D2.중복삭제
+                    AND S.COM_GRP_CD = (SELECT COM_GRP_CD FROM ACOM020T WHERE CLMN_NM = 'WCT_PRBB_CD') -- 수주확률코드
+                    AND A.WCT_PRBB_CD = S.COM_CD
+                    AND GC.COM_GRP_CD = (SELECT COM_GRP_CD FROM ACOM020T WHERE CLMN_NM = 'GODS_CLSF_CD')
+                    AND B.GODS_CLSF_CD = GC.COM_CD
+                    <if test='bsnsClsfCd != null and bsnsClsfCd != "" '>
+                        AND GC.HGRK_COM_CD = #{bsnsClsfCd} --★조회조건_사업분류
+                    </if>
+                    <if test='prjtTypeCd != null and prjtTypeCd != "" '>
+                        AND C.PRJT_TYPE_CD = #{prjtTypeCd}
+                    </if>
+                    AND B.FCST_YAM BETWEEN #{fromDate} AND #{toDate} -- 조회조건_기간
+                    <if test='slsDeptId != null and slsDeptId != "" '>
+                        AND A.SLS_DEPT_ID  in (
+                        SELECT DEPT_ID FROM HMST110T
+                        WHERE SELL_OCR_YN = 'Y' -- 매출발생부서
+                        <![CDATA[
+                        AND SUBSTR(ORG_CLOSE_DATE,1,4) >=  #{critYear}
+                        ]]>
+                        AND CRIT_YEAR = #{critYear}
+                        START WITH
+                        DEPT_ID = #{slsDeptId}
+                        CONNECT BY
+                        PRIOR DEPT_ID = HGRK_DEPT_ID
+                        )    -- 조회조건_영업부서
+                    </if>
+                    <if test='slsEmpId != null'>
+                        AND A.SLS_EMP_ID = #{slsEmpId} -- 조회조건_영업대표
+                    </if>
+                    <if test='brslDstCd == "B" '>
+                        AND B.SELL_AMT != 0 -- 매출 예상/실적 리스트인 경우
+                    </if>
+                    <if test='brslDstCd == "C" '>
+                        AND B.BUY_AMT != 0 -- 매입 예상/실적 리스트인 경우
+                    </if>
+                    <if test='prodDstCd != null and prodDstCd != "" '>
+                        AND B.PROD_DST_CD = #{prodDstCd} -- ★조회조건_상품구분 -- ★상품실적현황인 경우
+                    </if>
+                    GROUP BY C.LAST_CUST_ID, C.PRJT_ID, C.PRJT_NM, A.BOPT_ID,
+                    A.SLS_DEPT_ID, A.SLS_EMP_ID,
+                    A.CNTR_DATE, --A.WCT_DCD_DATE, -- 계약일자, 수주확정일자
+                    B.FCST_YAM, -- 매출매입예상월
+                    GC.HGRK_COM_CD, --★사업분류코드
+                    A.WCT_PRBB_CD, A.BOPT_STAT_CD,
+                    CASE WHEN A.BOPT_STAT_CD = 'E' THEN 1 ELSE S.COM_CD_NUM_VAL END --★20190711 WCT_PRBB_VAL
+                    <if test='prodDstCd != null and prodDstCd != "" '>
+                        , B.PROD_DST_CD  -- ★상품실적현황인 경우
+                    </if>
+                ) P
+                WHERE P.LAST_CUST_ID = M.CUST_ID
+                AND P.SLS_EMP_ID = H.EMP_ID
+                AND P.BOPT_ID = Q.BOPT_ID
+                <if test='prodDstCd != null and prodDstCd != "" '>
+                    AND P.PROD_DST_CD = Q.PROD_DST_CD  -- ★상품실적현황인 경우
                 </if>
-                <if test='slsEmpId != null'>
-                    AND A.SLS_EMP_ID = #{slsEmpId} -- 조회조건_영업대표
+                GROUP BY LAST_CUST_ID, M.CUST_NM, P.PRJT_ID, P.PRJT_NM, P.BOPT_ID,P.BOPT_STAT_CD,
+                P.SLS_DEPT_ID, P.SLS_EMP_ID, H.EMP_NM,
+                P.CNTR_DATE, P.FCST_YAM,
+                P.BSNS_CLSF_CD, P.WCT_PRBB_CD, P.WCT_PRBB_VAL, -- ★20190711
+                <if test='prodDstCd != null and prodDstCd != "" '>
+                    P.PROD_DST_CD,  -- ★상품실적현황인 경우
                 </if>
-                <if test='bsnsClsfCd != null and bsnsClsfCd != "" '>
-                    AND A.BSNS_CLSF_CD = #{bsnsClsfCd} -- 조회조건_사업분류
-                </if>
+                P.SELL_AMT, P.BUY_AMT
+            )
+            <if test='orderTypeCd == "CP" or ( orderTypeCd == null)'>
+                ORDER BY LAST_CUST_NM, PRJT_NM, CNTR_DATE  -- 정렬기준: 고객명+프로젝트명
+            </if>
+            <if test='orderTypeCd == "SD" '>
+                ORDER BY FCST_YAM, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 발생시기
+            </if>
+            <if test='orderTypeCd == "WP" '>
+                ORDER BY WCT_PRBB_VAL DESC, FCST_YAM, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 수주가능성
+            </if>
+            <if test='orderTypeCd == "TA" '>
                 <if test='brslDstCd == "B" '>
-                    AND B.SELL_AMT != 0 -- 매출 예상/실적 리스트인 경우
+                    ORDER BY SELL_OPPTY_RSL_AMT DESC, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 기회금액(매출)
                 </if>
                 <if test='brslDstCd == "C" '>
-                    AND B.BUY_AMT != 0 -- 매입 예상/실적 리스트인 경우
+                    ORDER BY BUY_OPPTY_RSL_AMT DESC, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 기회금액(매입)
                 </if>
-                <if test='prodDstCd != null and prodDstCd != "" '>
-                    AND B.PROD_DST_CD = #{prodDstCd} -- ★조회조건_상품구분 -- ★상품실적현황인 경우
+            </if>
+            <if test='orderTypeCd == "FA" '>
+                <if test='brslDstCd == "B" '>
+                    ORDER BY SELL_FCST_RSL_AMT DESC, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 확률금액(매출)
                 </if>
-                GROUP BY C.LAST_CUST_ID, C.PRJT_ID, C.PRJT_NM, A.BOPT_ID,
-                A.SLS_DEPT_ID, A.SLS_EMP_ID,
-                A.CNTR_DATE, --A.WCT_DCD_DATE, -- 계약일자, 수주확정일자
-                B.FCST_YAM, -- 매출매입예상월
-                A.BSNS_CLSF_CD, A.WCT_PRBB_CD, A.BOPT_STAT_CD,
-                CASE WHEN A.BOPT_STAT_CD = 'E' THEN 1 ELSE S.COM_CD_NUM_VAL END --★20190711 WCT_PRBB_VAL
-                <if test='prodDstCd != null and prodDstCd != "" '>
-                    , B.PROD_DST_CD  -- ★상품실적현황인 경우
+                <if test='brslDstCd == "C" '>
+                    ORDER BY BUY_FCST_RSL_AMT DESC, LAST_CUST_NM, PRJT_NM, FCST_YAM  -- 정렬기준: 확률금액(매입)
                 </if>
-            ) P
-            WHERE P.LAST_CUST_ID = M.CUST_ID
-            AND P.SLS_EMP_ID = H.EMP_ID
-            AND P.BOPT_ID = Q.BOPT_ID
-            <if test='prodDstCd != null and prodDstCd != "" '>
-                AND P.PROD_DST_CD = Q.PROD_DST_CD  -- ★상품실적현황인 경우
             </if>
-            GROUP BY LAST_CUST_ID, M.CUST_NM, P.PRJT_ID, P.PRJT_NM, P.BOPT_ID,P.BOPT_STAT_CD,
-            P.SLS_DEPT_ID, P.SLS_EMP_ID, H.EMP_NM,
-            P.CNTR_DATE, P.FCST_YAM,
-            P.BSNS_CLSF_CD, P.WCT_PRBB_CD, P.WCT_PRBB_VAL, -- ★20190711
-            <if test='prodDstCd != null and prodDstCd != "" '>
-                P.PROD_DST_CD,  -- ★상품실적현황인 경우
+            <if test='orderTypeCd == "RA" '>
+                <if test='brslDstCd == "B" '>
+                    ORDER BY SELL_RSL_AMT DESC, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 실적금액(매출)
+                </if>
+                <if test='brslDstCd == "C" '>
+                    ORDER BY BUY_RSL_AMT DESC, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 실적금액(매입)
+                </if>
             </if>
-            P.SELL_AMT, P.BUY_AMT
-        )
-        <if test='orderTypeCd == "CP" or ( orderTypeCd == null)'>
-            ORDER BY LAST_CUST_NM, PRJT_NM, CNTR_DATE  -- 정렬기준: 고객명+프로젝트명
-        </if>
-        <if test='orderTypeCd == "SD" '>
-            ORDER BY FCST_YAM, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 발생시기
-        </if>
-        <if test='orderTypeCd == "WP" '>
-            ORDER BY WCT_PRBB_VAL DESC, FCST_YAM, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 수주가능성
-        </if>
-        <if test='orderTypeCd == "TA" '>
-            <if test='brslDstCd == "B" '>
-                ORDER BY SELL_OPPTY_RSL_AMT DESC, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 기회금액(매출)
+            <if test='orderTypeCd == "IC" '>
+                ORDER BY ISSUE_CNT DESC, LAST_CUST_NM, PRJT_NM
             </if>
-            <if test='brslDstCd == "C" '>
-                ORDER BY BUY_OPPTY_RSL_AMT DESC, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 기회금액(매입)
-            </if>
-        </if>
-        <if test='orderTypeCd == "FA" '>
-            <if test='brslDstCd == "B" '>
-                ORDER BY SELL_FCST_RSL_AMT DESC, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 확률금액(매출)
-            </if>
-            <if test='brslDstCd == "C" '>
-                ORDER BY BUY_FCST_RSL_AMT DESC, LAST_CUST_NM, PRJT_NM, FCST_YAM  -- 정렬기준: 확률금액(매입)
-            </if>
-        </if>
-        <if test='orderTypeCd == "RA" '>
-            <if test='brslDstCd == "B" '>
-                ORDER BY SELL_RSL_AMT DESC, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 실적금액(매출)
-            </if>
-            <if test='brslDstCd == "C" '>
-                ORDER BY BUY_RSL_AMT DESC, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 실적금액(매입)
-            </if>
-        </if>
-        <if test='orderTypeCd == "IC" '>
-            ORDER BY ISSUE_CNT DESC, LAST_CUST_NM, PRJT_NM
-        </if>
-        ) T
+            ) T
         ) S
         WHERE ROWNUMBER BETWEEN #{pageSize} * (#{pageNumber} - 1) + 1
         AND #{pageSize} * (#{pageNumber} - 1) + #{pageSize}
+
+    </select>
+
+
+
+    <!-- 수주 잔여예상 리스트 조회 -->
+    <select id="selectWCTSalesReportRsdnList"
+            parameterType="com.ibiz.api.model.BusinessResultSearchVO"
+            resultType="com.ibiz.api.model.SalesReportVO">
+
+            SELECT * FROM (
+              SELECT COUNT(1) OVER() AS TOTAL_CNT, ROWNUM AS ROWNUMBER, T.*
+              FROM (
+                        SELECT CRIT_YAM AS CNTR_DATE, TT.PRJT_ID, IBIZ_PRJT_NM(TT.PRJT_ID) AS PRJT_NM, BOPT_ID,
+                            APRJ.LAST_CUST_ID, IBIZ_CUST_NM(APRJ.LAST_CUST_ID) AS LAST_CUST_NM,
+                            APRJ.PRJT_TYPE_CD,
+                            TT.SLS_DEPT_ID, IBIZ_DEPT_NM(TT.SLS_DEPT_ID) AS SLS_DEPT_NM,
+                            TT.SLS_EMP_ID, IBIZ_EMP_NM(TT.SLS_EMP_ID) AS SLS_EMP_NM,
+                            ACOM.HGRK_COM_CD AS BSNS_CLSF_CD, IBIZ_COM_CD_NM('BSNS_CLSF_CD',ACOM.HGRK_COM_CD) AS BSNS_CLSF_CD_NM,
+                            <if test='prodDstCd != null and prodDstCd != "" '>
+                                PROD_DST_CD, IBIZ_COM_CD_NM('PROD_DST_CD',PROD_DST_CD) AS PROD_DST_CD_NM,  -- 상품구분코드  -- ★상품실적현황인 경우
+                                PROD_TYPE_CD, IBIZ_COM_CD_NM('PROD_TYPE_CD',PROD_TYPE_CD) AS PROD_TYPE_CD_NM,
+                            </if>
+                            WCT_ID,
+                            GODS_CLSF_CD, WCT_PRBB_CD, IBIZ_COM_CD_NM('WCT_PRBB_CD',WCT_PRBB_CD) AS WCT_PRBB_CD_NM,
+                            OPPTY_SELL_AMT AS SELL_OPPTY_RSL_AMT, FCST_SELL_AMT AS SELL_FCST_RSL_AMT, RSL_SELL_AMT AS SELL_RSL_AMT, DEF_SELL_AMT,
+                            OPPTY_BUY_AMT AS BUY_OPPTY_RSL_AMT, FCST_BUY_AMT AS BUY_FCST_RSL_AMT, RSL_BUY_AMT AS BUY_RSL_AMT, DEF_BUY_AMT,
+                            BOPT_STAT_CD, IBIZ_COM_CD_NM('BOPT_STAT_CD', BOPT_STAT_CD) AS BOPT_STAT_CD_NM,
+                            SUM(FCST_SELL_AMT) OVER() AS TOTAL_SELL_FCST_RSL_AMT, -- 매출금액_확률적용 총액
+                            SUM(RSL_SELL_AMT) OVER() AS TOTAL_SELL_RSL_AMT, -- 매출금액_실적 총액
+                            SUM(DEF_SELL_AMT) OVER() AS TOTAL_DEF_SELL_AMT -- 매출금액_차액 총액
+                        FROM
+                        (
+                               SELECT NVL(RSL.CRIT_YAM, FCST.CRIT_YAM) AS CRIT_YAM, NVL(FCST.PRJT_ID,RSL.PRJT_ID) AS PRJT_ID, NVL(RSL.BOPT_ID,FCST.BOPT_ID) AS BOPT_ID, NVL(SLS_DEPT_ID,RSL.DEPT_ID) AS SLS_DEPT_ID, NVL(FCST.SLS_EMP_ID, RSL.EMP_ID) AS SLS_EMP_ID,
+                                    <if test='prodDstCd != null and prodDstCd != "" '>
+                                        (SELECT HGRK_COM_CD FROM ACOM010T WHERE COM_GRP_CD ='PM04' AND COM_CD = NVL(RSL.PROD_TYPE_CD, FCST.PROD_TYPE_CD)) AS PROD_DST_CD,   -- 상품구분코드  -- ★상품실적현황인 경우
+                                        NVL(RSL.PROD_TYPE_CD, FCST.PROD_TYPE_CD) AS PROD_TYPE_CD,
+                                    </if>
+                                    WCT_ID,
+                                    NVL(FCST.GODS_CLSF_CD,RSL.GODS_CLSF_CD) AS GODS_CLSF_CD, NVL(FCST.WCT_PRBB_CD, RSL.WCT_PRBB_CD) AS WCT_PRBB_CD,
+                                    NVL(FCST.OPPTY_SELL_AMT,0) AS OPPTY_SELL_AMT , NVL(FCST.FCST_SELL_AMT,0) AS FCST_SELL_AMT,  NVL(RSL.RSL_SELL_AMT,0) AS RSL_SELL_AMT, ( NVL(FCST.FCST_SELL_AMT,0) - NVL(RSL.RSL_SELL_AMT,0) )AS DEF_SELL_AMT,
+                                    0 AS OPPTY_BUY_AMT, 0 AS FCST_BUY_AMT, 0 AS RSL_BUY_AMT, 0 AS DEF_BUY_AMT ,
+                                    NVL(FCST.BOPT_STAT_CD, (SELECT BOPT_STAT_CD FROM BPIP000T WHERE BOPT_ID = RSL.BOPT_ID)) AS BOPT_STAT_CD
+                                FROM
+                                        --(기준월 = 잔여종료월 이고 기준월 = 잔여시작월)
+                                        -- A.기준월 기준 갭추출
+                                        -- 기준월 예상(기회) SUM
+                                        (
+
+                                            SELECT CRIT_YAM, PRJT_ID,  BOPT_ID, SLS_DEPT_ID, SLS_EMP_ID,
+                                                    <if test='prodDstCd != null and prodDstCd != "" '>
+                                                        (SELECT HGRK_COM_CD FROM ACOM010T WHERE COM_GRP_CD ='PM04' AND COM_CD = RSDN_FCST.PROD_TYPE_CD) AS PROD_DST_CD,   -- 상품구분코드  -- ★상품실적현황인 경우
+                                                        PROD_TYPE_CD,
+                                                    </if>
+                                                    GODS_CLSF_CD, WCT_PRBB_CD,
+                                                    OPPTY_SELL_AMT, (OPPTY_SELL_AMT*WCT_PRBB_VAL) AS FCST_SELL_AMT, 0 AS RSL_SELL_AMT, (OPPTY_SELL_AMT*WCT_PRBB_VAL) AS DEF_SELL_AMT ,
+                                                    BOPT_STAT_CD
+                                              FROM (
+                                                        SELECT
+                                                                A.PRJT_ID, A.BOPT_ID, SUBSTR(A.CNTR_DATE,1,6) AS CRIT_YAM, A.SLS_DEPT_ID, A.SLS_EMP_ID, D.HGRK_COM_CD AS BSNS_CLSF_CD,
+                                                                <if test='prodDstCd != null and prodDstCd != "" '>
+                                                                   PROD_TYPE_CD, -- ★상품실적현황인 경우
+                                                                </if>
+                                                                GODS_CLSF_CD,
+                                                                NVL(SUM(SELL_AMT),0) AS OPPTY_SELL_AMT,
+                                                                A.WCT_PRBB_CD, A.BOPT_STAT_CD,
+                                                                CASE WHEN A.BOPT_STAT_CD = 'E' THEN 1 ELSE S.COM_CD_NUM_VAL END WCT_PRBB_VAL -- 계약완료는 수주확률 적용하지 않음
+                                                          FROM BPIP000T A
+                                                          JOIN BPIP020T B ON A.BOPT_ID = B.BOPT_ID
+                                                          JOIN APRJ000T C ON A.PRJT_ID = C.PRJT_ID
+                                                          LEFT JOIN (SELECT HGRK_COM_CD, COM_CD FROM ACOM010T WHERE COM_GRP_CD ='PM08' ) D
+                                                          ON D.COM_CD = B.GODS_CLSF_CD
+                                                          JOIN (SELECT * FROM ACOM010T WHERE COM_GRP_CD = (SELECT COM_GRP_CD FROM ACOM020T WHERE CLMN_NM = 'WCT_PRBB_CD')) S  -- 수주확률코드
+                                                          ON S.COM_CD = A.WCT_PRBB_CD
+                                                         WHERE
+                                                            (A.BOPT_STAT_CD = 'E' -- 계약완료
+                                                                OR  (
+                                                                    A.FCST_RFLC_YN = 'Y' -- 사업예상반영여부
+                                                                    AND A.BOPT_STAT_CD NOT IN ('E', 'F') -- E.계약완료, F.사업기회종료 제외
+                                                                )
+                                                            )
+                                                           AND C.PRJT_STAT_CD NOT LIKE 'F%' -- F1.사업이관, F2.사업폐기
+                                                           AND C.PRJT_STAT_CD NOT LIKE 'D%' -- D1.일반삭제, D2.중복삭제
+                                                           AND LENGTH(A.CNTR_DATE) >= 6
+                                                        GROUP BY A.PRJT_ID, A.BOPT_ID,  SUBSTR(A.CNTR_DATE,1,6), A.SLS_DEPT_ID, A.SLS_EMP_ID, D.HGRK_COM_CD,
+                                                             <if test='prodDstCd != null and prodDstCd != "" '>
+                                                               PROD_TYPE_CD, -- ★상품실적현황인 경우
+                                                            </if>
+                                                            GODS_CLSF_CD, A.WCT_PRBB_CD,  A.BOPT_STAT_CD, CASE WHEN A.BOPT_STAT_CD = 'E' THEN 1 ELSE S.COM_CD_NUM_VAL END
+                                              ) RSDN_FCST
+                                            WHERE (OPPTY_SELL_AMT != 0)-- 수주금액
+                                            <if test='slsDeptId != null and slsDeptId != "" '>
+                                            AND SLS_DEPT_ID  IN (
+                                                            SELECT DEPT_ID FROM HMST110T
+                                                            WHERE SELL_OCR_YN = 'Y' -- 매출발생부서
+                                                            <![CDATA[
+                                                                    AND SUBSTR(ORG_CLOSE_DATE,1,4) >= #{critYear}
+                                                            ]]>
+                                                            AND CRIT_YEAR = #{critYear}
+                                                            START WITH
+                                                            DEPT_ID = #{slsDeptId}
+                                                            CONNECT BY
+                                                            PRIOR DEPT_ID = HGRK_DEPT_ID
+                                            )
+                                            </if>
+                                            AND CRIT_YAM = #{critDate}   -- 조회조건_기간
+
+                                        ) FCST
+                                        FULL OUTER JOIN
+                                        -- 기준월 실적 SUM
+                                        (
+                                            SELECT
+                                                CNTR.CRIT_YAM, CNTR.PRJT_ID, MAX(WMST.WCT_ID) AS WCT_ID, CNTR.SLS_DEPT_ID AS DEPT_ID, GODS_CLSF_CD, '10' AS WCT_PRBB_CD,
+                                                CNTR.SLS_EMP_ID AS EMP_ID,
+                                                <if test='prodDstCd != null and prodDstCd != "" '>
+                                                   PROD_TYPE_CD, -- ★상품실적현황인 경우
+                                                </if>
+                                                RSL.BOPT_ID,
+                                                NVL(SUM(ROUND(NVL(RSL.RATE*CNTR.CNTR_AMT,0),0)),0) AS RSL_SELL_AMT
+                                            FROM (
+                                                    SELECT BEST.FCST_PAL_ID, BESTM.BOPT_ID, (SELECT HGRK_COM_CD FROM ACOM010T WHERE COM_GRP_CD ='PM04' AND COM_CD = BEST.PROD_TYPE_CD) AS PROD_DST_CD,
+                                                        BEST.PROD_TYPE_CD, BEST.GODS_CLSF_CD, BEST.SELL_AMT , SUM_BEST.SUM_SELL_AMT,
+                                                         CASE WHEN NVL(SUM_BEST.SUM_SELL_AMT,0) = 0
+                                                            THEN 0
+                                                            ELSE NVL(BEST.SELL_AMT/SUM_BEST.SUM_SELL_AMT,0)
+                                                        END AS RATE
+                                                    FROM
+                                                    (
+                                                        SELECT BE02.FCST_PAL_ID,SUM(BE02.SELL_AMT) AS SUM_SELL_AMT
+                                                        FROM BEST020T BE02
+                                                        WHERE 1=1 AND GODS_CLSF_CD != 'AL'
+                                                        GROUP BY BE02.FCST_PAL_ID
+                                                    ) SUM_BEST
+                                                    JOIN (
+                                                        SELECT BE02.FCST_PAL_ID, BE02.PROD_TYPE_CD, BE02.GODS_CLSF_CD, BE02.SELL_AMT
+                                                        FROM BEST020T BE02
+                                                        WHERE 1=1 AND GODS_CLSF_CD != 'AL'
+                                                    ) BEST
+                                                    ON SUM_BEST.FCST_PAL_ID = BEST.FCST_PAL_ID
+                                                    JOIN BEST000T BESTM
+                                                    ON BESTM.FCST_PAL_ID = BEST.FCST_PAL_ID
+                                                    <![CDATA[
+                                                        WHERE BEST.SELL_AMT IS NOT NULL AND BEST.SELL_AMT <> 0
+                                                    ]]>
+                                            ) RSL -- BEST020T 기반 비율
+                                            LEFT JOIN (
+                                                    SELECT PRJT_ID, CNTR_ID, FCST_PAL_ID, SUM(CNTR_AMT) AS CNTR_AMT, SUBSTR(CNTR_DATE,1,6) AS CRIT_YAM,
+                                                        SLS_DEPT_ID, SLS_EMP_ID
+                                                    FROM WMST000T CNTR
+                                                    GROUP BY PRJT_ID, CNTR_ID, FCST_PAL_ID, SUBSTR(CNTR_DATE,1,6), SLS_DEPT_ID, SLS_EMP_ID
+                                            ) CNTR -- 계약금액, 계약정보
+                                            ON RSL.FCST_PAL_ID = CNTR.FCST_PAL_ID
+                                            LEFT JOIN (
+                                                SELECT SUM(WCT_AMT) AS WCT_AMT, CNTR_ID, MAX(WCT_ID) AS WCT_ID
+                                                FROM WMST100T
+                                                GROUP BY CNTR_ID
+                                            ) WMST
+                                            ON WMST.CNTR_ID = CNTR.CNTR_ID
+                                            JOIN APRJ000T APRJ
+                                            ON CNTR.PRJT_ID = APRJ.PRJT_ID
+                                            JOIN ( SELECT HGRK_COM_CD,COM_CD FROM ACOM010T WHERE COM_GRP_CD = 'PM08' ) ACOM
+                                            ON ACOM.COM_CD = RSL.GODS_CLSF_CD
+                                            WHERE CNTR.CRIT_YAM = #{critDate} -- 조회조건_기간
+                                            <if test='slsDeptId != null and slsDeptId != "" '>
+                                            AND CNTR.SLS_DEPT_ID  IN (
+                                                                                SELECT DEPT_ID FROM HMST110T
+                                                                                WHERE SELL_OCR_YN = 'Y' -- 매출발생부서
+                                                                                <![CDATA[
+                                                                                        AND SUBSTR(ORG_CLOSE_DATE,1,4) >= #{critYear}
+                                                                                ]]>
+                                                                                AND CRIT_YEAR = #{critYear}
+                                                                                START WITH
+                                                                                DEPT_ID = #{slsDeptId}
+                                                                                CONNECT BY
+                                                                                PRIOR DEPT_ID = HGRK_DEPT_ID
+                                                        )    -- 조회조건_영업부서
+                                            </if>
+                                            AND RSL.RATE != 0
+                                            GROUP BY CNTR.CRIT_YAM, CNTR.PRJT_ID, CNTR.SLS_DEPT_ID, CNTR.SLS_EMP_ID,
+                                                        <if test='prodDstCd != null and prodDstCd != "" '>
+                                                           PROD_TYPE_CD, -- ★상품실적현황인 경우
+                                                        </if>
+                                                    GODS_CLSF_CD, RSL.BOPT_ID
+
+                                        ) RSL
+                                        ON (FCST.PRJT_ID = RSL.PRJT_ID AND FCST.CRIT_YAM = RSL.CRIT_YAM AND FCST.BOPT_ID = RSL.BOPT_ID
+                                             <if test='prodDstCd != null and prodDstCd != "" '>
+                                               AND FCST.PROD_TYPE_CD = RSL.PROD_TYPE_CD  -- ★상품실적현황인 경우
+                                            </if>
+                                        AND FCST.GODS_CLSF_CD = RSL.GODS_CLSF_CD )
+
+                    <if test='critDate lt toDate '>
+                                UNION ALL
+                                        -- 기준월 보다 잔여종료월 크고 기준월 = 잔여시작월 일때만 UNION ALL 처리
+                                        -- B. 잔여시작월+1 ~ 잔여종료월 예상조회
+                                        (
+                                            SELECT CRIT_YAM, PRJT_ID, BOPT_ID, SLS_DEPT_ID, SLS_EMP_ID,
+                                                    <if test='prodDstCd != null and prodDstCd != "" '>
+                                                       (SELECT HGRK_COM_CD FROM ACOM010T WHERE COM_GRP_CD ='PM04' AND COM_CD = RSDN_FCST.PROD_TYPE_CD) AS PROD_DST_CD, PROD_TYPE_CD, -- ★상품실적현황인 경우
+                                                    </if>
+                                                    '' AS WCT_ID,
+                                                    GODS_CLSF_CD, WCT_PRBB_CD,
+                                                    OPPTY_SELL_AMT, (OPPTY_SELL_AMT*WCT_PRBB_VAL) AS FCST_SELL_AMT, 0 AS RSL_SELL_AMT, (OPPTY_SELL_AMT*WCT_PRBB_VAL) AS DEF_SELL_AMT,
+                                                    0 AS OPPTY_BUY_AMT, 0 AS FCST_BUY_AMT, 0 AS RSL_BUY_AMT, 0 AS DEF_BUY_AMT,
+                                                    BOPT_STAT_CD
+                                              FROM (
+                                                        SELECT
+                                                                A.PRJT_ID, A.BOPT_ID, SUBSTR(A.CNTR_DATE,1,6) AS CRIT_YAM, A.SLS_DEPT_ID, A.SLS_EMP_ID, D.HGRK_COM_CD AS BSNS_CLSF_CD,
+                                                                <if test='prodDstCd != null and prodDstCd != "" '>
+                                                                   PROD_TYPE_CD, -- ★상품실적현황인 경우
+                                                                </if>
+                                                                GODS_CLSF_CD,
+                                                                NVL(SUM(SELL_AMT),0) AS OPPTY_SELL_AMT,
+                                                                A.WCT_PRBB_CD, A.BOPT_STAT_CD,
+                                                                CASE WHEN A.BOPT_STAT_CD = 'E' THEN 1 ELSE S.COM_CD_NUM_VAL END WCT_PRBB_VAL -- 계약완료는 수주확률 적용하지 않음
+                                                          FROM BPIP000T A
+                                                          JOIN BPIP020T B ON A.BOPT_ID = B.BOPT_ID
+                                                          JOIN APRJ000T C ON A.PRJT_ID = C.PRJT_ID
+                                                          LEFT JOIN (SELECT HGRK_COM_CD, COM_CD FROM ACOM010T WHERE COM_GRP_CD ='PM08' ) D
+                                                          ON D.COM_CD = B.GODS_CLSF_CD
+                                                          JOIN (SELECT * FROM ACOM010T WHERE COM_GRP_CD = (SELECT COM_GRP_CD FROM ACOM020T WHERE CLMN_NM = 'WCT_PRBB_CD')) S  -- 수주확률코드
+                                                          ON S.COM_CD = A.WCT_PRBB_CD
+                                                         WHERE
+                                                            (A.BOPT_STAT_CD = 'E' -- 계약완료
+                                                                OR  (
+                                                                    A.FCST_RFLC_YN = 'Y' -- 사업예상반영여부
+                                                                    AND A.BOPT_STAT_CD NOT IN ('E', 'F') -- E.계약완료, F.사업기회종료 제외
+                                                                )
+                                                            )
+                                                           AND C.PRJT_STAT_CD NOT LIKE 'F%' -- F1.사업이관, F2.사업폐기
+                                                           AND C.PRJT_STAT_CD NOT LIKE 'D%' -- D1.일반삭제, D2.중복삭제
+                                                           AND LENGTH(A.CNTR_DATE) >= 6
+                                                        GROUP BY A.PRJT_ID, A.BOPT_ID, SUBSTR(A.CNTR_DATE,1,6), A.SLS_DEPT_ID, A.SLS_EMP_ID, D.HGRK_COM_CD,
+                                                                <if test='prodDstCd != null and prodDstCd != "" '>
+                                                                   PROD_TYPE_CD, -- ★상품실적현황인 경우
+                                                                </if>
+                                                                GODS_CLSF_CD, A.WCT_PRBB_CD, A.BOPT_STAT_CD, CASE WHEN A.BOPT_STAT_CD = 'E' THEN 1 ELSE S.COM_CD_NUM_VAL END
+                                              ) RSDN_FCST
+                                            WHERE (OPPTY_SELL_AMT != 0)-- 수주금액
+                                            <if test='slsDeptId != null and slsDeptId != "" '>
+                                            AND SLS_DEPT_ID  IN (
+                                                            SELECT DEPT_ID FROM HMST110T
+                                                            WHERE SELL_OCR_YN = 'Y' -- 매출발생부서
+                                                            <![CDATA[
+                                                                    AND SUBSTR(ORG_CLOSE_DATE,1,4) >=  #{critYear}
+                                                            ]]>
+                                                            AND CRIT_YEAR = #{critYear}
+                                                            START WITH
+                                                            DEPT_ID = #{slsDeptId}
+                                                            CONNECT BY
+                                                            PRIOR DEPT_ID = HGRK_DEPT_ID
+                                            )
+                                            </if>
+                                            AND CRIT_YAM BETWEEN #{fromDate}+'01' AND #{toDate}
+                                        )
+                            </if>
+                        ) TT
+                        JOIN APRJ000T APRJ
+                        ON TT.PRJT_ID = APRJ.PRJT_ID
+                        LEFT JOIN ( SELECT HGRK_COM_CD,COM_CD FROM ACOM010T WHERE COM_GRP_CD = 'PM08' ) ACOM
+                        ON ACOM.COM_CD = TT.GODS_CLSF_CD
+                        WHERE 1 = 1
+                        <if test='slsEmpId != null'>
+                            AND TT.SLS_EMP_ID = #{slsEmpId} -- 조회조건_영업대표
+                        </if>
+                        <if test='prodDstCd != null and prodDstCd != "" '>
+                            AND TT.PROD_DST_CD = #{prodDstCd} -- ★조회조건_상품구분 -- ★상품실적현황인 경우
+                        </if>
+                        <if test='bsnsClsfCd != null and bsnsClsfCd != "" '>
+                            AND ACOM.HGRK_COM_CD = #{bsnsClsfCd}  --★조회조건_사업분류
+                        </if>
+                        <if test='prjtTypeCd != null and prjtTypeCd != "" '>
+                            AND APRJ.PRJT_TYPE_CD = #{prjtTypeCd}  --★조회조건_프로젝트유형
+                        </if>
+
+                        <if test='orderTypeCd == "CP" or ( orderTypeCd == null)'>
+                            ORDER BY PRJT_NM, IBIZ_CUST_NM(APRJ.LAST_CUST_ID)-- 정렬조건 고객명+프로젝트명
+                        </if>
+                        <if test='orderTypeCd == "SD" '>
+                            ORDER BY CRIT_YAM,PRJT_NM  -- 정렬조건 발생시기
+                        </if>
+                        <if test='orderTypeCd == "WP" '>
+                            ORDER BY WCT_PRBB_CD DESC, CNTR_DATE, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 수주가능성
+                        </if>
+                        <if test='orderTypeCd == "FA" '>
+                            ORDER BY FCST_SELL_AMT DESC, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 확률금액(수주)
+                        </if>
+                        <if test='orderTypeCd == "RA" '>
+                            ORDER BY RSL_SELL_AMT,PRJT_NM -- 정렬조건 실적금액(매출)
+                        </if>
+                ) T
+            ) S
+            WHERE ROWNUMBER BETWEEN #{pageSize} * (#{pageNumber} - 1) + 1
+            AND #{pageSize} * (#{pageNumber} - 1) + #{pageSize}
+
+
+
+    </select>
+
+
+
+    <!-- 매입/매출 잔여예상 리스트 조회 -->
+    <select id="selectBuySellSalesReportRsdnList"
+            parameterType="com.ibiz.api.model.BusinessResultSearchVO"
+            resultType="com.ibiz.api.model.SalesReportVO">
+
+
+      SELECT * FROM (
+      SELECT COUNT(1) OVER() AS TOTAL_CNT, ROWNUM AS ROWNUMBER, T.*
+      FROM (
+                SELECT FCST_YAM, TT.PRJT_ID, IBIZ_PRJT_NM(TT.PRJT_ID) AS PRJT_NM, BOPT_ID,
+                        APRJ.LAST_CUST_ID, IBIZ_CUST_NM(APRJ.LAST_CUST_ID) AS LAST_CUST_NM,
+                        APRJ.PRJT_TYPE_CD,
+                        TT.SLS_DEPT_ID, IBIZ_DEPT_NM(TT.SLS_DEPT_ID) AS SLS_DEPT_NM,
+                        TT.SLS_EMP_ID, IBIZ_EMP_NM(TT.SLS_EMP_ID) AS SLS_EMP_NM,
+                        ACOM.HGRK_COM_CD AS BSNS_CLSF_CD, IBIZ_COM_CD_NM('BSNS_CLSF_CD',ACOM.HGRK_COM_CD) AS BSNS_CLSF_CD_NM,
+                        <if test='prodDstCd != null and prodDstCd != "" '>
+                            PROD_DST_CD, IBIZ_COM_CD_NM('PROD_DST_CD',PROD_DST_CD) AS PROD_DST_CD_NM,  -- ★상품실적현황인 경우
+                            PROD_TYPE_CD, IBIZ_COM_CD_NM('PROD_TYPE_CD',PROD_TYPE_CD) AS PROD_TYPE_CD_NM,
+                        </if>
+                        WCT_ID,
+                        GODS_CLSF_CD, WCT_PRBB_CD, IBIZ_COM_CD_NM('WCT_PRBB_CD',WCT_PRBB_CD) AS WCT_PRBB_CD_NM,  SUBSTR(CNTR_DATE,1,6) AS CNTR_DATE,
+                        OPPTY_SELL_AMT AS SELL_OPPTY_RSL_AMT, FCST_SELL_AMT AS SELL_FCST_RSL_AMT, RSL_SELL_AMT AS SELL_RSL_AMT, DEF_SELL_AMT,
+                        OPPTY_BUY_AMT AS BUY_OPPTY_RSL_AMT, FCST_BUY_AMT AS BUY_FCST_RSL_AMT, RSL_BUY_AMT AS BUY_RSL_AMT, DEF_BUY_AMT,
+                        BOPT_STAT_CD, IBIZ_COM_CD_NM('BOPT_STAT_CD', BOPT_STAT_CD) AS BOPT_STAT_CD_NM,
+                        SUM(FCST_SELL_AMT) OVER() AS TOTAL_SELL_FCST_RSL_AMT, -- 매출금액_확률적용 총액
+                        SUM(RSL_SELL_AMT) OVER() AS TOTAL_SELL_RSL_AMT, -- 매출금액_실적 총액
+                        SUM(DEF_SELL_AMT) OVER() AS TOTAL_DEF_SELL_AMT, -- 매출금액_차액 총액
+                        SUM(FCST_BUY_AMT) OVER() AS TOTAL_BUY_FCST_RSL_AMT, -- 매입금액_확률적용 총액
+                        SUM(RSL_BUY_AMT) OVER() AS TOTAL_BUY_RSL_AMT, -- 매입금액_실적 총액
+                        SUM(DEF_BUY_AMT) OVER() AS TOTAL_DEF_BUY_AMT -- 매입금액_차액 총액
+                    FROM
+                    (
+                           SELECT NVL(RSL.CRIT_YAM, FCST.FCST_YAM) AS FCST_YAM, NVL(FCST.PRJT_ID,RSL.PRJT_ID) AS PRJT_ID, NVL(RSL.BOPT_ID,FCST.BOPT_ID) AS BOPT_ID, NVL(SLS_DEPT_ID,RSL.DEPT_ID) AS SLS_DEPT_ID, NVL(FCST.SLS_EMP_ID, RSL.EMP_ID) AS SLS_EMP_ID,
+                                <if test='prodDstCd != null and prodDstCd != "" '>
+                                    (SELECT HGRK_COM_CD FROM ACOM010T WHERE COM_GRP_CD ='PM04' AND COM_CD = NVL(RSL.PROD_TYPE_CD, FCST.PROD_TYPE_CD)) AS PROD_DST_CD, NVL(RSL.PROD_TYPE_CD, FCST.PROD_TYPE_CD) AS PROD_TYPE_CD,  -- ★상품실적현황인 경우
+                                </if>
+                                WCT_ID,
+                                NVL(FCST.GODS_CLSF_CD,RSL.GODS_CLSF_CD) AS GODS_CLSF_CD, NVL(FCST.WCT_PRBB_CD, RSL.WCT_PRBB_CD) AS WCT_PRBB_CD, NVL(FCST.CNTR_DATE, RSL.CNTR_DATE) AS CNTR_DATE,
+                                NVL(FCST.OPPTY_SELL_AMT,0) AS OPPTY_SELL_AMT , NVL(FCST.FCST_SELL_AMT,0) AS FCST_SELL_AMT,  NVL(RSL.RSL_SELL_AMT,0) AS RSL_SELL_AMT, ( NVL(FCST.FCST_SELL_AMT,0) - NVL(RSL.RSL_SELL_AMT,0) )AS DEF_SELL_AMT,
+                                NVL(FCST.OPPTY_BUY_AMT,0) AS OPPTY_BUY_AMT, NVL(FCST.FCST_BUY_AMT,0) AS FCST_BUY_AMT, NVL(RSL.RSL_BUY_AMT,0) AS RSL_BUY_AMT, ( NVL(FCST.FCST_BUY_AMT,0) - NVL(RSL.RSL_BUY_AMT,0) ) AS DEF_BUY_AMT,
+                                NVL(FCST.BOPT_STAT_CD, (SELECT BOPT_STAT_CD FROM BPIP000T WHERE BOPT_ID = RSL.BOPT_ID)) AS BOPT_STAT_CD
+                            FROM
+
+                                    --(기준월 = 잔여종료월 이고 기준월 = 잔여시작월)
+                                    -- A.기준월 기준 갭추출
+                                    -- 기준월 예상(기회) SUM
+                                    (
+                                        SELECT FCST_YAM, PRJT_ID, BOPT_ID, SLS_DEPT_ID, SLS_EMP_ID,
+                                                <if test='prodDstCd != null and prodDstCd != "" '>
+                                                    PROD_TYPE_CD,  -- ★상품실적현황인 경우
+                                                </if>
+                                                GODS_CLSF_CD, WCT_PRBB_CD, CNTR_DATE,
+                                                NVL(OPPTY_SELL_AMT,0) AS OPPTY_SELL_AMT, (OPPTY_SELL_AMT*WCT_PRBB_VAL) AS FCST_SELL_AMT,
+                                                NVL(OPPTY_BUY_AMT,0) AS OPPTY_BUY_AMT, (OPPTY_BUY_AMT*WCT_PRBB_VAL) AS FCST_BUY_AMT,
+                                                BOPT_STAT_CD
+                                        FROM (
+                                            SELECT FCST_YAM, PRJT_ID, BPIP.BOPT_ID, BPIP.SLS_DEPT_ID, BPIP.SLS_EMP_ID,
+                                                <if test='prodDstCd != null and prodDstCd != "" '>
+                                                    PROD_TYPE_CD,  -- ★상품실적현황인 경우
+                                                </if>
+                                                GODS_CLSF_CD,
+                                                NVL(SUM(SELL_AMT),0) AS OPPTY_SELL_AMT,
+                                                NVL(SUM(BUY_AMT),0) AS OPPTY_BUY_AMT,
+                                                BPIP.WCT_PRBB_CD, BPIP.CNTR_DATE, BPIP.BOPT_STAT_CD,
+                                                CASE WHEN BPIP.BOPT_STAT_CD = 'E' THEN 1 ELSE S.COM_CD_NUM_VAL END WCT_PRBB_VAL -- 계약완료는 수주확률 적용하지 않음
+                                            FROM BPIP000T BPIP
+                                            JOIN BPIP020T BP02
+                                            ON BPIP.BOPT_ID = BP02.BOPT_ID
+                                            JOIN (SELECT * FROM ACOM010T WHERE COM_GRP_CD = (SELECT COM_GRP_CD FROM ACOM020T WHERE CLMN_NM = 'WCT_PRBB_CD')) S  -- 수주확률코드
+                                            ON S.COM_CD = BPIP.WCT_PRBB_CD
+                                            WHERE 1 = 1
+                                            AND  (BPIP.BOPT_STAT_CD = 'E' -- 계약완료
+                                                                OR  (
+                                                                    BPIP.FCST_RFLC_YN = 'Y' -- 사업예상반영여부
+                                                                    AND BPIP.BOPT_STAT_CD NOT IN ('E', 'F') -- E.계약완료, F.사업기회종료 제외
+                                                                )
+                                                  )
+                                             <if test='brslDstCd == "B" '>
+                                                 AND SELL_AMT IS NOT NULL AND SELL_AMT !=0 -- 매출
+                                            </if>
+                                            <if test='brslDstCd == "C" '>
+                                                AND BUY_AMT IS NOT NULL AND BUY_AMT !=0 -- 매입
+                                            </if>
+                                        <if test='slsDeptId != null and slsDeptId != "" '>
+                                            AND SLS_DEPT_ID  IN (
+                                                        SELECT DEPT_ID FROM HMST110T
+                                                        WHERE SELL_OCR_YN = 'Y' -- 매출발생부서
+                                                        <![CDATA[
+                                                                AND SUBSTR(ORG_CLOSE_DATE,1,4) >= #{critYear}
+                                                        ]]>
+                                                        AND CRIT_YEAR = #{critYear}
+                                                        START WITH
+                                                        DEPT_ID = #{slsDeptId}
+                                                        CONNECT BY
+                                                        PRIOR DEPT_ID = HGRK_DEPT_ID
+                                            )
+                                        </if>
+                                             AND FCST_YAM = #{critDate}
+                                            GROUP BY PRJT_ID, FCST_YAM, BPIP.BOPT_ID, BPIP.SLS_DEPT_ID, BPIP.SLS_EMP_ID,
+                                                    <if test='prodDstCd != null and prodDstCd != "" '>
+                                                        PROD_TYPE_CD,  -- ★상품실적현황인 경우
+                                                    </if>
+                                                    GODS_CLSF_CD, BPIP.WCT_PRBB_CD, BPIP.CNTR_DATE, BPIP.BOPT_STAT_CD, CASE WHEN BPIP.BOPT_STAT_CD = 'E' THEN 1 ELSE S.COM_CD_NUM_VAL END
+                                        )
+                                    ) FCST
+                                    FULL OUTER JOIN
+                                    -- 기준월 실적 SUM
+                                    (
+                                        SELECT CRIT_YAM, PRJT_ID, MAX(T.WCT_ID) AS WCT_ID, DEPT_ID, GODS_CLSF_CD, '10' AS WCT_PRBB_CD, CNTR_DATE,
+                                            CASE WHEN EMP_ID IS NULL
+                                                THEN (SELECT MAX(EMP_ID) FROM RSLT000V WHERE PRJT_ID = T.PRJT_ID)
+                                                ELSE EMP_ID
+                                            END EMP_ID,
+                                            <if test='prodDstCd != null and prodDstCd != "" '>
+                                                PROD_TYPE_CD,  -- ★상품실적현황인 경우
+                                            </if>
+                                            WMST.BOPT_ID,
+                                            NVL(SUM(RSL_SELL_AMT),0) AS RSL_SELL_AMT, NVL(SUM(RSL_BUY_AMT),0) AS RSL_BUY_AMT
+                                        FROM RSLT000V T
+                                        LEFT JOIN (
+                                            SELECT A.WCT_ID, C.BOPT_ID, A.CNTR_ID, B.CNTR_DATE
+                                            FROM WMST100T A
+                                            JOIN WMST000T B
+                                            ON A.CNTR_ID = B.CNTR_ID
+                                            JOIN BEST000T C
+                                            ON B.FCST_PAL_ID = C.FCST_PAL_ID
+                                        ) WMST
+                                        ON T.WCT_ID = WMST.WCT_ID
+                                         <if test='brslDstCd == "B" '>
+                                            WHERE RSL_SELL_AMT IS NOT NULL AND RSL_SELL_AMT !=0 -- 매출
+                                        </if>
+                                        <if test='brslDstCd == "C" '>
+                                            WHERE RSL_BUY_AMT IS NOT NULL AND RSL_BUY_AMT !=0 -- 매입
+                                        </if>
+                                        <if test='slsDeptId != null and slsDeptId != "" '>
+                                        AND DEPT_ID IN (
+                                                        SELECT DEPT_ID FROM HMST110T
+                                                        WHERE SELL_OCR_YN = 'Y' -- 매출발생부서
+                                                        <![CDATA[
+                                                                AND SUBSTR(ORG_CLOSE_DATE,1,4) >= #{critYear}
+                                                        ]]>
+                                                        AND CRIT_YEAR = #{critYear}
+                                                        START WITH
+                                                        DEPT_ID = #{slsDeptId}
+                                                        CONNECT BY
+                                                        PRIOR DEPT_ID = HGRK_DEPT_ID
+                                        )
+                                        </if>
+                                        AND CRIT_YAM = #{critDate}
+                                        GROUP BY CRIT_YAM, PRJT_ID, DEPT_ID, EMP_ID,
+                                                <if test='prodDstCd != null and prodDstCd != "" '>
+                                                   PROD_TYPE_CD,  -- ★상품실적현황인 경우
+                                                </if>
+                                                GODS_CLSF_CD, BOPT_ID, CNTR_DATE
+                                    ) RSL
+                                    ON (FCST.PRJT_ID = RSL.PRJT_ID AND FCST.FCST_YAM = RSL.CRIT_YAM  AND FCST.BOPT_ID = RSL.BOPT_ID
+                                        <if test='prodDstCd != null and prodDstCd != "" '>
+                                           AND FCST.PROD_TYPE_CD = RSL.PROD_TYPE_CD   -- ★상품실적현황인 경우
+                                        </if>
+                                        AND FCST.GODS_CLSF_CD = RSL.GODS_CLSF_CD )
+
+
+                    <if test='critDate lt toDate '>
+                            UNION ALL
+                                    -- 기준월 보다 잔여종료월이 크고 기준월 = 잔여시작월 일때만 UNION ALL 처리
+                                    -- B. 잔여시작월+1 ~ 잔여종료월 예상조회
+                                    (
+                                        SELECT FCST_YAM, PRJT_ID, BOPT_ID, SLS_DEPT_ID, SLS_EMP_ID,
+                                                <if test='prodDstCd != null and prodDstCd != "" '>
+                                                   (SELECT HGRK_COM_CD FROM ACOM010T WHERE COM_GRP_CD ='PM04' AND COM_CD = RSDN_FCST.PROD_TYPE_CD) AS PROD_DST_CD, PROD_TYPE_CD,   -- ★상품실적현황인 경우
+                                                </if>
+                                                '' AS WCT_ID,
+                                                GODS_CLSF_CD, WCT_PRBB_CD, CNTR_DATE,
+                                                OPPTY_SELL_AMT, (OPPTY_SELL_AMT*WCT_PRBB_VAL) AS FCST_SELL_AMT, 0 AS RSL_SELL_AMT, (OPPTY_SELL_AMT*WCT_PRBB_VAL) AS DEF_SELL_AMT,
+                                                OPPTY_BUY_AMT, (OPPTY_BUY_AMT*WCT_PRBB_VAL) AS FCST_BUY_AMT, 0 AS RSL_BUY_AMT, (OPPTY_BUY_AMT*WCT_PRBB_VAL) AS DEF_BUY_AMT,
+                                                BOPT_STAT_CD
+                                        FROM (
+                                            SELECT BPIP.PRJT_ID, FCST_YAM, BPIP.BOPT_ID, BPIP.SLS_DEPT_ID, BPIP.SLS_EMP_ID, ACOM.HGRK_COM_CD AS BSNS_CLSF_CD,
+                                                <if test='prodDstCd != null and prodDstCd != "" '>
+                                                   PROD_TYPE_CD,   -- ★상품실적현황인 경우
+                                                </if>
+                                                GODS_CLSF_CD,
+                                                NVL(SUM(SELL_AMT),0) AS OPPTY_SELL_AMT,
+                                                NVL(SUM(BUY_AMT),0) AS OPPTY_BUY_AMT ,
+                                                BPIP.WCT_PRBB_CD, CNTR_DATE, BPIP.BOPT_STAT_CD,
+                                                CASE WHEN BPIP.BOPT_STAT_CD = 'E' THEN 1 ELSE S.COM_CD_NUM_VAL END WCT_PRBB_VAL -- 계약완료는 수주확률 적용하지 않음
+                                            FROM BPIP000T BPIP
+                                            JOIN BPIP020T BP02
+                                            ON BPIP.BOPT_ID = BP02.BOPT_ID
+                                            JOIN APRJ000T APRJ
+                                            ON APRJ.PRJT_ID = BPIP.PRJT_ID
+                                            JOIN (SELECT * FROM ACOM010T WHERE COM_GRP_CD = (SELECT COM_GRP_CD FROM ACOM020T WHERE CLMN_NM = 'WCT_PRBB_CD')) S  -- 수주확률코드
+                                            ON S.COM_CD = BPIP.WCT_PRBB_CD
+                                            LEFT JOIN ( SELECT HGRK_COM_CD,COM_CD FROM ACOM010T WHERE COM_GRP_CD = 'PM08' ) ACOM
+                                            ON ACOM.COM_CD = BP02.GODS_CLSF_CD
+                                            WHERE
+                                            (BPIP.BOPT_STAT_CD = 'E' -- 계약완료
+                                                OR  (
+                                                    BPIP.FCST_RFLC_YN = 'Y' -- 사업예상반영여부
+                                                    AND BPIP.BOPT_STAT_CD NOT IN ('E', 'F') -- E.계약완료, F.사업기회종료 제외
+                                                )
+                                            )
+                                            AND APRJ.PRJT_STAT_CD NOT LIKE 'F%' -- F1.사업이관, F2.사업폐기
+                                            AND APRJ.PRJT_STAT_CD NOT LIKE 'D%' -- D1.일반삭제, D2.중복삭제
+                                            GROUP BY BPIP.PRJT_ID, FCST_YAM, BPIP.BOPT_ID,  BPIP.SLS_DEPT_ID, BPIP.SLS_EMP_ID,ACOM.HGRK_COM_CD,
+                                                    <if test='prodDstCd != null and prodDstCd != "" '>
+                                                       PROD_TYPE_CD,   -- ★상품실적현황인 경우
+                                                    </if>
+                                                    GODS_CLSF_CD,BPIP.WCT_PRBB_CD, CNTR_DATE, BPIP.BOPT_STAT_CD, CASE WHEN BPIP.BOPT_STAT_CD = 'E' THEN 1 ELSE S.COM_CD_NUM_VAL END
+                                        ) RSDN_FCST
+                                         <if test='brslDstCd == "B" '>
+                                            WHERE (OPPTY_SELL_AMT != 0)-- 매출
+                                        </if>
+                                        <if test='brslDstCd == "C" '>
+                                            WHERE (OPPTY_BUY_AMT != 0) -- 매입
+                                        </if>
+                                        <if test='slsDeptId != null and slsDeptId != "" '>
+                                        AND SLS_DEPT_ID  IN (
+                                                        SELECT DEPT_ID FROM HMST110T
+                                                        WHERE SELL_OCR_YN = 'Y' -- 매출발생부서
+                                                        <![CDATA[
+                                                                AND SUBSTR(ORG_CLOSE_DATE,1,4) >= #{critYear}
+                                                        ]]>
+                                                        AND CRIT_YEAR = #{critYear}
+                                                        START WITH
+                                                        DEPT_ID = #{slsDeptId}
+                                                        CONNECT BY
+                                                        PRIOR DEPT_ID = HGRK_DEPT_ID
+                                        )
+                                        </if>
+                                        AND FCST_YAM BETWEEN #{fromDate}+'01' AND #{toDate}
+                                    )
+                            </if>
+
+                    ) TT
+                    JOIN APRJ000T APRJ
+                    ON TT.PRJT_ID = APRJ.PRJT_ID
+                    LEFT JOIN ( SELECT HGRK_COM_CD,COM_CD FROM ACOM010T WHERE COM_GRP_CD = 'PM08' ) ACOM
+                    ON ACOM.COM_CD = TT.GODS_CLSF_CD
+                    WHERE 1 = 1
+                        <if test='slsEmpId != null'>
+                            AND TT.SLS_EMP_ID = #{slsEmpId} -- 조회조건_영업대표
+                        </if>
+                        <if test='prodDstCd != null and prodDstCd != "" '>
+                            AND TT.PROD_DST_CD = #{prodDstCd} -- ★조회조건_상품구분 -- ★상품실적현황인 경우
+                        </if>
+                        <if test='bsnsClsfCd != null and bsnsClsfCd != "" '>
+                            AND ACOM.HGRK_COM_CD = #{bsnsClsfCd}  --★조회조건_사업분류
+                        </if>
+                        <if test='prjtTypeCd != null and prjtTypeCd != "" '>
+                            AND APRJ.PRJT_TYPE_CD = #{prjtTypeCd}  --★조회조건_프로젝트유형
+                        </if>
+
+                        <if test='orderTypeCd == "CP" or ( orderTypeCd == null)'>
+                            ORDER BY PRJT_NM, IBIZ_CUST_NM(APRJ.LAST_CUST_ID)-- 정렬조건 고객명+프로젝트명
+                        </if>
+                        <if test='orderTypeCd == "SD" '>
+                            ORDER BY FCST_YAM,PRJT_NM  -- 정렬조건 발생시기
+                        </if>
+                        <if test='orderTypeCd == "WP" '>
+                            ORDER BY WCT_PRBB_CD DESC, CNTR_DATE, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 수주가능성
+                        </if>
+                        <if test='orderTypeCd == "FA" '>
+                             <if test='brslDstCd == "B" '>
+                                ORDER BY FCST_SELL_AMT,PRJT_NM -- 정렬조건 확률금액(매출)
+                            </if>
+                            <if test='brslDstCd == "C" '>
+                                ORDER BY FCST_BUY_AMT,PRJT_NM -- 정렬조건 확률금액(매입)
+                            </if>
+                        </if>
+                        <if test='orderTypeCd == "RA" '>
+                             <if test='brslDstCd == "B" '>
+                                ORDER BY RSL_SELL_AMT,PRJT_NM -- 정렬조건 실적금액(매출)
+                            </if>
+                            <if test='brslDstCd == "C" '>
+                                ORDER BY RSL_BUY_AMT,PRJT_NM -- 정렬조건 실적금액(매입)
+                            </if>
+                        </if>
+
+          ) T
+    ) S
+    WHERE ROWNUMBER BETWEEN #{pageSize} * (#{pageNumber} - 1) + 1
+    AND #{pageSize} * (#{pageNumber} - 1) + #{pageSize}
 
     </select>
 
@@ -1230,343 +1824,169 @@
     </select>
 
 
-    <!-- ERP 실적 매출매입 조회 -->
-    <select id="selectSalesRealReportDetailList"
-            parameterType="com.ibiz.api.model.BusinessResultSearchVO"
-            resultType="com.ibiz.api.model.SalesReportVO">
-
-
-            SELECT * FROM (
-            SELECT COUNT(1) OVER() AS TOTAL_CNT, ROWNUM AS ROWNUMBER, T.* FROM (
-            SELECT *
-            FROM
-                (
-                SELECT
-                    A.CRIT_YAM as SELL_CRIT_YAM
-                    ,A.BLTO_DEPT_ID AS SLS_DEPT_ID
-                    ,DEPT_NM
-                    ,A.EMP_ID
-                    ,A.EMP_NM
-                    ,A.PRJT_ID
-                    ,A.PRJT_NM
-                    ,A.FCST_PAL_ID
-                    ,A.WCT_ID
-                    ,A.BSNS_CLSF_CD
-                    ,C.HGRK_COM_CD AS PROD_DST_CD
-                    ,IBIZ_COM_CD_NM('PROD_DST_CD',C.HGRK_COM_CD) PROD_DST_CD_NM
-                    ,SUBSTR(B.P_TYPE,1,2) AS PROD_TYPE_CD
-                    ,SUBSTR(B.P_TYPE,2,2) AS GODS_CLSF_CD
-                    ,PRJT.LAST_CUST_ID,CUST.CUST_NM AS LAST_CUST_NM
-                    ,PRJT_TYPE_CD
-                    ,ROUND(DECODE(B.RATE,NULL,A.SELL_AMT, A.SELL_AMT*B.RATE),0) AS SELL_RSL_AMT
-                    ,ROUND(DECODE(B.BUY_RATE,NULL,A.BUY_AMT, A.BUY_AMT*B.BUY_RATE),0) AS BUY_RSL_AMT
-                FROM (
-                        SELECT
-                            A.PRJT_ID,PRJT_NM,A.EMP_ID,A.EMP_NM,A.CRIT_YAM,FCST_PAL_ID,BLTO_DEPT_ID,BSNS_CLSF_CD,SUM(SELL_AMT)AS SELL_AMT,SUM(BUY_AMT) AS BUY_AMT,DEPT_NM, WCT_ID
-                        FROM
-                        (
-                            SELECT
-                                a.CRIT_YEAR||A.CRIT_MONTH AS CRIT_YAM ,A.PRJT_ID,PRJT_NM,F.EMP_ID,F.EMP_NM,FCST_PAL_ID,F.DEPT_ID AS BLTO_DEPT_ID,F.DEPT_NM,C.BSNS_CLSF_CD
-                                ,CASE WHEN E.MAAC_PROFIT = 'PROF0001' THEN  SUM(NVL(RSL_AMT,0)) END AS SELL_AMT
-                                ,CASE WHEN E.MAAC_PROFIT IN ('PROF0002','PROF0003','PROF0004','PROF0005') THEN  SUM(NVL(RSL_AMT,0)) END AS BUY_AMT
-                                ,B.WCT_ID
-                            FROM SSIF530T A
-                            LEFT JOIN (
-                                        SELECT DISTINCT CRIT_YEAR,CRIT_MONTH,PRJT_ID,PRJT_NM,EMP_ID,EMP_NM,DEPT_ID,DEPT_NM FROM GMST500T
-                            )F
-                            ON A.CRIT_YEAR = F.CRIT_YEAR AND A.CRIT_MONTH = F.CRIT_MONTH AND A.PRJT_ID = F.PRJT_ID
-                            LEFT JOIN WMST100T B
-                            ON A.CNTR_ID = B.WCT_ID
-                            LEFT JOIN WMST000T C
-                            ON B.CNTR_ID = C.CNTR_ID
-                            LEFT JOIN GMST220T D
-                            ON A.GL_ACNT_CD = D.GL_ACNT_CD
-                            LEFT JOIN GMST210T E
-                            ON D.MAAC_ACNT_CD = E.MAAC_ACNT_CD
-                            WHERE 1=1
-                            <![CDATA[
-                                AND A.SND_DATE = (SELECT MAX(SND_DATE) FROM SSIF530T WHERE CRIT_YEAR = A.CRIT_YEAR AND CRIT_MONTH = A.CRIT_MONTH )
-                                AND A.CRIT_YEAR||A.CRIT_MONTH < TO_CHAR(SYSDATE,'YYYYMM')
-                            ]]>
-                            GROUP BY A.CRIT_YEAR||A.CRIT_MONTH,F.DEPT_ID,C.BSNS_CLSF_CD,MAAC_PROFIT,FCST_PAL_ID,A.PRJT_ID, B.WCT_ID, F.EMP_ID,F.EMP_NM,PRJT_NM,DEPT_NM
-                        )A
-                        GROUP BY A.CRIT_YAM,FCST_PAL_ID,BLTO_DEPT_ID,BSNS_CLSF_CD,A.PRJT_ID,A.WCT_ID,A.EMP_ID,A.EMP_NM,PRJT_NM,DEPT_NM
-                )A
-                LEFT JOIN
-                (
-                    SELECT
-                        B.FCST_PAL_ID,B.P_TYPE,SELL_AMT/SUM_AMT AS RATE,
-                        NVL(DECODE(SUM_BUY_AMT,NVL(NULL,0),0,BUY_AMT/SUM_BUY_AMT),0) AS BUY_RATE
-                    FROM (
-                        SELECT FCST_PAL_ID,SUM(SELL_AMT) AS SUM_AMT,SUM(BUY_AMT) AS SUM_BUY_AMT
-                        FROM TT000V GROUP BY FCST_PAL_ID
-                    )A
-                    LEFT JOIN TT000V B
-                    ON A.FCST_PAL_ID = B.FCST_PAL_ID
-                    WHERE SELL_AMT/SUM_AMT IS NOT NULL
-
-                )B
-                ON A.FCST_PAL_ID = B.FCST_PAL_ID
-                LEFT JOIN (SELECT * FROM ACOM010T WHERE COM_GRP_CD = 'PM04')C
-                ON SUBSTR(B.P_TYPE,1,2) = C.COM_CD
-                LEFT JOIN APRJ000T PRJT
-                ON A.PRJT_ID = PRJT.PRJT_ID
-                LEFT JOIN CMST000T CUST
-                ON PRJT.LAST_CUST_ID = CUST.CUST_ID
-
-
-                UNION ALL
-
-                (
-                    --현재달은 이걸로 픽스
-                    SELECT A.CRIT_YAM ,A.BLTO_DEPT_ID AS DEPT_ID ,DEPT_NM ,A.SLS_EMP_ID AS EMP_ID ,A.EMP_NM,A.PRJT_ID,A.PRJT_NM
-                        ,A.FCST_PAL_ID, WCT_ID, A.BSNS_CLSF_CD,C.HGRK_COM_CD AS PROD_DST_CD,IBIZ_COM_CD_NM('PROD_DST_CD',C.HGRK_COM_CD) PROD_DST_CD_NM
-                        ,SUBSTR(B.P_TYPE,1,2) AS PROD_TYPE_CD,SUBSTR(B.P_TYPE,2,2) AS GODS_CLSF_CD,A.LAST_CUST_ID,CUST.CUST_NM AS LAST_CUST_NM, PRJT.PRJT_TYPE_CD
-                        ,ROUND(DECODE(B.RATE,NULL,A.SELL_AMT, A.SELL_AMT*B.RATE),0) AS SELL_AMT
-                        ,ROUND(DECODE(B.BUY_RATE,NULL,A.BUY_AMT, A.BUY_AMT*B.BUY_RATE),0) AS BUY_AMT
-                    FROM (
-
-                        SELECT
-                            A.CRIT_YAM,FCST_PAL_ID,BLTO_DEPT_ID,DEPT_NM,BSNS_CLSF_CD,SUM(SELL_AMT)AS SELL_AMT,SUM(BUY_AMT) AS BUY_AMT,SLS_EMP_ID,EMP_NM,PRJT_ID,PRJT_NM,A.LAST_CUST_ID, WCT_ID
-                        FROM
-                        (
-                            SELECT
-                                a.CRIT_YEAR||A.CRIT_MONTH AS CRIT_YAM
-                                ,FCST_PAL_ID
-                                ,B.WCT_ID
-                                ,F.SLS_DEPT_ID AS BLTO_DEPT_ID
-                                ,DEPT_NM
-                                ,F.PRJT_ID
-                                ,F.PRJT_NM
-                                ,F.SLS_EMP_ID
-                                ,EMP_NM
-                                ,C.BSNS_CLSF_CD
-                                ,F.LAST_CUST_ID
-                                ,CASE WHEN E.MAAC_PROFIT = 'PROF0001' THEN  SUM(NVL(RSL_AMT,0)) END AS SELL_AMT
-                                ,CASE WHEN E.MAAC_PROFIT IN ('PROF0002','PROF0003','PROF0004','PROF0005') THEN  SUM(NVL(RSL_AMT,0)) END AS BUY_AMT
-                            FROM SSIF530T A
-                            LEFT JOIN WMST100T B
-                            ON A.CNTR_ID = B.WCT_ID
-                            LEFT JOIN WMST000T C
-                            ON B.CNTR_ID = C.CNTR_ID
-                            LEFT JOIN GMST220T D
-                            ON A.GL_ACNT_CD = D.GL_ACNT_CD
-                            LEFT JOIN GMST210T E
-                            ON D.MAAC_ACNT_CD = E.MAAC_ACNT_CD
-                            LEFT JOIN APRJ000T F
-                            ON A.PRJT_ID = F.PRJT_ID
-                            LEFT JOIN HMST100T G
-                            ON F.SLS_DEPT_ID = G.DEPT_ID
-                            LEFT JOIN HMST300T H
-                            ON F.SLS_EMP_ID = H.EMP_ID
-
-                            WHERE 1=1
-                            <![CDATA[
-                                AND A.SND_DATE = (SELECT MAX(SND_DATE) FROM SSIF530T WHERE CRIT_YEAR = A.CRIT_YEAR AND CRIT_MONTH = A.CRIT_MONTH )
-                                AND A.CRIT_YEAR||A.CRIT_MONTH = TO_CHAR(SYSDATE,'YYYYMM')
-                            ]]>
-                        GROUP BY A.CRIT_YEAR||A.CRIT_MONTH ,F.SLS_DEPT_ID,C.BSNS_CLSF_CD, MAAC_PROFIT,FCST_PAL_ID, B.WCT_ID, DEPT_NM,F.SLS_EMP_ID,EMP_NM,F.PRJT_ID,F.PRJT_NM ,F.LAST_CUST_ID
-                        )A
-                        GROUP BY A.CRIT_YAM,FCST_PAL_ID,BLTO_DEPT_ID,BSNS_CLSF_CD,DEPT_NM,SLS_EMP_ID,EMP_NM,PRJT_ID, WCT_ID, PRJT_NM,A.LAST_CUST_ID
-                    )A
-                    LEFT JOIN
-                    (
-                        SELECT
-                            B.FCST_PAL_ID,
-                            B.P_TYPE,
-                            SELL_AMT/SUM_AMT AS RATE,
-                            NVL(DECODE(SUM_BUY_AMT,NVL(NULL,0),0,BUY_AMT/SUM_BUY_AMT),0) AS BUY_RATE
-                        FROM (
-                                SELECT FCST_PAL_ID,SUM(SELL_AMT) AS SUM_AMT,SUM(BUY_AMT) AS SUM_BUY_AMT
-                                FROM TT000V GROUP BY FCST_PAL_ID
-                        )A
-                        LEFT JOIN TT000V B
-                        ON A.FCST_PAL_ID = B.FCST_PAL_ID
-                        WHERE SELL_AMT/SUM_AMT IS NOT NULL
-                    )B
-                    ON A.FCST_PAL_ID = B.FCST_PAL_ID
-                    LEFT JOIN (SELECT * FROM ACOM010T WHERE COM_GRP_CD = 'PM04')C
-                    ON SUBSTR(B.P_TYPE,1,2) = C.COM_CD
-                    LEFT JOIN CMST000T CUST
-                    ON A.LAST_CUST_ID = CUST.CUST_ID
-                    LEFT JOIN APRJ000T PRJT
-                    ON A.PRJT_ID = PRJT.PRJT_ID
-                )
-
-                UNION ALL
-                -- PMS 직접투입 예외건 조회
-                -- 매출/매입에 따라 예외구분코드분기필요
-                (
-                    SELECT
-                        EXPT.CRIT_YEAR || EXPT.CRIT_MONTH AS CRIT_YAM, F.DEPT_ID AS DEPT_ID, IBIZ_DEPT_NM(F.DEPT_ID) AS DEPT_NM,
-                            APRJ.SLS_EMP_ID AS EMP_ID, IBIZ_EMP_NM(APRJ.SLS_EMP_ID) AS EMP_NM, EXPT.PRJT_ID, IBIZ_PRJT_NM(APRJ.PRJT_ID) AS PRJT_NM,
-                            RSL.FCST_PAL_ID, NVL(RSL.WCT_ID,'EXPT') AS WCT_ID,
-                                '예외' AS PROD_DST_CD, '예외' AS PROD_DST_CD_NM,
-                                '예외' AS PROD_TYPE_CD, '예외' AS PROD_TYPE_CD_NM,
-                                '예외' AS GODS_CLSF_CD,
-                                RSL.LAST_CUST_ID, RSL.LAST_CUST_NM, RSL.PRJT_TYPE_CD,
-
-                            0 AS SELL_AMT,
-                            EXPT.AMT AS BUY_AMT
-
-                    FROM GMST400T EXPT
-                    JOIN (
-                      SELECT DISTINCT CRIT_YEAR,CRIT_MONTH,PRJT_ID,EMP_ID,DEPT_ID FROM GMST500T
-                    )F
-                    ON EXPT.CRIT_YEAR = F.CRIT_YEAR AND EXPT.CRIT_MONTH = F.CRIT_MONTH AND EXPT.PRJT_ID = F.PRJT_ID
-                    JOIN APRJ000T APRJ
-                    ON EXPT.PRJT_ID =APRJ.PRJT_ID
-                    LEFT JOIN (
-                         SELECT
-                            MAX(CNTR.FCST_PAL_ID) AS FCST_PAL_ID, MAX(WMST.WCT_ID) AS WCT_ID, SSIF.PRJT_ID,
-                            CNTR.LAST_CUST_ID, IBIZ_CUST_NM(CNTR.LAST_CUST_ID) AS LAST_CUST_NM,
-                            WMST.WCT_TYPE_CD AS PRJT_TYPE_CD
-                        FROM SSIF530T SSIF
-                        LEFT JOIN WMST100T WMST
-                        ON SSIF.PRJT_ID = WMST.PRJT_ID
-                        LEFT JOIN WMST000T CNTR
-                        ON CNTR.CNTR_ID = WMST.CNTR_ID
-                        WHERE CNTR.FCST_PAL_ID IS NOT NULL
-                        GROUP BY CNTR.SLS_DEPT_ID, CNTR.SLS_EMP_ID, IBIZ_EMP_NM(CNTR.SLS_EMP_ID),
-                        SSIF.PRJT_ID,
-                        CNTR.LAST_CUST_ID, IBIZ_CUST_NM(CNTR.LAST_CUST_ID) ,
-                        WMST.WCT_TYPE_CD
-
-
-                    ) RSL
-                    ON EXPT.PRJT_ID = RSL.PRJT_ID
-                    WHERE EXPT.CRIT_YEAR = #{critYear} AND EXPT.CRIT_MONTH BETWEEN SUBSTR(#{fromDate},5,2) AND SUBSTR(#{toDate},5,2)
-                    <if test='brslDstCd == "B" '>
-                        AND EXC_TYPE_CD ='1'   --매출가감(1) > 매출
-                    </if>
-                    <if test='brslDstCd == "C" '>
-                        AND EXC_TYPE_CD ='3'   -- 원가가감(3) > 매입
-                    </if>
-                )
-
-            )A
-            WHERE 1=1
-            AND SELL_CRIT_YAM BETWEEN #{fromDate} AND #{toDate} -- 조회조건_기간-- 조회조건_기간
-
-            <if test='brslDstCd == "B" '>
-                AND (SELL_RSL_AMT IS NOT NULL AND SELL_RSL_AMT != 0)   --매출
-            </if>
-            <if test='brslDstCd == "C" '>
-                AND  (BUY_RSL_AMT IS NOT NULL AND BUY_RSL_AMT != 0)   --매입
-            </if>
-            <if test='prodDstCd != null and prodDstCd != "" '>
-                AND PROD_DST_CD = #{prodDstCd} -- 조회조건_상품구분
-            </if>
-            <if test='bsnsClsfCd != null and bsnsClsfCd != "" '>
-                AND BSNS_CLSF_CD = #{bsnsClsfCd} -- 조회조건_사업분류
-            </if>
-            <if test='slsEmpId != null'>
-                AND EMP_ID = #{slsEmpId} -- 조회조건_영업대표
-            </if>
-            <if test='slsDeptId != null and slsDeptId != "" '>
-            AND A.SLS_DEPT_ID  in (
-                                    SELECT DEPT_ID FROM HMST110T
-                                    WHERE SELL_OCR_YN = 'Y' -- 매출발생부서
-                                    <![CDATA[
-                                            AND SUBSTR(ORG_CLOSE_DATE,1,4) >= #{critYear}
-                                    ]]>
-                                    AND CRIT_YEAR = #{critYear}
-                                    START WITH
-                                    DEPT_ID = #{slsDeptId}
-                                    CONNECT BY
-                                    PRIOR DEPT_ID = HGRK_DEPT_ID
-            )    -- 조회조건_영업부서
-            </if>
-            <if test='prjtTypeCd != null and prjtTypeCd != "" '>
-                AND A.PRJT_TYPE_CD = #{prjtTypeCd}
-            </if>
-
-                <if test='orderTypeCd == "CP" or ( orderTypeCd == null)'>
-                    ORDER BY LAST_CUST_NM, PRJT_NM--, CNTR_DATE  -- 정렬기준: 고객명+프로젝트명
-                </if>
-                <if test='orderTypeCd == "SD" '>
-                    ORDER BY SELL_CRIT_YAM, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 발생시기
-                </if>
-
-                <if test='orderTypeCd == "RA" '>
-                    <if test='brslDstCd == "B" '>
-                        ORDER BY SELL_RSL_AMT DESC, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 실적금액(매출)
-                    </if>
-                    <if test='brslDstCd == "C" '>
-                        ORDER BY BUY_RSL_AMT DESC, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 실적금액(매입)
-                    </if>
-                </if>
-
-                ) T
-            ) S
-            WHERE ROWNUMBER BETWEEN #{pageSize} * (#{pageNumber} - 1) + 1
-            AND #{pageSize} * (#{pageNumber} - 1) + #{pageSize}
-
-
-    </select>
-
-
 
     <!-- ERP 실적 수주 조회 -->
     <select id="selectSalesRealWCTReportDetailList"
             parameterType="com.ibiz.api.model.BusinessResultSearchVO"
             resultType="com.ibiz.api.model.SalesReportVO">
 
-        SELECT * FROM (
-        SELECT COUNT(1) OVER() AS TOTAL_CNT, ROWNUM AS ROWNUMBER, T.* FROM (
-        SELECT *
-        FROM
-                (
-            SELECT SUBSTR(CNTR_DATE ,1,6) AS SELL_CRIT_YAM, C.BLTO_DEPT_ID AS SLS_DEPT_ID,DEPT.DEPT_NM,PRJT.SLS_EMP_ID,EMP.EMP_NM
-                    ,CNTR_ID
-                    ,A.PRJT_ID
-                    ,PRJT.PRJT_NM
-                    ,PRJT.PRJT_TYPE_CD
-                    ,A.FCST_PAL_ID
-                    ,'R1' BPLN_DST_CD -- R1.사업실적
-                    ,'AR' BRSL_DTL_DST_CD -- AR.수주실적
-                    ,BSNS_CLSF_CD
-                    ,F.HGRK_COM_CD AS PROD_DST_CD
-                    ,IBIZ_COM_CD_NM('PROD_DST_CD',F.HGRK_COM_CD) PROD_DST_CD_NM
-                    ,SUBSTR(E.P_TYPE,1,2) AS PROD_TYPE_CD
-                    ,SUBSTR(E.P_TYPE,2,2) AS GODS_CLSF_CD
-                    ,PRJT.LAST_CUST_ID,CUST.CUST_NM AS LAST_CUST_NM
-                    ,ROUND(DECODE(E.RATE,NULL,A.CNTR_AMT, A.CNTR_AMT*E.RATE),0) AS CNTR_AMT
-            FROM WMST000T A
-            LEFT JOIN APRJ000T B
-            ON A.PRJT_ID = B.PRJT_ID
-            LEFT JOIN HMST300T C
-            ON B.SLS_EMP_ID = C.EMP_ID
-            LEFT JOIN APRJ000T PRJT
-            ON A.PRJT_ID = PRJT.PRJT_ID
-            LEFT JOIN HMST300T EMP
-            ON A.SLS_EMP_ID = EMP.EMP_ID
-            LEFT JOIN HMST100T DEPT
-            ON EMP.BLTO_DEPT_ID = DEPT.DEPT_ID
-            LEFT JOIN (SELECT
-                B.FCST_PAL_ID,
-                B.P_TYPE,
-                SELL_AMT/SUM_AMT AS RATE,
-                NVL(DECODE(SUM_BUY_AMT,NVL(NULL,0),0,BUY_AMT/SUM_BUY_AMT),0) AS BUY_RATE
+
+            SELECT
+                TOTAL_CNT, ROWNUMBER,
+                CNTR_YAM AS SELL_CRIT_YAM, PRJT_ID, PRJT_NM, BOPT_ID, PRJT_TYPE_CD, LAST_CUST_ID,  LAST_CUST_NM,
+                BSNS_CLSF_CD, IBIZ_COM_CD_NM('BSNS_CLSF_CD',BSNS_CLSF_CD) AS BSNS_CLSF_CD_NM,
+                PROD_DST_CD, PROD_DST_CD_NM,
+                PROD_TYPE_CD, PROD_TYPE_CD_NM,
+                SLS_DEPT_ID, SLS_DEPT_NM,SLS_EMP_ID, SLS_EMP_NM,
+                CNTR_ID, FCST_PAL_ID, CNTR_RATE_AMT AS CNTR_AMT,
+                BOPT_ID, TOTAL_SELL_RSL_AMT
             FROM (
-            SELECT FCST_PAL_ID,SUM(SELL_AMT) AS SUM_AMT,SUM(BUY_AMT) AS SUM_BUY_AMT
-            FROM TT000V GROUP BY FCST_PAL_ID
-            )A
-            LEFT JOIN TT000V B
-            ON A.FCST_PAL_ID = B.FCST_PAL_ID
-             WHERE SELL_AMT/SUM_AMT IS NOT NULL
-            )E
-            ON A.FCST_PAL_ID = E.FCST_PAL_ID
-            LEFT JOIN (SELECT * FROM ACOM010T WHERE COM_GRP_CD = 'PM04')F
-            ON SUBSTR(E.P_TYPE,1,2) = F.COM_CD
-            LEFT JOIN CMST000T CUST
-            ON PRJT.LAST_CUST_ID = CUST.CUST_ID
-        )A
-        WHERE 1=1
-        AND CNTR_AMT != 0
-        AND SELL_CRIT_YAM BETWEEN #{fromDate} AND #{toDate} -- 조회조건_기간
+                    SELECT
+                        COUNT(1) OVER() AS TOTAL_CNT, ROWNUM AS ROWNUMBER,
+                        CNTR.CNTR_YAM, CNTR.PRJT_ID, APRJ.PRJT_NM, APRJ.PRJT_TYPE_CD,
+                        APRJ.LAST_CUST_ID, IBIZ_CUST_NM(APRJ.LAST_CUST_ID) AS LAST_CUST_NM,
+                        CNTR.SLS_DEPT_ID, IBIZ_DEPT_NM(CNTR.SLS_DEPT_ID) AS SLS_DEPT_NM, CNTR.SLS_EMP_ID, IBIZ_EMP_NM(CNTR.SLS_EMP_ID) AS SLS_EMP_NM,
+                        ACOM.HGRK_COM_CD AS BSNS_CLSF_CD,
+                        PROD_DST_CD, IBIZ_COM_CD_NM('PROD_DST_CD',PROD_DST_CD) AS PROD_DST_CD_NM,
+                        RSL.PROD_TYPE_CD, IBIZ_COM_CD_NM('PROD_TYPE_CD',PROD_TYPE_CD) AS PROD_TYPE_CD_NM,
+                        CNTR.CNTR_ID, CNTR.FCST_PAL_ID, CNTR.CNTR_AMT,
+                        ROUND(NVL(RSL.RATE*CNTR.CNTR_AMT,0),0) AS CNTR_RATE_AMT,
+                        (SELECT BOPT_ID FROM BEST000T WHERE FCST_PAL_ID = CNTR.FCST_PAL_ID ) AS BOPT_ID,
+                        SUM(ROUND(NVL(RSL.RATE*CNTR.CNTR_AMT,0),0)) OVER() AS TOTAL_SELL_RSL_AMT -- 매출금액_실적 총액
+                    FROM (
+                            SELECT BEST.FCST_PAL_ID, (SELECT HGRK_COM_CD FROM ACOM010T WHERE COM_GRP_CD ='PM04' AND COM_CD = BEST.PROD_TYPE_CD) AS PROD_DST_CD,
+                                BEST.PROD_TYPE_CD, BEST.GODS_CLSF_CD, BEST.SELL_AMT , SUM_BEST.SUM_SELL_AMT,
+                                 CASE WHEN NVL(SUM_BEST.SUM_SELL_AMT,0) = 0
+                                    THEN 0
+                                    ELSE NVL(BEST.SELL_AMT/SUM_BEST.SUM_SELL_AMT,0)
+                                END AS RATE
+                            FROM
+                            (
+                                SELECT BE02.FCST_PAL_ID,SUM(BE02.SELL_AMT) AS SUM_SELL_AMT
+                                FROM BEST020T BE02
+                                WHERE 1=1 AND GODS_CLSF_CD != 'AL'
+                                GROUP BY BE02.FCST_PAL_ID
+                            ) SUM_BEST
+                            JOIN (
+                                SELECT BE02.FCST_PAL_ID, BE02.PROD_TYPE_CD, BE02.GODS_CLSF_CD, BE02.SELL_AMT
+                                FROM BEST020T BE02
+                                WHERE 1=1 AND GODS_CLSF_CD != 'AL'
+                            ) BEST
+                            ON SUM_BEST.FCST_PAL_ID = BEST.FCST_PAL_ID
+                    ) RSL -- BEST020T 기반 비율
+                    LEFT JOIN (
+                            SELECT PRJT_ID, CNTR_ID, FCST_PAL_ID, SUM(CNTR_AMT) AS CNTR_AMT, SUBSTR(CNTR_DATE,1,6) AS CNTR_YAM,
+                                SLS_DEPT_ID, SLS_EMP_ID
+                            FROM WMST000T CNTR
+                            GROUP BY PRJT_ID, CNTR_ID, FCST_PAL_ID, SUBSTR(CNTR_DATE,1,6), SLS_DEPT_ID, SLS_EMP_ID
+                    ) CNTR -- 계약금액, 계약정보
+                    ON RSL.FCST_PAL_ID = CNTR.FCST_PAL_ID
+                    JOIN APRJ000T APRJ
+                    ON CNTR.PRJT_ID = APRJ.PRJT_ID
+                    JOIN ( SELECT HGRK_COM_CD,COM_CD FROM ACOM010T WHERE COM_GRP_CD = 'PM08' ) ACOM
+                    ON ACOM.COM_CD = RSL.GODS_CLSF_CD
+                    WHERE CNTR.CNTR_YAM BETWEEN #{fromDate} AND #{toDate} -- 조회조건_기간
+                    <if test='prodDstCd != null and prodDstCd != "" '>
+                        AND PROD_DST_CD = #{prodDstCd} -- 조회조건_상품구분
+                    </if>
+                    <if test='bsnsClsfCd != null and bsnsClsfCd != "" '>
+                        AND ACOM.HGRK_COM_CD = #{bsnsClsfCd} -- 조회조건_사업분류
+                    </if>
+                    <if test='slsEmpId != null'>
+                        AND EMP_ID = #{slsEmpId} -- 조회조건_영업대표
+                    </if>
+                    <if test='slsDeptId != null and slsDeptId != "" '>
+                    AND CNTR.SLS_DEPT_ID  IN (
+                                                        SELECT DEPT_ID FROM HMST110T
+                                                        WHERE SELL_OCR_YN = 'Y' -- 매출발생부서
+                                                        <![CDATA[
+                                                                AND SUBSTR(ORG_CLOSE_DATE,1,4) >=  #{critYear}
+                                                        ]]>
+                                                        AND CRIT_YEAR =  #{critYear}
+                                                        START WITH
+                                                        DEPT_ID =  #{slsDeptId}
+                                                        CONNECT BY
+                                                        PRIOR DEPT_ID = HGRK_DEPT_ID
+                                )   -- 조회조건_영업부서
+                    </if>
+                    AND RSL.RATE != 0
+                    <if test='prjtTypeCd != null and prjtTypeCd != "" '>
+                        AND PRJT_TYPE_CD = #{prjtTypeCd}  -- 검색조건 프로젝트유형
+                    </if>
+                    <if test='orderTypeCd == "CP" or ( orderTypeCd == null)'>
+                        ORDER BY PRJT_NM, IBIZ_CUST_NM(APRJ.LAST_CUST_ID) DESC -- 정렬조건 고객명+프로젝트명
+                    </if>
+                    <if test='orderTypeCd == "SD" '>
+                        ORDER BY CNTR_YAM,PRJT_NM  -- 정렬조건 발생시기
+                    </if>
+                    <if test='orderTypeCd == "RA" '>
+                        ORDER BY ROUND(NVL(RSL.RATE*CNTR.CNTR_AMT,0),0),PRJT_NM -- 정렬조건 실적금액
+                    </if>
+            )
+            WHERE ROWNUMBER BETWEEN #{pageSize} * (#{pageNumber} - 1) + 1
+                    AND #{pageSize} * (#{pageNumber} - 1) + #{pageSize}
+
+
+    </select>
+
+
+    <!-- ERP 실적 매출매입 조회 -->
+    <select id="selectSalesRealReportDetailList"
+            parameterType="com.ibiz.api.model.BusinessResultSearchVO"
+            resultType="com.ibiz.api.model.SalesReportVO">
+
+        SELECT
+        TOTAL_CNT, ROWNUMBER,
+        CRIT_YAM AS SELL_CRIT_YAM, PRJT_ID, PRJT_NM, PRJT_TYPE_CD, LAST_CUST_ID,  LAST_CUST_NM, WCT_ID,
+        BSNS_CLSF_CD, IBIZ_COM_CD_NM('BSNS_CLSF_CD',BSNS_CLSF_CD) AS BSNS_CLSF_CD_NM,
+        PROD_DST_CD, IBIZ_COM_CD_NM('PROD_DST_CD',PROD_DST_CD) AS PROD_DST_CD_NM,
+        PROD_TYPE_CD, IBIZ_COM_CD_NM('PROD_TYPE_CD',PROD_TYPE_CD)  AS PROD_TYPE_CD_NM,
+        SLS_DEPT_ID, SLS_DEPT_NM,SLS_EMP_ID, SLS_EMP_NM,
+        RSL_SELL_AMT AS SELL_RSL_AMT, RSL_BUY_AMT AS BUY_RSL_AMT,
+        TOTAL_SELL_RSL_AMT, TOTAL_BUY_RSL_AMT, (SELECT BOPT_ID FROM BEST000T WHERE FCST_PAL_ID = (SELECT MAX(FCST_PAL_ID) FROM WMST000T WHERE CNTR_ID = (SELECT MAX(CNTR_ID) FROM WMST100T WHERE WCT_ID = T.WCT_ID))) AS BOPT_ID
+        FROM (
+        SELECT
+        COUNT(1) OVER() AS TOTAL_CNT, ROWNUM AS ROWNUMBER,
+        RSL.CRIT_YAM, RSL.PRJT_ID, APRJ.PRJT_NM, DST.HGRK_COM_CD AS PROD_DST_CD, APRJ.PRJT_TYPE_CD,
+        LAST_CUST_ID, IBIZ_CUST_NM(LAST_CUST_ID) AS LAST_CUST_NM, RSL.WCT_ID,
+        ACOM.HGRK_COM_CD AS BSNS_CLSF_CD,
+        RSL.PROD_TYPE_CD,
+        RSL.DEPT_ID AS SLS_DEPT_ID, IBIZ_DEPT_NM(RSL.DEPT_ID) AS SLS_DEPT_NM,
+        NVL(RSL.EMP_ID,APRJ.SLS_EMP_ID) AS SLS_EMP_ID, IBIZ_EMP_NM(NVL(RSL.EMP_ID,APRJ.SLS_EMP_ID)) AS SLS_EMP_NM,
+        NVL(RSL_SELL_AMT,0) AS RSL_SELL_AMT,
+        NVL(RSL_BUY_AMT,0) AS RSL_BUY_AMT,
+        SUM(NVL(RSL_SELL_AMT,0)) OVER() AS TOTAL_SELL_RSL_AMT, -- 매출금액_실적 총액
+        SUM(NVL(RSL_BUY_AMT,0)) OVER() AS TOTAL_BUY_RSL_AMT -- 매입금액_실적 총액
+        FROM RSLT000V RSL
+        JOIN APRJ000T APRJ
+        ON RSL.PRJT_ID = APRJ.PRJT_ID
+        LEFT JOIN ( SELECT HGRK_COM_CD,COM_CD FROM ACOM010T WHERE COM_GRP_CD = 'PM08' ) ACOM
+        ON ACOM.COM_CD = RSL.GODS_CLSF_CD
+        LEFT JOIN (SELECT HGRK_COM_CD,COM_CD FROM ACOM010T WHERE COM_GRP_CD ='PM04' ) DST
+        ON RSL.PROD_TYPE_CD = DST.COM_CD
+        <if test='slsDeptId != null and slsDeptId != "" '>
+            WHERE CRIT_YAM BETWEEN #{fromDate} AND #{toDate} -- 조회조건_기간
+            AND DEPT_ID  IN (
+            SELECT DEPT_ID FROM HMST110T
+            WHERE SELL_OCR_YN = 'Y' -- 매출발생부서
+            <![CDATA[
+                                                    AND SUBSTR(ORG_CLOSE_DATE,1,4) >= #{critYear}
+                                            ]]>
+            AND CRIT_YEAR = #{critYear}
+            START WITH
+            DEPT_ID = #{slsDeptId}
+            CONNECT BY
+            PRIOR DEPT_ID = HGRK_DEPT_ID
+            )    -- 조회조건_영업부서
+        </if>
+        <if test='brslDstCd == "C" '>
+            AND RSL_BUY_AMT IS NOT NULL AND RSL_BUY_AMT != 0  -- 매입
+        </if>
+        <if test='brslDstCd == "B" '>
+            AND RSL_SELL_AMT IS NOT NULL AND RSL_SELL_AMT != 0 -- 매출
+        </if>
         <if test='prodDstCd != null and prodDstCd != "" '>
-            AND PROD_DST_CD = #{prodDstCd} -- 조회조건_상품구분
+            AND DST.HGRK_COM_CD = #{prodDstCd} -- 조회조건_상품구분
         </if>
         <if test='bsnsClsfCd != null and bsnsClsfCd != "" '>
             AND BSNS_CLSF_CD = #{bsnsClsfCd} -- 조회조건_사업분류
@@ -1574,36 +1994,26 @@
         <if test='slsEmpId != null'>
             AND EMP_ID = #{slsEmpId} -- 조회조건_영업대표
         </if>
-        <if test='slsDeptId != null and slsDeptId != "" '>
-        AND A.SLS_DEPT_ID  in (
-                                SELECT DEPT_ID FROM HMST110T
-                                WHERE SELL_OCR_YN = 'Y' -- 매출발생부서
-                                <![CDATA[
-                                        AND SUBSTR(ORG_CLOSE_DATE,1,4) >= #{critYear}
-                                ]]>
-                                AND CRIT_YEAR = #{critYear}
-                                START WITH
-                                DEPT_ID = #{slsDeptId}
-                                CONNECT BY
-                                PRIOR DEPT_ID = HGRK_DEPT_ID
-        )    -- 조회조건_영업부서
-        </if>
         <if test='prjtTypeCd != null and prjtTypeCd != "" '>
-            AND A.PRJT_TYPE_CD = #{prjtTypeCd}
+            AND PRJT_TYPE_CD = #{prjtTypeCd} -- 검색조건 프로젝트유형
         </if>
 
-                <if test='orderTypeCd == "CP" or ( orderTypeCd == null)'>
-                    ORDER BY LAST_CUST_NM, PRJT_NM  -- 정렬기준: 고객명+프로젝트명
-                </if>
-                <if test='orderTypeCd == "SD" '>
-                    ORDER BY SELL_CRIT_YAM, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 발생시기
-                </if>
-                <if test='orderTypeCd == "RA" '>
-                    ORDER BY CNTR_AMT DESC, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 실적금액
-                </if>
+        <if test='orderTypeCd == "CP" or ( orderTypeCd == null)'>
+            ORDER BY PRJT_NM, IBIZ_CUST_NM(APRJ.LAST_CUST_ID)-- 정렬조건 고객명+프로젝트명
+        </if>
+        <if test='orderTypeCd == "SD" '>
+            ORDER BY CRIT_YAM,PRJT_NM  -- 정렬조건 발생시기
+        </if>
+        <if test='orderTypeCd == "RA" '>
+            <if test='brslDstCd == "B" '>
+                ORDER BY RSL_SELL_AMT,PRJT_NM -- 정렬조건 실적금액(매출)
+            </if>
+            <if test='brslDstCd == "C" '>
+                ORDER BY RSL_BUY_AMT,PRJT_NM -- 정렬조건 실적금액(매입)
+            </if>
+        </if>
 
         ) T
-        ) S
         WHERE ROWNUMBER BETWEEN #{pageSize} * (#{pageNumber} - 1) + 1
         AND #{pageSize} * (#{pageNumber} - 1) + #{pageSize}
 

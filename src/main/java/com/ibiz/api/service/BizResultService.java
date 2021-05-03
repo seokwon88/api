@@ -113,6 +113,34 @@ public class BizResultService {
         return list;
     }
 
+    //잔여예상 실적상세리스트
+    @Transactional
+    public List<SalesReportVO> selectSalesReportRsdnList(Payload<BusinessResultSearchVO> requestPayload) throws Exception {
+        log.info("Call Service : " + this.getClass().getName() + ".selectSalesReportRsdnList");
+        BusinessResultSearchVO businessResultSearchVO = requestPayload.getDto();
+
+        List<SalesReportVO> list = new ArrayList<>();
+
+        if(businessResultSearchVO.getBrslDtlDstCd() != null) {
+            if(businessResultSearchVO.getBrslDtlDstCd().equals("BU") || businessResultSearchVO.getBrslDtlDstCd().equals("CU") || businessResultSearchVO.getBrslDtlDstCd().equals("DU")){
+                businessResultSearchVO.setIsUnsold("Y");
+            }
+
+            if(businessResultSearchVO.getBrslDtlDstCd().substring(0,1).equals("A")) {
+                list = bizResultDAO.selectWCTSalesReportRsdnList(businessResultSearchVO);
+            }else if(businessResultSearchVO.getBrslDtlDstCd().substring(0,1).equals("B") || businessResultSearchVO.getBrslDtlDstCd().substring(0,1).equals("C")) {
+                list = bizResultDAO.selectBuySellSalesReportRsdnList(businessResultSearchVO);
+            }
+        }else {
+            if(businessResultSearchVO.getBrslDstCd().equals("A")) {
+                list = bizResultDAO.selectWCTSalesReportRsdnList(businessResultSearchVO);
+            }else if(businessResultSearchVO.getBrslDstCd().equals("B") || businessResultSearchVO.getBrslDstCd().equals("C")) {
+                list = bizResultDAO.selectBuySellSalesReportRsdnList(businessResultSearchVO);
+            }
+        }
+
+        return list;
+    }
     //사업분류 콤보박스 리스트
     public List<YearBizTypeDimVO> selectBsnsClsfList(Payload<YearBizTypeDimVO> requestPayload) throws Exception {
         log.info("Call Service : " + this.getClass().getName() + ".selectBsnsClsfList");

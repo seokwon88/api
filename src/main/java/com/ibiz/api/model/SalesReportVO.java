@@ -256,6 +256,12 @@ public class SalesReportVO {
     // 매입금액 누적실적 총액
     private long totalAcmlBuyRslAmt;
 
+    // 매출금액 차액 총액
+    private long totalDefSellAmt;
+
+    // 매입금액 차액 총액
+    private long totalDefBuyAmt;
+
     /**
      * 사업부문
      */
@@ -268,6 +274,16 @@ public class SalesReportVO {
 
     // 수주(계약)금액
     private long cntrAmt;
+
+    // 수주ID
+    private String wctId;
+
+    // 매출 차액
+    private long defSellAmt;
+
+    // 매입 차액
+    private long defBuyAmt;
+
 
     public String getProdDstCdNm() {
         return prodDstCdNm;
@@ -739,5 +755,45 @@ public class SalesReportVO {
 
     public void setCntrAmt(long cntrAmt) {
         this.cntrAmt = cntrAmt;
+    }
+
+    public String getWctId() {
+        return wctId;
+    }
+
+    public void setWctId(String wctId) {
+        this.wctId = wctId;
+    }
+
+    public long getDefSellAmt() {
+        return defSellAmt;
+    }
+
+    public void setDefSellAmt(long defSellAmt) {
+        this.defSellAmt = defSellAmt;
+    }
+
+    public long getDefBuyAmt() {
+        return defBuyAmt;
+    }
+
+    public void setDefBuyAmt(long defBuyAmt) {
+        this.defBuyAmt = defBuyAmt;
+    }
+
+    public long getTotalDefSellAmt() {
+        return totalDefSellAmt;
+    }
+
+    public void setTotalDefSellAmt(long totalDefSellAmt) {
+        this.totalDefSellAmt = totalDefSellAmt;
+    }
+
+    public long getTotalDefBuyAmt() {
+        return totalDefBuyAmt;
+    }
+
+    public void setTotalDefBuyAmt(long totalDefBuyAmt) {
+        this.totalDefBuyAmt = totalDefBuyAmt;
     }
 }
