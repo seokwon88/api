@@ -1976,7 +1976,7 @@
                     ON ACOM.COM_CD = RSL.GODS_CLSF_CD
 
                             <if test='orderTypeCd == "CP" or ( orderTypeCd == null)'>
-                                ORDER BY PRJT_NM, IBIZ_CUST_NM(APRJ.LAST_CUST_ID) DESC -- 정렬조건 고객명+프로젝트명
+                                ORDER BY PRJT_NM, IBIZ_CUST_NM(LAST_CUST_ID) DESC -- 정렬조건 고객명+프로젝트명
                             </if>
                             <if test='orderTypeCd == "SD" '>
                                 ORDER BY CNTR_YAM,PRJT_NM  -- 정렬조건 발생시기
