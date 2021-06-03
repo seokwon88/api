@@ -147,6 +147,10 @@ public class BusinessResultSearchVO {
      */
     private Integer pageNumber;
 
+    // 프로젝트별 합계조회여부
+    private String byPrjtYn;
+
+
     public String getCritYear() {
         return critYear;
     }
@@ -433,5 +437,21 @@ public class BusinessResultSearchVO {
 
     public void setCritDate(String critDate) {
         this.critDate = critDate;
+    }
+
+    public Integer getPageNumber() {
+        return pageNumber;
+    }
+
+    public void setPageNumber(Integer pageNumber) {
+        this.pageNumber = pageNumber;
+    }
+
+    public String getByPrjtYn() {
+        return byPrjtYn;
+    }
+
+    public void setByPrjtYn(String byPrjtYn) {
+        this.byPrjtYn = byPrjtYn;
     }
 }

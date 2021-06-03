@@ -98,15 +98,33 @@ public class BizResultService {
             }
 
             if(businessResultSearchVO.getBrslDtlDstCd().substring(0,1).equals("A")) {
-                list = bizResultDAO.selectWCTSalesReportList(businessResultSearchVO);
+                if(businessResultSearchVO.getByPrjtYn().equals("Y")){
+                    list = bizResultDAO.selectWCTSalesReportByBoptList(businessResultSearchVO);
+                }else{
+                    list = bizResultDAO.selectWCTSalesReportList(businessResultSearchVO);
+                }
+
             }else if(businessResultSearchVO.getBrslDtlDstCd().substring(0,1).equals("B") || businessResultSearchVO.getBrslDtlDstCd().substring(0,1).equals("C")) {
-                list = bizResultDAO.selectBuySellSalesReportList(businessResultSearchVO);
+                if(businessResultSearchVO.getByPrjtYn().equals("Y")){
+                    list = bizResultDAO.selectBuySellSalesReportByBoptList(businessResultSearchVO);
+                }else{
+                    list = bizResultDAO.selectBuySellSalesReportList(businessResultSearchVO);
+                }
             }
         }else {
             if(businessResultSearchVO.getBrslDstCd().equals("A")) {
-                list = bizResultDAO.selectWCTSalesReportList(businessResultSearchVO);
+                if(businessResultSearchVO.getByPrjtYn().equals("Y")){
+                    list = bizResultDAO.selectWCTSalesReportByBoptList(businessResultSearchVO);
+                }else{
+                    list = bizResultDAO.selectWCTSalesReportList(businessResultSearchVO);
+                }
+
             }else if(businessResultSearchVO.getBrslDstCd().equals("B") || businessResultSearchVO.getBrslDstCd().equals("C")) {
-                list = bizResultDAO.selectBuySellSalesReportList(businessResultSearchVO);
+                if(businessResultSearchVO.getByPrjtYn().equals("Y")){
+                    list = bizResultDAO.selectBuySellSalesReportByBoptList(businessResultSearchVO);
+                }else{
+                    list = bizResultDAO.selectBuySellSalesReportList(businessResultSearchVO);
+                }
             }
         }
 
@@ -422,9 +440,18 @@ public class BizResultService {
         List<SalesReportVO> list = new ArrayList<>();
 
         if(businessResultSearchVO.getBrslDstCd().equals("A")){
-            list = bizResultDAO.selectSalesRealWCTReportDetailList(businessResultSearchVO);
+            if(businessResultSearchVO.getByPrjtYn().equals("Y")){
+                list = bizResultDAO.selectSalesRealWCTReportDetailByPrjtList(businessResultSearchVO);
+            }else{
+                list = bizResultDAO.selectSalesRealWCTReportDetailList(businessResultSearchVO);
+            }
         }else if(businessResultSearchVO.getBrslDstCd().equals("B") || businessResultSearchVO.getBrslDstCd().equals("C")){
-            list = bizResultDAO.selectSalesRealReportDetailList(businessResultSearchVO);
+            if(businessResultSearchVO.getByPrjtYn().equals("Y")){
+                list = bizResultDAO.selectSalesRealReportDetailByPrjtList(businessResultSearchVO);
+            }else{
+                list = bizResultDAO.selectSalesRealReportDetailList(businessResultSearchVO);
+            }
+
         }
 
         return list;

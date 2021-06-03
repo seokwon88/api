@@ -284,6 +284,24 @@ public class SalesReportVO {
     // 매입 차액
     private long defBuyAmt;
 
+    // 프로젝트별 매출합계
+    private long prjtSellAmt;
+
+    // 프로젝트별 매입합계
+    private long prjtBuyAmt;
+
+    // ERP 매출금액
+    private long realSellRslAmt;
+
+    // ERP 매입금액
+    private long realBuyRslAmt;
+
+    // ERP 매출 총합계금액
+    private long totalRealSellRslAmt;
+
+    // ERP 매입 총합계금액
+    private long totalRealBuyRslAmt;
+
 
     public String getProdDstCdNm() {
         return prodDstCdNm;
@@ -795,5 +813,53 @@ public class SalesReportVO {
 
     public void setTotalDefBuyAmt(long totalDefBuyAmt) {
         this.totalDefBuyAmt = totalDefBuyAmt;
+    }
+
+    public long getPrjtSellAmt() {
+        return prjtSellAmt;
+    }
+
+    public void setPrjtSellAmt(long prjtSellAmt) {
+        this.prjtSellAmt = prjtSellAmt;
+    }
+
+    public long getPrjtBuyAmt() {
+        return prjtBuyAmt;
+    }
+
+    public void setPrjtBuyAmt(long prjtBuyAmt) {
+        this.prjtBuyAmt = prjtBuyAmt;
+    }
+
+    public long getRealSellRslAmt() {
+        return realSellRslAmt;
+    }
+
+    public void setRealSellRslAmt(long realSellRslAmt) {
+        this.realSellRslAmt = realSellRslAmt;
+    }
+
+    public long getRealBuyRslAmt() {
+        return realBuyRslAmt;
+    }
+
+    public void setRealBuyRslAmt(long realBuyRslAmt) {
+        this.realBuyRslAmt = realBuyRslAmt;
+    }
+
+    public long getTotalRealSellRslAmt() {
+        return totalRealSellRslAmt;
+    }
+
+    public void setTotalRealSellRslAmt(long totalRealSellRslAmt) {
+        this.totalRealSellRslAmt = totalRealSellRslAmt;
+    }
+
+    public long getTotalRealBuyRslAmt() {
+        return totalRealBuyRslAmt;
+    }
+
+    public void setTotalRealBuyRslAmt(long totalRealBuyRslAmt) {
+        this.totalRealBuyRslAmt = totalRealBuyRslAmt;
     }
 }
