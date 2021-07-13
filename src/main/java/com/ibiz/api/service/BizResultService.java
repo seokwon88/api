@@ -31,6 +31,22 @@ public class BizResultService {
         businessResultSearchVO.setRsdnStartDate(businessResultSearchVO.getCritYear()+ businessResultSearchVO.getRsdnStartMon()); // 잔여시작월
         businessResultSearchVO.setRsdnEndDate(businessResultSearchVO.getCritYear()+ businessResultSearchVO.getRsdnEndMon()); // 잔여종료월 (구 toDate)
 
+        // 2021년 ui/ils매각에 따라 예외발생
+        if(Integer.parseInt(businessResultSearchVO.getFromDate()) >= 202105 && businessResultSearchVO.getCritYear().equals("2021")){
+            // ils 영업
+            businessResultSearchVO.setExceptILSYn("Y");
+            // ui 영업
+           if(Integer.parseInt(businessResultSearchVO.getFromDate()) >= 202106 && businessResultSearchVO.getCritYear().equals("2021")){
+                businessResultSearchVO.setExceptUIYn("Y");
+            }else{
+                businessResultSearchVO.setExceptUIYn("N");
+            }
+        }else{
+            businessResultSearchVO.setExceptILSYn("N"); // ils 영업
+            businessResultSearchVO.setExceptUIYn("N"); // ui 영업
+        }
+
+
         List<BusinessResultVO> list = bizResultDAO.selectExpectDeptStatsList(businessResultSearchVO);
 
         return list;
@@ -63,6 +79,22 @@ public class BizResultService {
         businessResultSearchVO.setRsdnStartDate(businessResultSearchVO.getCritYear()+ businessResultSearchVO.getRsdnStartMon()); // 잔여시작월
         businessResultSearchVO.setRsdnEndDate(businessResultSearchVO.getCritYear()+ businessResultSearchVO.getRsdnEndMon()); // 잔여종료월 (구 toDate)
 
+
+        // 2021년 ui/ils매각에 따라 예외발생
+        if(Integer.parseInt(businessResultSearchVO.getFromDate()) >= 202105 && businessResultSearchVO.getCritYear().equals("2021")){
+            // ils 영업
+            businessResultSearchVO.setExceptILSYn("Y");
+            // ui 영업
+            if(Integer.parseInt(businessResultSearchVO.getFromDate()) >= 202106 && businessResultSearchVO.getCritYear().equals("2021")){
+                businessResultSearchVO.setExceptUIYn("Y");
+            }else{
+                businessResultSearchVO.setExceptUIYn("N");
+            }
+        }else{
+            businessResultSearchVO.setExceptILSYn("N"); // ils 영업
+            businessResultSearchVO.setExceptUIYn("N"); // ui 영업
+        }
+
         List<BusinessResultVO> list = bizResultDAO.selectExpectBizGroupStatsList(businessResultSearchVO);
 
         return list;
@@ -79,6 +111,18 @@ public class BizResultService {
         businessResultSearchVO.setRsdnStartDate(businessResultSearchVO.getCritYear()+ businessResultSearchVO.getRsdnStartMon()); // 잔여시작월
         businessResultSearchVO.setRsdnEndDate(businessResultSearchVO.getCritYear()+ businessResultSearchVO.getRsdnEndMon()); // 잔여종료월 (구 toDate)
 
+        // 2021년 ui매각에 따라 예외발생
+        if(businessResultSearchVO.getFromDate().equals("202106")){
+            businessResultSearchVO.setExceptUIYn("Y");
+        }else{
+            businessResultSearchVO.setExceptUIYn("N");
+        }
+        // 2021년 ils매각에 따라 예외발생
+        if(businessResultSearchVO.getFromDate().equals("202105")){
+            businessResultSearchVO.setExceptILSYn("Y");
+        }else{
+            businessResultSearchVO.setExceptILSYn("N");
+        }
         List<BusinessResultVO> list = bizResultDAO.selectExpectProdGroupStatsList(businessResultSearchVO);
 
         return list;
@@ -105,6 +149,7 @@ public class BizResultService {
                 }
 
             }else if(businessResultSearchVO.getBrslDtlDstCd().substring(0,1).equals("B") || businessResultSearchVO.getBrslDtlDstCd().substring(0,1).equals("C")) {
+
                 if(businessResultSearchVO.getByPrjtYn().equals("Y")){
                     list = bizResultDAO.selectBuySellSalesReportByBoptList(businessResultSearchVO);
                 }else{
@@ -120,6 +165,7 @@ public class BizResultService {
                 }
 
             }else if(businessResultSearchVO.getBrslDstCd().equals("B") || businessResultSearchVO.getBrslDstCd().equals("C")) {
+
                 if(businessResultSearchVO.getByPrjtYn().equals("Y")){
                     list = bizResultDAO.selectBuySellSalesReportByBoptList(businessResultSearchVO);
                 }else{
@@ -446,6 +492,22 @@ public class BizResultService {
                 list = bizResultDAO.selectSalesRealWCTReportDetailList(businessResultSearchVO);
             }
         }else if(businessResultSearchVO.getBrslDstCd().equals("B") || businessResultSearchVO.getBrslDstCd().equals("C")){
+
+            // 2021년 ui/ils매각에 따라 예외발생
+            if(Integer.parseInt(businessResultSearchVO.getToDate()) >= 202105 && businessResultSearchVO.getCritYear().equals("2021")){
+                // ils 영업
+                businessResultSearchVO.setExceptILSYn("Y");
+                // ui 영업
+                if(Integer.parseInt(businessResultSearchVO.getToDate()) >= 202106 && businessResultSearchVO.getCritYear().equals("2021")){
+                    businessResultSearchVO.setExceptUIYn("Y");
+                }else{
+                    businessResultSearchVO.setExceptUIYn("N");
+                }
+            }else{
+                businessResultSearchVO.setExceptILSYn("N"); // ils 영업
+                businessResultSearchVO.setExceptUIYn("N"); // ui 영업
+            }
+
             if(businessResultSearchVO.getByPrjtYn().equals("Y")){
                 list = bizResultDAO.selectSalesRealReportDetailByPrjtList(businessResultSearchVO);
             }else{

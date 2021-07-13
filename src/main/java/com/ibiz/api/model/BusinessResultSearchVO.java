@@ -150,6 +150,13 @@ public class BusinessResultSearchVO {
     // 프로젝트별 합계조회여부
     private String byPrjtYn;
 
+    // 예외처리를 위한 변수
+    // 2021년 ui 매각에 따른 필터링
+    private String exceptUIYn;
+
+    // 예외처리를 위한 변수
+    // 2021년 ils 매각에 따른 필터링
+    private String exceptILSYn;
 
     public String getCritYear() {
         return critYear;
@@ -453,5 +460,21 @@ public class BusinessResultSearchVO {
 
     public void setByPrjtYn(String byPrjtYn) {
         this.byPrjtYn = byPrjtYn;
+    }
+
+    public String getExceptUIYn() {
+        return exceptUIYn;
+    }
+
+    public void setExceptUIYn(String exceptUIYn) {
+        this.exceptUIYn = exceptUIYn;
+    }
+
+    public String getExceptILSYn() {
+        return exceptILSYn;
+    }
+
+    public void setExceptILSYn(String exceptILSYn) {
+        this.exceptILSYn = exceptILSYn;
     }
 }
