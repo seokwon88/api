@@ -1339,6 +1339,7 @@ SELECT * FROM (
                             OPPTY_SELL_AMT AS SELL_OPPTY_RSL_AMT, FCST_SELL_AMT AS SELL_FCST_RSL_AMT, RSL_SELL_AMT AS SELL_RSL_AMT, DEF_SELL_AMT,
                             OPPTY_BUY_AMT AS BUY_OPPTY_RSL_AMT, FCST_BUY_AMT AS BUY_FCST_RSL_AMT, RSL_BUY_AMT AS BUY_RSL_AMT, DEF_BUY_AMT,
                             BOPT_STAT_CD, IBIZ_COM_CD_NM('BOPT_STAT_CD', BOPT_STAT_CD) AS BOPT_STAT_CD_NM,
+                            SUM(OPPTY_SELL_AMT) OVER() AS TOTAL_SELL_OPPTY_RSL_AMT, -- 매출금액_기회 총액
                             SUM(FCST_SELL_AMT) OVER() AS TOTAL_SELL_FCST_RSL_AMT, -- 매출금액_확률적용 총액
                             SUM(RSL_SELL_AMT) OVER() AS TOTAL_SELL_RSL_AMT, -- 매출금액_실적 총액
                             SUM(DEF_SELL_AMT) OVER() AS TOTAL_DEF_SELL_AMT -- 매출금액_차액 총액
@@ -1636,9 +1637,11 @@ SELECT * FROM (
                         OPPTY_SELL_AMT AS SELL_OPPTY_RSL_AMT, FCST_SELL_AMT AS SELL_FCST_RSL_AMT, RSL_SELL_AMT AS SELL_RSL_AMT, DEF_SELL_AMT,
                         OPPTY_BUY_AMT AS BUY_OPPTY_RSL_AMT, FCST_BUY_AMT AS BUY_FCST_RSL_AMT, RSL_BUY_AMT AS BUY_RSL_AMT, DEF_BUY_AMT,
                         BOPT_STAT_CD, IBIZ_COM_CD_NM('BOPT_STAT_CD', BOPT_STAT_CD) AS BOPT_STAT_CD_NM,
+                        SUM(OPPTY_SELL_AMT) OVER() AS TOTAL_SELL_OPPTY_RSL_AMT, -- 매출금액_기회 총액
                         SUM(FCST_SELL_AMT) OVER() AS TOTAL_SELL_FCST_RSL_AMT, -- 매출금액_확률적용 총액
                         SUM(RSL_SELL_AMT) OVER() AS TOTAL_SELL_RSL_AMT, -- 매출금액_실적 총액
                         SUM(DEF_SELL_AMT) OVER() AS TOTAL_DEF_SELL_AMT, -- 매출금액_차액 총액
+                        SUM(OPPTY_BUY_AMT) OVER() AS TOTAL_BUY_OPPTY_RSL_AMT, -- 매입금액_기회 총액
                         SUM(FCST_BUY_AMT) OVER() AS TOTAL_BUY_FCST_RSL_AMT, -- 매입금액_확률적용 총액
                         SUM(RSL_BUY_AMT) OVER() AS TOTAL_BUY_RSL_AMT, -- 매입금액_실적 총액
                         SUM(DEF_BUY_AMT) OVER() AS TOTAL_DEF_BUY_AMT -- 매입금액_차액 총액
