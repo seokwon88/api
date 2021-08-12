@@ -111,18 +111,21 @@ public class BizResultService {
         businessResultSearchVO.setRsdnStartDate(businessResultSearchVO.getCritYear()+ businessResultSearchVO.getRsdnStartMon()); // 잔여시작월
         businessResultSearchVO.setRsdnEndDate(businessResultSearchVO.getCritYear()+ businessResultSearchVO.getRsdnEndMon()); // 잔여종료월 (구 toDate)
 
-        // 2021년 ui매각에 따라 예외발생
-        if(businessResultSearchVO.getFromDate().equals("202106")){
-            businessResultSearchVO.setExceptUIYn("Y");
-        }else{
-            businessResultSearchVO.setExceptUIYn("N");
-        }
-        // 2021년 ils매각에 따라 예외발생
-        if(businessResultSearchVO.getFromDate().equals("202105")){
+        // 2021년 ui/ils매각에 따라 예외발생
+        if(Integer.parseInt(businessResultSearchVO.getFromDate()) >= 202105 && businessResultSearchVO.getCritYear().equals("2021")){
+            // ils 영업
             businessResultSearchVO.setExceptILSYn("Y");
+            // ui 영업
+            if(Integer.parseInt(businessResultSearchVO.getFromDate()) >= 202106 && businessResultSearchVO.getCritYear().equals("2021")){
+                businessResultSearchVO.setExceptUIYn("Y");
+            }else{
+                businessResultSearchVO.setExceptUIYn("N");
+            }
         }else{
-            businessResultSearchVO.setExceptILSYn("N");
+            businessResultSearchVO.setExceptILSYn("N"); // ils 영업
+            businessResultSearchVO.setExceptUIYn("N"); // ui 영업
         }
+
         List<BusinessResultVO> list = bizResultDAO.selectExpectProdGroupStatsList(businessResultSearchVO);
 
         return list;
