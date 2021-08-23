@@ -593,54 +593,50 @@
             resultType="com.ibiz.api.model.SalesReportVO">
 
         SELECT * FROM (
-            SELECT COUNT(1) OVER() AS TOTAL_CNT,  ROWNUM AS ROWNUMBER, T.* FROM (
+            SELECT COUNT(1) OVER() AS TOTAL_CNT,  ROWNUM AS ROWNUMBER,
+            T.* FROM (
                 SELECT  LAST_CUST_ID, LAST_CUST_NM, PRJT_ID, PRJT_NM, SLS_DEPT_ID, SLS_EMP_ID, SLS_EMP_NM,
-                    CNTR_DATE, BSNS_CLSF_CD, BSNS_CLSF_CD_NM, -- 사업분류코드
+                    CNTR_DATE, BSNS_CLSF_CD AS BSNS_CLSF_CD,  BSNS_CLSF_CD_NM, -- 사업분류코드
                     WCT_PRBB_CD,  WCT_PRBB_CD_NM, -- 수주확률코드
                     BOPT_STAT_CD, BOPT_STAT_CD_NM, -- 사업기회상태코드
-                    <if test='prodDstCd != null and prodDstCd != "" '>
-                        PROD_DST_CD, PROD_DST_CD_NM,  -- 상품구분코드  -- ★상품실적현황인 경우
-                    </if>
                     SELL_OPPTY_RSL_AMT, -- 매출금액_기회
                     BUY_OPPTY_RSL_AMT, -- 매입금액_기회
                     SELL_FCST_RSL_AMT, -- 매출금액_확률적용
                     BUY_FCST_RSL_AMT, -- 매입금액_확률적용
                     SELL_RSL_AMT, -- 매출금액_실적
+                    REAL_SELL_RSL_AMT, -- 매출금액_실제실적
                     BUY_RSL_AMT, -- 매입금액_실적
-                    ISSUE_CNT, BOPT_ID, BOPT_NM, BOPT_END_TYPE_CD, BOPT_END_TYPE_CD_NM, COM_CD_NUM_VAL,
+                    REAL_BUY_RSL_AMT, -- 매입금액_실제실적
+                    BOPT_ID, BOPT_NM, BOPT_END_TYPE_CD, BOPT_END_TYPE_CD_NM, COM_CD_NUM_VAL,
                     SUM(SELL_OPPTY_RSL_AMT) OVER() AS TOTAL_SELL_OPPTY_RSL_AMT, -- 매출금액_기회 총액
                     SUM(BUY_OPPTY_RSL_AMT) OVER() AS TOTAL_BUY_OPPTY_RSL_AMT, -- 매입금액_기회 총액
                     SUM(SELL_FCST_RSL_AMT) OVER() AS TOTAL_SELL_FCST_RSL_AMT, -- 매출금액_확률적용 총액
                     SUM(BUY_FCST_RSL_AMT) OVER() AS TOTAL_BUY_FCST_RSL_AMT, -- 매입금액_확률적용 총액
                     SUM(SELL_RSL_AMT) OVER() AS TOTAL_SELL_RSL_AMT,  -- 매출금액_실적 총액
-                    SUM(BUY_RSL_AMT) OVER() AS TOTAL_BUY_RSL_AMT  -- 매입금액_실적 총액
+                    SUM(REAL_SELL_RSL_AMT) OVER() AS TOTAL_REAL_SELL_RSL_AMT,  -- 매출금액_실제실적 총액
+                    SUM(BUY_RSL_AMT) OVER() AS TOTAL_BUY_RSL_AMT,  -- 매입금액_실적 총액
+                    SUM(REAL_BUY_RSL_AMT) OVER() AS TOTAL_REAL_BUY_RSL_AMT  -- 매입금액_실제실적 총액
                 FROM
                 (
                     SELECT P.LAST_CUST_ID, M.CUST_NM LAST_CUST_NM, P.PRJT_ID, P.PRJT_NM,
                         P.SLS_DEPT_ID, P.SLS_EMP_ID, H.EMP_NM SLS_EMP_NM,
                         P.CNTR_DATE,
-                        BSNS_CLSF_CD, IBIZ_COM_CD_NM('BSNS_CLSF_CD',P.BSNS_CLSF_CD) BSNS_CLSF_CD_NM, -- 사업분류코드
                         WCT_PRBB_CD, IBIZ_COM_CD_NM('WCT_PRBB_CD',P.WCT_PRBB_CD) WCT_PRBB_CD_NM, -- 수주확률코드
                         BOPT_STAT_CD, IBIZ_COM_CD_NM('BOPT_STAT_CD',P.BOPT_STAT_CD) BOPT_STAT_CD_NM, -- 사업기회상태코드
-                        <if test='prodDstCd != null and prodDstCd != "" '>
-                            P.PROD_DST_CD, IBIZ_COM_CD_NM('PROD_DST_CD',P.PROD_DST_CD) PROD_DST_CD_NM,  -- 상품구분코드  -- ★상품실적현황인 경우
-                        </if>
-                        --GODS_CLSF_CD, IBIZ_COM_CD_NM('GODS_CLSF_CD',B.GODS_CLSF_CD) GODS_CLSF_NM,  -- 제품분류코드
+                        BSNS_CLSF_CD, IBIZ_COM_CD_NM('BSNS_CLSF_CD',P.BSNS_CLSF_CD) BSNS_CLSF_CD_NM, -- 사업분류코드
                         P.SELL_AMT AS SELL_OPPTY_RSL_AMT, -- 매출금액_기회
                         P.BUY_AMT AS BUY_OPPTY_RSL_AMT, -- 매입금액_기회
                         P.SELL_AMT*P.COM_CD_NUM_VAL  AS SELL_FCST_RSL_AMT, -- 매출금액_확률적용
                         P.BUY_AMT*P.COM_CD_NUM_VAL AS BUY_FCST_RSL_AMT, -- 매입금액_확률적용
                         DECODE(BOPT_STAT_CD,'E',P.SELL_AMT,0) AS SELL_RSL_AMT,  -- 매출금액_실적
+                        NVL(RSL.SUM_SELL_AMT,0) AS REAL_SELL_RSL_AMT,  -- 매출금액_실제실적
                         DECODE(BOPT_STAT_CD,'E',P.BUY_AMT,0) AS BUY_RSL_AMT,  -- 매입금액_실적
-                        (SELECT COUNT(BSNS_ISSUE_ID)
-                            FROM BPIP200T
-                            WHERE PRJT_ID = P.PRJT_ID
-                            AND ISSUE_DLNG_STAT_CD IN ('A','B','C','D') -- 이슈처리상태: A.등록, B.계획수립, C.처리중, D.결과검토
-                        ) ISSUE_CNT,
+                        NVL(RSL.ACML_BUY_RSL_AMT,0) AS REAL_BUY_RSL_AMT,  -- 매입금액_실제실적
                         P.BOPT_ID, P.BOPT_NM,
                         P.BOPT_END_TYPE_CD, IBIZ_COM_CD_NM('BOPT_END_TYPE_CD', P.BOPT_END_TYPE_CD) BOPT_END_TYPE_CD_NM,
                         P.COM_CD_NUM_VAL
-                    FROM CMST000T M, HMST300T H,
+                    FROM CMST000T M
+                    JOIN
                     (
                         SELECT C.LAST_CUST_ID, C.PRJT_ID, C.PRJT_NM, A.BOPT_ID, A.BOPT_NM, -- A.BOPT_NM,
                         A.SLS_DEPT_ID, A.SLS_EMP_ID,
@@ -705,8 +701,91 @@
                             ,B.PROD_DST_CD  -- ★상품실적현황인 경우
                         </if>
                     ) P
-                    WHERE P.LAST_CUST_ID = M.CUST_ID
-                    AND P.SLS_EMP_ID = H.EMP_ID
+                    ON P.LAST_CUST_ID = M.CUST_ID
+                    JOIN HMST300T H
+                    ON P.SLS_EMP_ID = H.EMP_ID
+                    LEFT JOIN (
+                                 SELECT WCT_RSL.*, BUY_RSL.ACML_BUY_RSL_AMT
+                                 FROM (
+                                        SELECT  BOPT_ID, CNTR_YAM, PRJT_ID,
+                                            SUM(ROUND(NVL(RSL.RATE*CNTR.CNTR_AMT,0),0)) AS SUM_SELL_AMT
+                                        FROM (
+                                                SELECT BEST.BOPT_ID, BEST.FCST_PAL_ID, (SELECT HGRK_COM_CD FROM ACOM010T WHERE COM_GRP_CD ='PM04' AND COM_CD = BEST.PROD_TYPE_CD) AS PROD_DST_CD,
+                                                    BEST.PROD_TYPE_CD, BEST.GODS_CLSF_CD, BEST.SELL_AMT , SUM_BEST.SUM_SELL_AMT,
+                                                     CASE WHEN NVL(SUM_BEST.SUM_SELL_AMT,0) = 0
+                                                        THEN 0
+                                                        ELSE NVL(BEST.SELL_AMT/SUM_BEST.SUM_SELL_AMT,0)
+                                                    END AS RATE
+                                                FROM
+                                                (
+                                                    SELECT BE02.FCST_PAL_ID,SUM(BE02.SELL_AMT) AS SUM_SELL_AMT
+                                                    FROM BEST020T BE02
+                                                    WHERE 1=1 AND GODS_CLSF_CD != 'AL'
+                                                    GROUP BY BE02.FCST_PAL_ID
+                                                ) SUM_BEST
+                                                JOIN (
+                                                    SELECT BE00.BOPT_ID, BE02.FCST_PAL_ID, BE02.PROD_TYPE_CD, BE02.GODS_CLSF_CD, BE02.SELL_AMT
+                                                    FROM BEST020T BE02
+                                                    JOIN BEST000T BE00
+                                                    ON BE00.FCST_PAL_ID = BE02.FCST_PAL_ID
+                                                    WHERE 1=1 AND GODS_CLSF_CD != 'AL'
+                                                ) BEST
+                                                ON SUM_BEST.FCST_PAL_ID = BEST.FCST_PAL_ID
+                                        ) RSL -- BEST020T 기반 비율
+                                        LEFT JOIN (
+                                                    SELECT CNTR.PRJT_ID, CNTR.CNTR_ID, FCST_PAL_ID, SUM(CNTR_AMT) AS CNTR_AMT, SUBSTR(CNTR_DATE,1,6) AS CNTR_YAM,
+                                                        CNTR.SLS_DEPT_ID, CNTR.SLS_EMP_ID
+                                                    FROM WMST000T CNTR
+                                                    JOIN ( SELECT * FROM WMST100T WHERE ERP_STAT_CD = 'C' AND WCT_STAT_CD ='B' AND WCT_DCD_DATE IS NOT NULL ) WCT
+                                                    ON CNTR.CNTR_ID = WCT.CNTR_ID
+                                                    GROUP BY CNTR.PRJT_ID, CNTR.CNTR_ID, FCST_PAL_ID, SUBSTR(CNTR_DATE,1,6), CNTR.SLS_DEPT_ID, CNTR.SLS_EMP_ID
+                                        ) CNTR -- 계약금액, 계약정보
+                                        ON RSL.FCST_PAL_ID = CNTR.FCST_PAL_ID
+                                        JOIN (SELECT HGRK_COM_CD, COM_CD FROM ACOM010T WHERE COM_GRP_CD = 'PM08') GC
+                                        ON GC.COM_CD = RSL.GODS_CLSF_CD
+                                        WHERE ROUND(NVL(RSL.RATE*CNTR.CNTR_AMT,0),0) != 0
+                                    <![CDATA[
+                                        AND CNTR_YAM <=  #{toDate}
+                                      ]]>
+                                        GROUP BY BOPT_ID, CNTR_YAM, PRJT_ID
+                              ) WCT_RSL
+                              LEFT JOIN (
+                                    SELECT
+                                            WCT.BOPT_ID,
+                                            SUM(NVL(RSL_BUY_AMT,0)) AS RSL_BUY_AMT,
+                                            NVL(ACML_BUY_RSL_AMT,0) AS ACML_BUY_RSL_AMT
+                                    FROM RSLT000V RSL
+                                    LEFT JOIN
+                                    (   SELECT WCT.WCT_ID, CNTR.CNTR_ID, BEST.BOPT_ID, CNTR.SLS_DEPT_ID
+                                        FROM WMST100T WCT
+                                        RIGHT JOIN WMST000T CNTR
+                                        ON WCT.CNTR_ID = CNTR.CNTR_ID
+                                        JOIN BEST000T BEST
+                                        ON BEST.FCST_PAL_ID = CNTR.FCST_PAL_ID
+                                    ) WCT
+                                    ON WCT.WCT_ID = RSL.WCT_ID
+                                    JOIN APRJ000T APRJ
+                                    ON RSL.PRJT_ID = APRJ.PRJT_ID
+                                    JOIN (
+                                        SELECT
+                                            PRJT_ID,
+                                            SUM(RSL_BUY_AMT) AS ACML_BUY_RSL_AMT
+                                        FROM RSLT000V SRSL
+                                      <![CDATA[
+                                        WHERE CRIT_YAM <= #{toDate}
+                                      ]]>
+                                        AND SUBSTR(CRIT_YAM,1,4) = #{critYear}
+                                        GROUP BY PRJT_ID
+                                    ) SUM_RSL
+                                    ON SUM_RSL.PRJT_ID = RSL.PRJT_ID
+                                    WHERE RSL_BUY_AMT != 0 -- 매입
+                                    GROUP BY WCT.BOPT_ID,ACML_BUY_RSL_AMT
+                              ) BUY_RSL
+                              ON BUY_RSL.BOPT_ID = WCT_RSL.BOPT_ID
+
+                    ) RSL -- 실제 실적
+                    ON (RSL.BOPT_ID = P.BOPT_ID AND SUBSTR(P.CNTR_DATE,1,6) = RSL.CNTR_YAM)
+
                 )
                 <if test='orderTypeCd == "CP" or ( orderTypeCd == null)'>
                     ORDER BY LAST_CUST_NM, PRJT_NM, CNTR_DATE -- 정렬기준: 고객명+프로젝트명
@@ -724,10 +803,7 @@
                     ORDER BY SELL_FCST_RSL_AMT DESC, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 확률금액(수주)
                 </if>
                 <if test='orderTypeCd == "RA" '>
-                    ORDER BY SELL_RSL_AMT DESC, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 실적금액(수주)
-                </if>
-                <if test='orderTypeCd == "IC" '>
-                    ORDER BY ISSUE_CNT DESC, LAST_CUST_NM, PRJT_NM
+                    ORDER BY REAL_SELL_RSL_AMT DESC, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 실적금액(수주)
                 </if>
             ) T
         ) S
@@ -932,71 +1008,56 @@ SELECT * FROM (
             resultType="com.ibiz.api.model.SalesReportVO">
 
         SELECT * FROM (
-            SELECT COUNT(1) OVER() AS TOTAL_CNT, ROWNUM AS ROWNUMBER, T.* FROM (
+            SELECT COUNT(1) OVER() AS TOTAL_CNT, ROWNUM AS ROWNUMBER,
+            T.* FROM (
             SELECT LAST_CUST_ID, LAST_CUST_NM, PRJT_ID, PRJT_NM, BOPT_ID,
                 SLS_DEPT_ID, SLS_EMP_ID, SLS_EMP_NM,
                 CNTR_DATE, FCST_YAM,
                 BSNS_CLSF_CD,  BSNS_CLSF_CD_NM, -- 사업분류코드
                 WCT_PRBB_CD,  WCT_PRBB_CD_NM, -- 수주확률코드
                 BOPT_STAT_CD, BOPT_STAT_CD_NM, -- 사업기회상태코드
-                <if test='prodDstCd != null and prodDstCd != "" '>
-                    PROD_DST_CD, PROD_DST_CD_NM,  -- 상품구분코드  -- ★상품실적현황인 경우
-                </if>
-                --GODS_CLSF_CD, IBIZ_COM_CD_NM('GODS_CLSF_CD',B.GODS_CLSF_CD) GODS_CLSF_NM,  -- 제품분류코드
                 SELL_OPPTY_RSL_AMT, -- 매출금액_기회
                 BUY_OPPTY_RSL_AMT, -- 매입금액_기회
                 SELL_FCST_RSL_AMT,  -- 매출금액_확률적용 -- ★20190711 계약완료는 수주확률 적용하지 않음
                 BUY_FCST_RSL_AMT, -- 매입금액_확률적용 -- ★20190711 계약완료는 수주확률 적용하지 않음
-                SELL_RSL_AMT, -- 매출금액_실적
-                BUY_RSL_AMT, -- 매입금액_실적
+                REAL_SELL_RSL_AMT, -- 매출금액_실제실적
+                REAL_BUY_RSL_AMT, -- 매입금액_실제실적
                 OPPTY_SELL_RSL_AMT, -- 매출금액_기회전체
                 OPPTY_BUY_RSL_AMT, -- 매입금액_기회전체
                 ACML_SELL_RSL_AMT, -- 매출금액_누적실적
                 ACML_BUY_RSL_AMT, -- 매입금액_누적실적
-                ISSUE_CNT,  -- 사업이슈개수
                 WCT_PRBB_VAL,
                 SUM(SELL_OPPTY_RSL_AMT) OVER() AS TOTAL_SELL_OPPTY_RSL_AMT, -- 매출금액_기회 총액
                 SUM(BUY_OPPTY_RSL_AMT) OVER() AS TOTAL_BUY_OPPTY_RSL_AMT, -- 매입금액_기회 총액
                 SUM(SELL_FCST_RSL_AMT) OVER() AS TOTAL_SELL_FCST_RSL_AMT, -- 매출금액_확률적용 총액
                 SUM(BUY_FCST_RSL_AMT) OVER() AS TOTAL_BUY_FCST_RSL_AMT, -- 매입금액_확률적용 총액
-                SUM(SELL_RSL_AMT) OVER() AS TOTAL_SELL_RSL_AMT,  -- 매출금액_실적 총액
-                SUM(BUY_RSL_AMT) OVER() AS TOTAL_BUY_RSL_AMT,  -- 매입금액_실적 총액
+                SUM(REAL_SELL_RSL_AMT) OVER() AS TOTAL_REAL_SELL_RSL_AMT,  -- 매출금액_실제실적 총액
+                SUM(REAL_BUY_RSL_AMT) OVER() AS TOTAL_REAL_BUY_RSL_AMT,  -- 매입금액_실제실적 총액
                 SUM(OPPTY_SELL_RSL_AMT) OVER() AS TOTAL_OPPTY_SELL_RSL_AMT, -- 매출금액_기회전체 총액
                 SUM(OPPTY_BUY_RSL_AMT) OVER() AS TOTAL_OPPTY_BUY_RSL_AMT, -- 매입금액_기회전체 총액
                 SUM(ACML_SELL_RSL_AMT) OVER() AS TOTAL_ACML_SELL_RSL_AMT, -- 매출금액_누적실적 총액
                 SUM(ACML_BUY_RSL_AMT) OVER() AS TOTAL_ACML_BUY_RSL_AMT -- 매입금액_누적실적 총액
             FROM
             (
-                SELECT P.LAST_CUST_ID, M.CUST_NM LAST_CUST_NM, P.PRJT_ID, P.PRJT_NM, P.BOPT_ID,
+                SELECT
+                P.LAST_CUST_ID, M.CUST_NM LAST_CUST_NM, P.PRJT_ID, P.PRJT_NM, P.BOPT_ID,
                 P.SLS_DEPT_ID, P.SLS_EMP_ID, H.EMP_NM SLS_EMP_NM,
                 P.CNTR_DATE, P.FCST_YAM,
                 P.BSNS_CLSF_CD, IBIZ_COM_CD_NM('BSNS_CLSF_CD',P.BSNS_CLSF_CD) BSNS_CLSF_CD_NM, -- 사업분류코드
                 P.WCT_PRBB_CD, IBIZ_COM_CD_NM('WCT_PRBB_CD',P.WCT_PRBB_CD) WCT_PRBB_CD_NM, -- 수주확률코드
                 P.BOPT_STAT_CD, IBIZ_COM_CD_NM('BOPT_STAT_CD',P.BOPT_STAT_CD) BOPT_STAT_CD_NM, -- 사업기회상태코드
-                <if test='prodDstCd != null and prodDstCd != "" '>
-                    P.PROD_DST_CD, IBIZ_COM_CD_NM('PROD_DST_CD',P.PROD_DST_CD) PROD_DST_CD_NM,  -- 상품구분코드  -- ★상품실적현황인 경우
-                </if>
-                --GODS_CLSF_CD, IBIZ_COM_CD_NM('GODS_CLSF_CD',B.GODS_CLSF_CD) GODS_CLSF_NM,  -- 제품분류코드
                 P.SELL_AMT AS SELL_OPPTY_RSL_AMT, -- 매출금액_기회
                 P.BUY_AMT AS BUY_OPPTY_RSL_AMT, -- 매입금액_기회
                 P.SELL_AMT*P.WCT_PRBB_VAL AS SELL_FCST_RSL_AMT, -- 매출금액_확률적용 -- ★20190711 계약완료는 수주확률 적용하지 않음
                 P.BUY_AMT*P.WCT_PRBB_VAL AS BUY_FCST_RSL_AMT, -- 매입금액_확률적용 -- ★20190711 계약완료는 수주확률 적용하지 않음
-                DECODE(P.BOPT_STAT_CD,'E',P.SELL_AMT,0) AS SELL_RSL_AMT, -- 매출금액_실적
-                DECODE(P.BOPT_STAT_CD,'E',P.BUY_AMT,0) AS BUY_RSL_AMT, -- 매입금액_실적
-                SUM(Q.SELL_AMT) AS OPPTY_SELL_RSL_AMT, -- 매출금액_기회전체
-                SUM(Q.BUY_AMT) AS OPPTY_BUY_RSL_AMT, -- 매입금액_기회전체
-                <![CDATA[
-                   SUM(CASE WHEN P.BOPT_STAT_CD='E' AND Q.FCST_YAM<=#{toDate} THEN Q.SELL_AMT ELSE 0 END) AS ACML_SELL_RSL_AMT, -- 매출금액_누적실적
-                   SUM(CASE WHEN P.BOPT_STAT_CD='E' AND Q.FCST_YAM<=#{toDate} THEN Q.BUY_AMT ELSE 0 END) AS ACML_BUY_RSL_AMT, -- 매입금액_누적실적
-
-                ]]>
-                (SELECT COUNT(BSNS_ISSUE_ID)
-                    FROM BPIP200T
-                    WHERE PRJT_ID = P.PRJT_ID
-                    AND ISSUE_DLNG_STAT_CD IN ('A','B','C','D') -- 이슈처리상태: A.등록, B.계획수립, C.처리중, D.결과검토
-                ) ISSUE_CNT,  -- 사업이슈개수
+                NVL(RSL.RSL_SELL_AMT,0) AS REAL_SELL_RSL_AMT, -- 매출금액_실제실적
+                NVL(RSL.RSL_BUY_AMT,0) AS REAL_BUY_RSL_AMT, -- 매입금액_실제실적
+                SUM(P.SELL_AMT) OVER() AS OPPTY_SELL_RSL_AMT, -- 매출금액_기회전체
+                SUM(P.BUY_AMT) OVER() AS OPPTY_BUY_RSL_AMT, -- 매입금액_기회전체
+                RSL.ACML_SELL_RSL_AMT, -- 매출금액_누적실적
+                RSL.ACML_BUY_RSL_AMT, -- 매출금액_누적실적
                 P.WCT_PRBB_VAL
-                FROM CMST000T M, HMST300T H, BPIP020T Q,
+                FROM CMST000T M, HMST300T H,
                 ( -- 대상건 추출
                     SELECT C.LAST_CUST_ID, C.PRJT_ID, C.PRJT_NM, A.BOPT_ID, -- A.BOPT_NM,
                     A.SLS_DEPT_ID, A.SLS_EMP_ID,
@@ -1008,8 +1069,8 @@ SELECT * FROM (
                     <if test='prodDstCd != null and prodDstCd != "" '>
                         B.PROD_DST_CD, --B.GODS_CLSF_CD,	 -- ★상품실적현황인 경우
                     </if>
-                    NVL(SUM(B.SELL_AMT),0) SELL_AMT, -- 매출금액
-                    NVL(SUM(B.BUY_AMT),0) BUY_AMT -- 매입금액
+                    NVL(SUM(B.SELL_AMT),0) SELL_AMT, -- 매출기회금액
+                    NVL(SUM(B.BUY_AMT),0) BUY_AMT -- 매입기회금액
                     FROM BPIP000T A, BPIP020T B, APRJ000T C, ACOM010T S, ACOM010T GC
                     WHERE A.BOPT_ID = B.BOPT_ID(+)
                     <choose>
@@ -1073,22 +1134,55 @@ SELECT * FROM (
                     <if test='prodDstCd != null and prodDstCd != "" '>
                         , B.PROD_DST_CD  -- ★상품실적현황인 경우
                     </if>
+
                 ) P
+                LEFT JOIN (
+                            SELECT
+                                    RSL.CRIT_YAM, WCT.BOPT_ID,
+                                    SUM(NVL(RSL_SELL_AMT,0)) AS RSL_SELL_AMT,
+                                    SUM(NVL(RSL_BUY_AMT,0)) AS RSL_BUY_AMT,
+                                    NVL(ACML_SELL_RSL_AMT,0) AS ACML_SELL_RSL_AMT,
+                                    NVL(ACML_BUY_RSL_AMT,0) AS ACML_BUY_RSL_AMT
+                            FROM RSLT000V RSL
+                            LEFT JOIN
+                            (   SELECT WCT.WCT_ID, CNTR.CNTR_ID, BEST.BOPT_ID, CNTR.SLS_DEPT_ID
+                                FROM WMST100T WCT
+                                RIGHT JOIN WMST000T CNTR
+                                ON WCT.CNTR_ID = CNTR.CNTR_ID
+                                JOIN BEST000T BEST
+                                ON BEST.FCST_PAL_ID = CNTR.FCST_PAL_ID
+                            ) WCT
+                            ON WCT.WCT_ID = RSL.WCT_ID
+                            JOIN APRJ000T APRJ
+                            ON RSL.PRJT_ID = APRJ.PRJT_ID
+                            JOIN (
+                                SELECT
+                                    PRJT_ID,
+                                    SUM(RSL_SELL_AMT) AS ACML_SELL_RSL_AMT,
+                                    SUM(RSL_BUY_AMT) AS ACML_BUY_RSL_AMT
+                                FROM RSLT000V SRSL
+                              <![CDATA[
+                                WHERE CRIT_YAM <= #{toDate}
+                              ]]>
+                                GROUP BY PRJT_ID
+                            ) SUM_RSL
+                            ON SUM_RSL.PRJT_ID = RSL.PRJT_ID
+
+                    <if test='brslDstCd == "B" '>
+                        WHERE RSL_SELL_AMT != 0 -- 매출
+                    </if>
+                    <if test='brslDstCd == "C" '>
+                        WHERE RSL_BUY_AMT != 0 -- 매입
+                    </if>
+
+                            GROUP BY WCT.BOPT_ID, RSL.CRIT_YAM, ACML_SELL_RSL_AMT, ACML_BUY_RSL_AMT
+
+                ) RSL
+                ON (P.BOPT_ID = RSL.BOPT_ID AND RSL.CRIT_YAM = P.FCST_YAM )
                 WHERE P.LAST_CUST_ID = M.CUST_ID
                 AND P.SLS_EMP_ID = H.EMP_ID
-                AND P.BOPT_ID = Q.BOPT_ID
-                <if test='prodDstCd != null and prodDstCd != "" '>
-                    AND P.PROD_DST_CD = Q.PROD_DST_CD  -- ★상품실적현황인 경우
-                </if>
-                GROUP BY LAST_CUST_ID, M.CUST_NM, P.PRJT_ID, P.PRJT_NM, P.BOPT_ID,P.BOPT_STAT_CD,
-                P.SLS_DEPT_ID, P.SLS_EMP_ID, H.EMP_NM,
-                P.CNTR_DATE, P.FCST_YAM,
-                P.BSNS_CLSF_CD, P.WCT_PRBB_CD, P.WCT_PRBB_VAL, -- ★20190711
-                <if test='prodDstCd != null and prodDstCd != "" '>
-                    P.PROD_DST_CD,  -- ★상품실적현황인 경우
-                </if>
-                P.SELL_AMT, P.BUY_AMT
             )
+
             <if test='orderTypeCd == "CP" or ( orderTypeCd == null)'>
                 ORDER BY LAST_CUST_NM, PRJT_NM, CNTR_DATE  -- 정렬기준: 고객명+프로젝트명
             </if>
@@ -1116,14 +1210,11 @@ SELECT * FROM (
             </if>
             <if test='orderTypeCd == "RA" '>
                 <if test='brslDstCd == "B" '>
-                    ORDER BY SELL_RSL_AMT DESC, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 실적금액(매출)
+                    ORDER BY REAL_SELL_RSL_AMT DESC, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 실적금액(매출)
                 </if>
                 <if test='brslDstCd == "C" '>
-                    ORDER BY BUY_RSL_AMT DESC, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 실적금액(매입)
+                    ORDER BY REAL_BUY_RSL_AMT DESC, LAST_CUST_NM, PRJT_NM  -- 정렬기준: 실적금액(매입)
                 </if>
-            </if>
-            <if test='orderTypeCd == "IC" '>
-                ORDER BY ISSUE_CNT DESC, LAST_CUST_NM, PRJT_NM
             </if>
             ) T
         ) S
