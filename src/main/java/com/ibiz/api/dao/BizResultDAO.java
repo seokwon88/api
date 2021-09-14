@@ -53,13 +53,13 @@ public class BizResultDAO {
     }
 
     //수주 예상/실적 영업부서 프로젝트별 리스트 조회
-    public List<SalesReportVO> selectWCTSalesReportByBoptList(BusinessResultSearchVO businessResultSearchVO) {
-        return mybatis.selectList( "BizResultMapper.selectWCTSalesReportByBoptList", businessResultSearchVO);
+    public List<SalesReportVO> selectWCTSalesReportByPrjtList(BusinessResultSearchVO businessResultSearchVO) {
+        return mybatis.selectList( "BizResultMapper.selectWCTSalesReportByPrjtList", businessResultSearchVO);
     }
 
     //매입/매출 예상/실적 영업부서 프로젝트별 리스트 조회
-    public List<SalesReportVO> selectBuySellSalesReportByBoptList(BusinessResultSearchVO businessResultSearchVO) {
-        return mybatis.selectList("BizResultMapper.selectBuySellSalesReportByBoptList", businessResultSearchVO);
+    public List<SalesReportVO> selectBuySellSalesReportByPrjtList(BusinessResultSearchVO businessResultSearchVO) {
+        return mybatis.selectList("BizResultMapper.selectBuySellSalesReportByPrjtList", businessResultSearchVO);
     }
 
     //수주 잔여예상 영업부서 리스트 조회

@@ -146,7 +146,7 @@ public class BizResultService {
 
             if(businessResultSearchVO.getBrslDtlDstCd().substring(0,1).equals("A")) {
                 if(businessResultSearchVO.getByPrjtYn().equals("Y")){
-                    list = bizResultDAO.selectWCTSalesReportByBoptList(businessResultSearchVO);
+                    list = bizResultDAO.selectWCTSalesReportByPrjtList(businessResultSearchVO);
                 }else{
                     list = bizResultDAO.selectWCTSalesReportList(businessResultSearchVO);
                 }
@@ -154,7 +154,7 @@ public class BizResultService {
             }else if(businessResultSearchVO.getBrslDtlDstCd().substring(0,1).equals("B") || businessResultSearchVO.getBrslDtlDstCd().substring(0,1).equals("C")) {
 
                 if(businessResultSearchVO.getByPrjtYn().equals("Y")){
-                    list = bizResultDAO.selectBuySellSalesReportByBoptList(businessResultSearchVO);
+                    list = bizResultDAO.selectBuySellSalesReportByPrjtList(businessResultSearchVO);
                 }else{
                     list = bizResultDAO.selectBuySellSalesReportList(businessResultSearchVO);
                 }
@@ -162,7 +162,7 @@ public class BizResultService {
         }else {
             if(businessResultSearchVO.getBrslDstCd().equals("A")) {
                 if(businessResultSearchVO.getByPrjtYn().equals("Y")){
-                    list = bizResultDAO.selectWCTSalesReportByBoptList(businessResultSearchVO);
+                    list = bizResultDAO.selectWCTSalesReportByPrjtList(businessResultSearchVO);
                 }else{
                     list = bizResultDAO.selectWCTSalesReportList(businessResultSearchVO);
                 }
@@ -170,7 +170,7 @@ public class BizResultService {
             }else if(businessResultSearchVO.getBrslDstCd().equals("B") || businessResultSearchVO.getBrslDstCd().equals("C")) {
 
                 if(businessResultSearchVO.getByPrjtYn().equals("Y")){
-                    list = bizResultDAO.selectBuySellSalesReportByBoptList(businessResultSearchVO);
+                    list = bizResultDAO.selectBuySellSalesReportByPrjtList(businessResultSearchVO);
                 }else{
                     list = bizResultDAO.selectBuySellSalesReportList(businessResultSearchVO);
                 }

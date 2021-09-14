@@ -23,6 +23,11 @@ public class SalesReportVO {
     private String bsnsClsfCd;
 
     /**
+     * 사업분류코드명
+     */
+    private String bsnsClsfCdNm;
+
+    /**
      * 최종고객ID
      */
     private String lastCustId;
@@ -349,6 +354,14 @@ public class SalesReportVO {
 
     public void setBsnsClsfCd(String bsnsClsfCd) {
         this.bsnsClsfCd = bsnsClsfCd;
+    }
+
+    public String getBsnsClsfCdNm() {
+        return bsnsClsfCdNm;
+    }
+
+    public void setBsnsClsfCdNm(String bsnsClsfCdNm) {
+        this.bsnsClsfCdNm = bsnsClsfCdNm;
     }
 
     public String getLastCustId() {
