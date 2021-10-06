@@ -657,7 +657,7 @@
                                                                     SELECT CNTR.PRJT_ID, CNTR.CNTR_ID, FCST_PAL_ID, SUM(CNTR_AMT) AS CNTR_AMT, SUBSTR(CNTR_DATE,1,6) AS CNTR_YAM,
                                                                         CNTR.SLS_DEPT_ID, CNTR.SLS_EMP_ID
                                                                     FROM WMST000T CNTR
-                                                                    JOIN ( SELECT * FROM WMST100T WHERE ERP_STAT_CD = 'C' AND WCT_STAT_CD ='B' AND WCT_DCD_DATE IS NOT NULL ) WCT
+                                                                    JOIN ( SELECT DISTINCT CNTR_ID  FROM WMST100T WHERE ERP_STAT_CD = 'C' AND WCT_STAT_CD ='B' AND WCT_DCD_DATE IS NOT NULL ) WCT
                                                                     ON CNTR.CNTR_ID = WCT.CNTR_ID
                                                                     GROUP BY CNTR.PRJT_ID, CNTR.CNTR_ID, FCST_PAL_ID, SUBSTR(CNTR_DATE,1,6), CNTR.SLS_DEPT_ID, CNTR.SLS_EMP_ID
                                                         ) CNTR -- 계약금액, 계약정보
@@ -877,7 +877,7 @@
                                                                 SELECT CNTR.PRJT_ID, CNTR.CNTR_ID, FCST_PAL_ID, SUM(CNTR_AMT) AS CNTR_AMT, SUBSTR(CNTR_DATE,1,6) AS CNTR_YAM,
                                                                     CNTR.SLS_DEPT_ID, CNTR.SLS_EMP_ID
                                                                 FROM WMST000T CNTR
-                                                                JOIN ( SELECT * FROM WMST100T WHERE ERP_STAT_CD = 'C' AND WCT_STAT_CD ='B' AND WCT_DCD_DATE IS NOT NULL ) WCT
+                                                                JOIN ( SELECT DISTINCT CNTR_ID  FROM WMST100T WHERE ERP_STAT_CD = 'C' AND WCT_STAT_CD ='B' AND WCT_DCD_DATE IS NOT NULL ) WCT
                                                                 ON CNTR.CNTR_ID = WCT.CNTR_ID
                                                                 GROUP BY CNTR.PRJT_ID, CNTR.CNTR_ID, FCST_PAL_ID, SUBSTR(CNTR_DATE,1,6), CNTR.SLS_DEPT_ID, CNTR.SLS_EMP_ID
                                                     ) CNTR -- 계약금액, 계약정보
@@ -1035,7 +1035,7 @@
                                                                                 SELECT CNTR.PRJT_ID, CNTR.CNTR_ID, FCST_PAL_ID, SUM(CNTR_AMT) AS CNTR_AMT, SUBSTR(CNTR_DATE,1,6) AS CNTR_YAM,
                                                                                     CNTR.SLS_DEPT_ID, CNTR.SLS_EMP_ID
                                                                                 FROM WMST000T CNTR
-                                                                                JOIN ( SELECT * FROM WMST100T WHERE ERP_STAT_CD = 'C' AND WCT_STAT_CD ='B' AND WCT_DCD_DATE IS NOT NULL ) WCT
+                                                                                JOIN ( SELECT DISTINCT CNTR_ID  FROM WMST100T WHERE ERP_STAT_CD = 'C' AND WCT_STAT_CD ='B' AND WCT_DCD_DATE IS NOT NULL ) WCT
                                                                                 ON CNTR.CNTR_ID = WCT.CNTR_ID
                                                                                 GROUP BY CNTR.PRJT_ID, CNTR.CNTR_ID, FCST_PAL_ID, SUBSTR(CNTR_DATE,1,6), CNTR.SLS_DEPT_ID, CNTR.SLS_EMP_ID
                                                                     ) CNTR -- 계약금액, 계약정보
@@ -1244,7 +1244,7 @@
                                                                             SELECT CNTR.PRJT_ID, CNTR.CNTR_ID, FCST_PAL_ID, SUM(CNTR_AMT) AS CNTR_AMT, SUBSTR(CNTR_DATE,1,6) AS CNTR_YAM,
                                                                                 CNTR.SLS_DEPT_ID, CNTR.SLS_EMP_ID
                                                                             FROM WMST000T CNTR
-                                                                            JOIN ( SELECT * FROM WMST100T WHERE ERP_STAT_CD = 'C' AND WCT_STAT_CD ='B' AND WCT_DCD_DATE IS NOT NULL ) WCT
+                                                                            JOIN ( SELECT DISTINCT CNTR_ID  FROM WMST100T WHERE ERP_STAT_CD = 'C' AND WCT_STAT_CD ='B' AND WCT_DCD_DATE IS NOT NULL ) WCT
                                                                             ON CNTR.CNTR_ID = WCT.CNTR_ID
                                                                             GROUP BY CNTR.PRJT_ID, CNTR.CNTR_ID, FCST_PAL_ID, SUBSTR(CNTR_DATE,1,6), CNTR.SLS_DEPT_ID, CNTR.SLS_EMP_ID
                                                                 ) CNTR -- 계약금액, 계약정보
