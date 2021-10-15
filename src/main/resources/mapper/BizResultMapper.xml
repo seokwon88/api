@@ -36,17 +36,23 @@
                         <choose>
                             <when test='deptId == "8100" and  (exceptILSYn == "Y" and  exceptUIYn == "Y") '> --  공공영업3팀  UI영업팀(매각) 제외 ☆☆☆
                                 <![CDATA[
-                                    SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM  <= '202112' AND RV.DEPT_ID NOT IN ('3030','9998') THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
+                                    SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM <= '202112'
+                                    AND ( (RV.CRIT_YAM < '202105' AND RV.DEPT_ID IN ('3030')) OR (RV.CRIT_YAM < '202106' AND RV.DEPT_ID IN ('9998')) OR RV.DEPT_ID NOT IN ('3030','9998')  )
+                                    THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
                                 ]]>
                             </when>
                             <when test='deptId == "8100" and  exceptILSYn == "Y" '> -- 2021년 5월달(포함) 이후에는 공공영업3팀 제외 ☆☆☆
                                 <![CDATA[
-                                    SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM <= '202112' AND RV.DEPT_ID NOT IN ('3030') THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
+                                    SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM <= '202112'
+                                    AND ( (RV.CRIT_YAM < '202105' AND RV.DEPT_ID IN ('3030')) OR (RV.CRIT_YAM < '202106' AND RV.DEPT_ID IN ('9998')) OR RV.DEPT_ID NOT IN ('3030','9998')  )
+                                    THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
                                 ]]>
                             </when>
                             <when test='deptId == "8100" and  exceptUIYn == "Y" '> -- 2021년 6월달(포함) 이후에는 UI영업팀(매각) 제외 ☆☆☆
                                 <![CDATA[
-                                    SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM <= '202112' AND RV.DEPT_ID NOT IN ('3030','9998') THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
+                                    SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM <= '202112'
+                                    AND ( (RV.CRIT_YAM < '202105' AND RV.DEPT_ID IN ('3030')) OR (RV.CRIT_YAM < '202106' AND RV.DEPT_ID IN ('9998')) OR RV.DEPT_ID NOT IN ('3030','9998')  )
+                                    THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
                                 ]]>
                             </when>
                             <otherwise>
@@ -299,17 +305,29 @@
                         <choose>
                             <when test='deptId == "8100" and  (exceptILSYn == "Y" and  exceptUIYn == "Y") '> --  공공영업3팀  UI영업팀(매각) 제외 ☆☆☆
                                 <![CDATA[
-                                                    SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM  <= '202112' AND RV.DEPT_ID NOT IN ('3030','9998') THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
+                                                    --SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM  <= '202112' AND RV.DEPT_ID NOT IN ('3030','9998') THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
+
+                                                    SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM  <= '202112'
+                                                    AND ( (RV.CRIT_YAM < '202105' AND RV.DEPT_ID IN ('3030')) OR (RV.CRIT_YAM < '202106' AND RV.DEPT_ID IN ('9998')) OR RV.DEPT_ID NOT IN ('3030','9998')  )
+                                                    THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
                                                 ]]>
                             </when>
                             <when test='deptId == "8100" and  exceptILSYn == "Y" '> -- 2021년 5월달(포함) 이후에는 공공영업3팀 제외 ☆☆☆
                                 <![CDATA[
-                                                    SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM <= '202112' AND RV.DEPT_ID NOT IN ('3030') THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
+                                                    --SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM <= '202112' AND RV.DEPT_ID NOT IN ('3030') THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
+
+                                                    SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM  <= '202112'
+                                                    AND ( (RV.CRIT_YAM < '202105' AND RV.DEPT_ID IN ('3030')) OR (RV.CRIT_YAM < '202106' AND RV.DEPT_ID IN ('9998')) OR RV.DEPT_ID NOT IN ('3030','9998')  )
+                                                    THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
                                                 ]]>
                             </when>
                             <when test='deptId == "8100" and  exceptUIYn == "Y" '> -- 2021년 6월달(포함) 이후에는 UI영업팀(매각) 제외 ☆☆☆
                                 <![CDATA[
-                                                    SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM <= '202112' AND RV.DEPT_ID NOT IN ('3030','9998') THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
+                                                    --SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM <= '202112' AND RV.DEPT_ID NOT IN ('3030','9998') THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
+
+                                                    SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM  <= '202112'
+                                                    AND ( (RV.CRIT_YAM < '202105' AND RV.DEPT_ID IN ('3030')) OR (RV.CRIT_YAM < '202106' AND RV.DEPT_ID IN ('9998')) OR RV.DEPT_ID NOT IN ('3030','9998')  )
+                                                    THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
                                                 ]]>
                             </when>
                             <otherwise>
@@ -445,17 +463,28 @@
                         <choose>
                             <when test='deptId == "8100" and  (exceptILSYn == "Y" and  exceptUIYn == "Y") '> --  공공영업3팀  UI영업팀(매각) 제외 ☆☆☆
                                 <![CDATA[
-                                                    SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM  <= '202112' AND RV.DEPT_ID NOT IN ('3030','9998') THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
+                                                    --SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM  <= '202112' AND RV.DEPT_ID NOT IN ('3030','9998') THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
+                                                    SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM  <= '202112'
+                                                    AND ( (RV.CRIT_YAM < '202105' AND RV.DEPT_ID IN ('3030')) OR (RV.CRIT_YAM < '202106' AND RV.DEPT_ID IN ('9998')) OR RV.DEPT_ID NOT IN ('3030','9998')  )
+                                                    THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
                                                 ]]>
                             </when>
                             <when test='deptId == "8100" and  exceptILSYn == "Y" '> -- 2021년 5월달(포함) 이후에는 공공영업3팀 제외 ☆☆☆
                                 <![CDATA[
-                                                    SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM <= '202112' AND RV.DEPT_ID NOT IN ('3030') THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
+                                                    --SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM <= '202112' AND RV.DEPT_ID NOT IN ('3030') THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
+
+                                                    SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM  <= '202112'
+                                                    AND ( (RV.CRIT_YAM < '202105' AND RV.DEPT_ID IN ('3030')) OR (RV.CRIT_YAM < '202106' AND RV.DEPT_ID IN ('9998')) OR RV.DEPT_ID NOT IN ('3030','9998')  )
+                                                    THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
                                                 ]]>
                             </when>
                             <when test='deptId == "8100" and  exceptUIYn == "Y" '> -- 2021년 6월달(포함) 이후에는 UI영업팀(매각) 제외 ☆☆☆
                                 <![CDATA[
-                                                    SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM <= '202112' AND RV.DEPT_ID NOT IN ('3030','9998') THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
+                                                    --SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM <= '202112' AND RV.DEPT_ID NOT IN ('3030','9998') THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
+
+                                                    SUM(CASE WHEN SUBSTR(RV.BRSL_DTL_DST_CD,2,1) = 'R' AND RV.CRIT_YAM  <= '202112'
+                                                    AND ( (RV.CRIT_YAM < '202105' AND RV.DEPT_ID IN ('3030')) OR (RV.CRIT_YAM < '202106' AND RV.DEPT_ID IN ('9998')) OR RV.DEPT_ID NOT IN ('3030','9998')  )
+                                                    THEN RSL_AMT ELSE 0 END) AS YRLY_BRSL_RSL_AMT, -- 연간_실적
                                                 ]]>
                             </when>
                             <otherwise>
