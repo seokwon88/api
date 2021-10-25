@@ -3096,12 +3096,12 @@
                             </if>
                             <if test="startDate != null and startDate != ''">
                                 <![CDATA[
-                                         AND ( BSNS_RPRT_START_DATE >= #{startDate} OR BSNS_RPRT_END_DATE >= #{startDate} OR (D.BSNS_PRGS_STAT_CD = 'H' AND RPRT_YN = 'Y') ) --★ 보고기간
+                                         AND ( BSNS_RPRT_START_DATE >= #{startDate} OR BSNS_RPRT_END_DATE >= #{startDate} ) --★ 보고기간
                                     ]]>
                             </if>
                             <if test="endDate != null and endDate != ''">
                                 <![CDATA[
-                                         AND ( BSNS_RPRT_START_DATE <= #{endDate} OR BSNS_RPRT_END_DATE <= #{endDate} OR (D.BSNS_PRGS_STAT_CD = 'H' AND RPRT_YN = 'Y') ) --★ 보고기간
+                                         AND ( BSNS_RPRT_START_DATE <= #{endDate} OR BSNS_RPRT_END_DATE <= #{endDate} ) --★ 보고기간
                                     ]]>
                             </if>
                         <choose>
@@ -3141,12 +3141,12 @@
         </if>
         <if test="startDate != null and startDate != ''">
             <![CDATA[
-                    AND ( BSNS_RPRT_START_DATE >= #{startDate} OR BSNS_RPRT_END_DATE >= #{startDate}  OR (BSNS_PRGS_STAT_CD = 'H' AND RPRT_YN = 'Y') )
+                    AND ( BSNS_RPRT_START_DATE >= #{startDate} OR BSNS_RPRT_END_DATE >= #{startDate} )
                 ]]>
         </if>
         <if test="endDate != null and endDate != ''">
             <![CDATA[
-                    AND ( BSNS_RPRT_START_DATE <= #{endDate} OR BSNS_RPRT_END_DATE <= #{endDate}  OR (BSNS_PRGS_STAT_CD = 'H' AND RPRT_YN = 'Y') )
+                    AND ( BSNS_RPRT_START_DATE <= #{endDate} OR BSNS_RPRT_END_DATE <= #{endDate} )
                 ]]>
         </if>
             AND UPPER(PRJT_ID) = UPPER(#{prjtId})
