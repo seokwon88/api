@@ -214,16 +214,45 @@
             WITH
             RSLT AS (
                 SELECT BSNS_CLSF_CD, PROD_DST_CD,#{brslDtlDstCd} BRSL_DTL_DST_CD,
-                       SUM(JAN_AMT) JAN_AMT, SUM(FEB_AMT) FEB_AMT, SUM(MAR_AMT) MAR_AMT, SUM(APR_AMT) APR_AMT, SUM(MAY_AMT) MAY_AMT, SUM(JUN_AMT) JUN_AMT,
-                       SUM(JUL_AMT) JUL_AMT, SUM(AUG_AMT) AUG_AMT ,SUM(SEP_AMT) SEP_AMT, SUM(OCT_AMT) OCT_AMT, SUM(NOV_AMT) NOV_AMT, SUM(DEC_AMT) DEC_AMT
-                  FROM BRST100V
-                 WHERE CRIT_YEAR = #{year}   -- ★조회조건: 기준연도
-                   AND DEPT_ID IN (SELECT DEPT_ID FROM HMST110T
-                                    WHERE SELL_OCR_YN = 'Y' -- 매출발생부서
-                                   START WITH DEPT_ID = #{slsDeptId} AND CRIT_YEAR = #{year}   -- ★조회조건: 영업부서+기준연도
-                                   CONNECT BY PRIOR DEPT_ID = HGRK_DEPT_ID AND PRIOR CRIT_YEAR = CRIT_YEAR)
-                   AND BRSL_DTL_DST_CD = #{brslDtlDstCd}  -- ★조회조건 실적구분
+                    SUM(JAN_AMT) JAN_AMT, SUM(FEB_AMT) FEB_AMT, SUM(MAR_AMT) MAR_AMT, SUM(APR_AMT) APR_AMT, SUM(MAY_AMT) MAY_AMT, SUM(JUN_AMT) JUN_AMT,
+                    SUM(JUL_AMT) JUL_AMT, SUM(AUG_AMT) AUG_AMT ,SUM(SEP_AMT) SEP_AMT, SUM(OCT_AMT) OCT_AMT, SUM(NOV_AMT) NOV_AMT, SUM(DEC_AMT) DEC_AMT
+                FROM
+                (
+                    SELECT BSNS_CLSF_CD, PROD_DST_CD,#{brslDtlDstCd} BRSL_DTL_DST_CD,
+                           SUM(JAN_AMT) JAN_AMT, SUM(FEB_AMT) FEB_AMT, SUM(MAR_AMT) MAR_AMT, SUM(APR_AMT) APR_AMT,
+                            <if test="year =='2021' ">
+                                -- 2021년에는 공공영업3팀 5월부터 제외
+                                CASE WHEN DEPT_ID != '3030' THEN SUM(MAY_AMT) END AS MAY_AMT,
+                                CASE WHEN DEPT_ID != '3030' THEN SUM(JUN_AMT) END AS JUN_AMT,
+                                CASE WHEN DEPT_ID != '3030' THEN SUM(JUL_AMT) END AS JUL_AMT,
+                                CASE WHEN DEPT_ID != '3030' THEN SUM(AUG_AMT) END AS AUG_AMT,
+                                CASE WHEN DEPT_ID != '3030' THEN SUM(SEP_AMT) END AS SEP_AMT,
+                                CASE WHEN DEPT_ID != '3030' THEN SUM(OCT_AMT) END AS OCT_AMT,
+                                CASE WHEN DEPT_ID != '3030' THEN SUM(NOV_AMT) END AS NOV_AMT,
+                                CASE WHEN DEPT_ID != '3030' THEN SUM(DEC_AMT) END AS DEC_AMT
+                            </if>
+                            <if test="year !='2021' ">
+                                SUM(MAY_AMT) AS MAY_AMT,
+                                SUM(JUN_AMT) AS JUN_AMT,
+                                SUM(JUL_AMT) AS JUL_AMT,
+                                SUM(AUG_AMT) AS AUG_AMT,
+                                SUM(SEP_AMT) AS SEP_AMT,
+                                SUM(OCT_AMT) AS OCT_AMT,
+                                SUM(NOV_AMT) AS NOV_AMT,
+                                SUM(DEC_AMT) AS DEC_AMT
+                            </if>
+                      FROM BRST100V
+                     WHERE CRIT_YEAR = #{year}   -- ★조회조건: 기준연도
+                       AND DEPT_ID IN (SELECT DEPT_ID FROM HMST110T
+                                        WHERE SELL_OCR_YN = 'Y' -- 매출발생부서
+                                       START WITH DEPT_ID = #{slsDeptId} AND CRIT_YEAR = #{year}   -- ★조회조건: 영업부서+기준연도
+                                       CONNECT BY PRIOR DEPT_ID = HGRK_DEPT_ID AND PRIOR CRIT_YEAR = CRIT_YEAR)
+                       AND BRSL_DTL_DST_CD = #{brslDtlDstCd}  -- ★조회조건 실적구분
+                        AND DEPT_ID NOT IN ('9998')
+                    GROUP BY BSNS_CLSF_CD, PROD_DST_CD, DEPT_ID
+                )
                 GROUP BY BSNS_CLSF_CD, PROD_DST_CD
+
             )
             SELECT BC.BSNS_CLSF_CD, BC.BSNS_CLSF_CD_NM AS BSNS_CLSF_CD_NM,  -- 사업분류코드
                    BC.PROD_DST_CD, BC.PROD_DST_CD_NM AS PROD_DST_CD_NM,  -- 상품구분코드
