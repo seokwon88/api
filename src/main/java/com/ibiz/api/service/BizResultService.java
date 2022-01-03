@@ -32,11 +32,11 @@ public class BizResultService {
         businessResultSearchVO.setRsdnEndDate(businessResultSearchVO.getCritYear()+ businessResultSearchVO.getRsdnEndMon()); // 잔여종료월 (구 toDate)
 
         // 2021년 ui/ils매각에 따라 예외발생
-        if(Integer.parseInt(businessResultSearchVO.getFromDate()) >= 202105 && businessResultSearchVO.getCritYear().equals("2021")){
+        if(Integer.parseInt(businessResultSearchVO.getFromDate()) >= 202105 && Integer.parseInt(businessResultSearchVO.getCritYear()) >= 2021){
             // ils 영업
             businessResultSearchVO.setExceptILSYn("Y");
             // ui 영업
-           if(Integer.parseInt(businessResultSearchVO.getFromDate()) >= 202106 && businessResultSearchVO.getCritYear().equals("2021")){
+           if(Integer.parseInt(businessResultSearchVO.getFromDate()) >= 202106 && Integer.parseInt(businessResultSearchVO.getCritYear()) >= 2021){
                 businessResultSearchVO.setExceptUIYn("Y");
             }else{
                 businessResultSearchVO.setExceptUIYn("N");
@@ -81,11 +81,11 @@ public class BizResultService {
 
 
         // 2021년 ui/ils매각에 따라 예외발생
-        if(Integer.parseInt(businessResultSearchVO.getFromDate()) >= 202105 && businessResultSearchVO.getCritYear().equals("2021")){
+        if(Integer.parseInt(businessResultSearchVO.getFromDate()) >= 202105 && Integer.parseInt(businessResultSearchVO.getCritYear()) >= 2021){
             // ils 영업
             businessResultSearchVO.setExceptILSYn("Y");
             // ui 영업
-            if(Integer.parseInt(businessResultSearchVO.getFromDate()) >= 202106 && businessResultSearchVO.getCritYear().equals("2021")){
+            if(Integer.parseInt(businessResultSearchVO.getFromDate()) >= 202106 && Integer.parseInt(businessResultSearchVO.getCritYear()) >= 2021){
                 businessResultSearchVO.setExceptUIYn("Y");
             }else{
                 businessResultSearchVO.setExceptUIYn("N");
@@ -112,11 +112,11 @@ public class BizResultService {
         businessResultSearchVO.setRsdnEndDate(businessResultSearchVO.getCritYear()+ businessResultSearchVO.getRsdnEndMon()); // 잔여종료월 (구 toDate)
 
         // 2021년 ui/ils매각에 따라 예외발생
-        if(Integer.parseInt(businessResultSearchVO.getFromDate()) >= 202105 && businessResultSearchVO.getCritYear().equals("2021")){
+        if(Integer.parseInt(businessResultSearchVO.getFromDate()) >= 202105 && Integer.parseInt(businessResultSearchVO.getCritYear()) >= 2021){
             // ils 영업
             businessResultSearchVO.setExceptILSYn("Y");
             // ui 영업
-            if(Integer.parseInt(businessResultSearchVO.getFromDate()) >= 202106 && businessResultSearchVO.getCritYear().equals("2021")){
+            if(Integer.parseInt(businessResultSearchVO.getFromDate()) >= 202106 && Integer.parseInt(businessResultSearchVO.getCritYear()) >= 2021){
                 businessResultSearchVO.setExceptUIYn("Y");
             }else{
                 businessResultSearchVO.setExceptUIYn("N");
@@ -226,6 +226,7 @@ public class BizResultService {
         BusinessResultSearchVO businessResultSearchVO = requestPayload.getDto();
 
         List<BusinessResultVO> list = new ArrayList<>();
+
         list = bizResultDAO.selectMonthlyCompareStatsList(businessResultSearchVO);
 
         return list;

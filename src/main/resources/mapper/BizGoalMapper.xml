@@ -206,7 +206,7 @@
 	</select>
 
 
-    <!-- 월별상품실적 조회 -->
+    <!-- 월별사업부문실적 조회 -->
     <select id="selectMonthlyBizGroupStatsList"
             parameterType="com.ibiz.api.model.BizGoalSearchVO"
             resultType="com.ibiz.api.model.YearDeptResultVO">
