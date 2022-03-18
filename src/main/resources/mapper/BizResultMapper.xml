@@ -3154,7 +3154,7 @@
                         </if>
                         <choose>
                             <when test="pageSize != null and pageSize != '' and pageNumber != null and pageNumber != ''">
-                                ORDER BY BSNS_RPRT_END_DATE DESC, BSNS_RPRT_START_DATE DESC, DEPT_ID ASC, RPRT_TYPE_CD ASC
+                                ORDER BY BSNS_RPRT_END_DATE DESC, CHG_DT DESC, DEPT_ID ASC, RPRT_TYPE_CD ASC
                             </when>
                             <otherwise>
                                 ORDER BY BSNS_RPRT_START_DATE
