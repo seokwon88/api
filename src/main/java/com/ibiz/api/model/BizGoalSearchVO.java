@@ -61,6 +61,9 @@ public class BizGoalSearchVO {
     // 관리자를 위한 코드
     private String adminBplnDstCd;
 
+    // 사업비배부-순매출비율 여부
+    private String nsleYN;
+
     public String getYear() {
         return year;
     }
@@ -157,12 +160,12 @@ public class BizGoalSearchVO {
         this.adminBplnDstCd = adminBplnDstCd;
     }
 
-    @Override
-    public String toString() {
-        return "BizGoalSearchVO [year=" + year + ", slsDeptId=" + slsDeptId + ", bplnDstCd=" + bplnDstCd
-                + ", brslDtlDstCd=" + brslDtlDstCd + ", bsnsClsfCd=" + bsnsClsfCd + ", brslDstCd=" + brslDstCd
-                + ", empId=" + empId + ", manageTarget=" + manageTarget + ", amtUnitCd=" + amtUnitCd
-                + ", openMgmtTgtCd=" + openMgmtTgtCd + ", lowerDeptYN=" + lowerDeptYN + ", adminBplnDstCd="
-                + adminBplnDstCd + "]";
+
+    public String getNsleYN() {
+        return nsleYN;
+    }
+
+    public void setNsleYN(String nsleYN) {
+        this.nsleYN = nsleYN;
     }
 }

@@ -158,6 +158,9 @@ public class BusinessResultSearchVO {
     // 2021년 ils 매각에 따른 필터링
     private String exceptILSYn;
 
+    // 사업비배부-순매출비율 여부
+    private String nsleYN;
+
     public String getCritYear() {
         return critYear;
     }
@@ -476,5 +479,13 @@ public class BusinessResultSearchVO {
 
     public void setExceptILSYn(String exceptILSYn) {
         this.exceptILSYn = exceptILSYn;
+    }
+
+    public String getNsleYN() {
+        return nsleYN;
+    }
+
+    public void setNsleYN(String nsleYN) {
+        this.nsleYN = nsleYN;
     }
 }

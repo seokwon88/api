@@ -115,8 +115,14 @@
                        END AS RSDN_FCST_RSL_AMT -- 잔여_예상(확률적용)
                 ]]>
                 -- ★★Comma 이동 END (반영 후 지울 것)
-                FROM BRST120V RV, --실시간 매출매입 반영 VIEW
-                --FROM BRST120V RV,
+                <choose>
+                    <when test='nsleYN == "Y" '> --  순매출비율용  ☆☆☆
+                        FROM BRST122V RV, --실시간 매출매입 반영 VIEW > 순매출비율용
+                    </when>
+                    <otherwise>
+                        FROM BRST120V RV, --실시간 매출매입 반영 VIEW
+                    </otherwise>
+                </choose>
                 ( SELECT DEPT_SEQC, DEPT_ID, DEPT_NM, -- DEPT_LVL, HGRK_DEPT_ID
                     C.BRSL_SEQC, C.BRSL_DST_CD, C.BRSL_DTL_DST_CD, -- 사업실적구분코드, 사업실적상세구분코드
                     <![CDATA[
@@ -268,7 +274,14 @@
         WITH
         RV AS (
             SELECT CRIT_YAM, BSNS_CLSF_CD, BRSL_DTL_DST_CD, RSL_AMT, DEPT_ID
-              FROM BRST120V
+                <choose>
+                    <when test='nsleYN == "Y" '> --  순매출비율용  ☆☆☆
+                        FROM BRST122V --실시간 매출매입 반영 VIEW > 순매출비율용
+                    </when>
+                    <otherwise>
+                        FROM BRST120V --실시간 매출매입 반영 VIEW
+                    </otherwise>
+                </choose>
              WHERE SUBSTR(CRIT_YAM,1,4) = #{critYear}  -- ★조회조건 기준연도
                AND DEPT_ID IN (SELECT DEPT_ID FROM HMST110T
                                 WHERE SELL_OCR_YN = 'Y' -- 매출발생부서
@@ -509,7 +522,14 @@
                     ]]>
                 FROM
                 ( SELECT CRIT_YAM, BSNS_CLSF_CD, PROD_DST_CD, BRSL_DTL_DST_CD, RSL_AMT, DEPT_ID
-                    FROM BRST120V
+                    <choose>
+                        <when test='nsleYN == "Y" '> --  순매출비율용  ☆☆☆
+                            FROM BRST122V --실시간 매출매입 반영 VIEW > 순매출비율용
+                        </when>
+                        <otherwise>
+                            FROM BRST120V --실시간 매출매입 반영 VIEW
+                        </otherwise>
+                    </choose>
                     WHERE SUBSTR(CRIT_YAM,1,4) = #{critYear}  -- ★조회조건: 기준연도
                     <if test='bsnsClsfCd != "" and bsnsClsfCd != null '>
                     AND BSNS_CLSF_CD = #{bsnsClsfCd} --★조회조건: 사업분류코드(택1) --◀2020-02-24
@@ -2692,7 +2712,14 @@
                                 SUM(DEC_AMT) DEC_AMT
                             </otherwise>
                         </choose>
-                  FROM BRST100V A,   --연도별부서실적
+                        <choose>
+                            <when test='nsleYN == "Y" '> --  순매출비율용  ☆☆☆
+                                FROM BRST102V A, --연도별부서실적 > 순매출비율용
+                            </when>
+                            <otherwise>
+                                FROM BRST100V A, --연도별부서실적
+                            </otherwise>
+                        </choose>
                      ( SELECT C10.COM_CD BRSL_DTL_DST_CD, C10.COM_CD_NM BRSL_DTL_DST_CD_NM, C10.HGRK_COM_CD AS BRSL_DST_CD
                          FROM ACOM020T C20, ACOM010T C10
                         WHERE C20.CLMN_NM = 'BRSL_DTL_DST_CD' --사업실적상세구분코드

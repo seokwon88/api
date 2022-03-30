@@ -106,7 +106,14 @@
             SUM(JAN_AMT) JAN_AMT, SUM(FEB_AMT) FEB_AMT, SUM(MAR_AMT) MAR_AMT, SUM(APR_AMT) APR_AMT, SUM(MAY_AMT) MAY_AMT, SUM(JUN_AMT) JUN_AMT,
             SUM(JUL_AMT) JUL_AMT, SUM(AUG_AMT) AUG_AMT ,SUM(SEP_AMT) SEP_AMT, SUM(OCT_AMT) OCT_AMT, SUM(NOV_AMT) NOV_AMT, SUM(DEC_AMT) DEC_AMT,
             #{brslDtlDstCd} BRSL_DTL_DST_CD
-       FROM BRST100V V10,
+        <choose>
+            <when test='nsleYN == "Y" '> --  순매출비율용  ☆☆☆
+                FROM BRST102V V10, --연도별부서실적 > 순매출비율용
+            </when>
+            <otherwise>
+                FROM BRST100V V10, --연도별부서실적
+            </otherwise>
+        </choose>
            ( SELECT DEPT_SEQC, DEPT_ID, DEPT_NM, -- DEPT_LVL, HGRK_DEPT_ID
                     <![CDATA[
                     CASE WHEN DEPT_LVL = 1 THEN DEPT_ID ELSE SUBSTRB(DEPT_ID_PATH,2,INSTRB(DEPT_ID_PATH,'@',1,2)-2) END AS DEPT_L1_ID,
@@ -241,7 +248,14 @@
                                 SUM(NOV_AMT) AS NOV_AMT,
                                 SUM(DEC_AMT) AS DEC_AMT
                             </if>
-                      FROM BRST100V
+                    <choose>
+                        <when test='nsleYN == "Y" '> --  순매출비율용  ☆☆☆
+                            FROM BRST102V --연도별부서실적 > 순매출비율용
+                        </when>
+                        <otherwise>
+                            FROM BRST100V  --연도별부서실적
+                        </otherwise>
+                    </choose>
                      WHERE CRIT_YEAR = #{year}   -- ★조회조건: 기준연도
                        AND DEPT_ID IN (SELECT DEPT_ID FROM HMST110T
                                         WHERE SELL_OCR_YN = 'Y' -- 매출발생부서
