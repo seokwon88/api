@@ -25,7 +25,11 @@ public class BizProjectInfoVO {
     /**
      * SEQ
      */
-    @Digits(integer=3,fraction=0)
+    private Integer prjtSeq;
+
+    /**
+     * SEQ
+     */
     private Integer seq;
 
     /**
@@ -186,6 +190,31 @@ public class BizProjectInfoVO {
      */
     private List<BizProjectReportVO> bizPrjtRprtDelList;
 
+    /**
+     * 보고유형코드
+     */
+    private String rprtTypeCd;
+
+    /**
+     * 보고유형코드명
+     */
+    private String rprtTypeCdNm;
+
+    /**
+     * 사업보고시작일자
+     */
+    private String bsnsRprtStartDate;
+
+    /**
+     * 사업보고종료일자
+     */
+    private String bsnsRprtEndDate;
+
+    /**
+     * 부서ID
+     */
+    private String deptId;
+
     public String getPrjtId() {
         return prjtId;
     }
@@ -208,6 +237,14 @@ public class BizProjectInfoVO {
 
     public void setPrjtNm(String prjtNm) {
         this.prjtNm = prjtNm;
+    }
+
+    public Integer getPrjtSeq() {
+        return prjtSeq;
+    }
+
+    public void setPrjtSeq(Integer prjtSeq) {
+        this.prjtSeq = prjtSeq;
     }
 
     public Integer getSeq() {
@@ -466,4 +503,43 @@ public class BizProjectInfoVO {
         this.bizPrjtRprtDelList = bizPrjtRprtDelList;
     }
 
+    public String getRprtTypeCd() {
+        return rprtTypeCd;
+    }
+
+    public void setRprtTypeCd(String rprtTypeCd) {
+        this.rprtTypeCd = rprtTypeCd;
+    }
+
+    public String getRprtTypeCdNm() {
+        return rprtTypeCdNm;
+    }
+
+    public void setRprtTypeCdNm(String rprtTypeCdNm) {
+        this.rprtTypeCdNm = rprtTypeCdNm;
+    }
+
+    public String getBsnsRprtStartDate() {
+        return bsnsRprtStartDate;
+    }
+
+    public void setBsnsRprtStartDate(String bsnsRprtStartDate) {
+        this.bsnsRprtStartDate = bsnsRprtStartDate;
+    }
+
+    public String getBsnsRprtEndDate() {
+        return bsnsRprtEndDate;
+    }
+
+    public void setBsnsRprtEndDate(String bsnsRprtEndDate) {
+        this.bsnsRprtEndDate = bsnsRprtEndDate;
+    }
+
+    public String getDeptId() {
+        return deptId;
+    }
+
+    public void setDeptId(String deptId) {
+        this.deptId = deptId;
+    }
 }

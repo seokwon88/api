@@ -352,12 +352,12 @@ public class BizResultService {
             if(bizProjectInfoVO.getRprtYn() == null || bizProjectInfoVO.getRprtYn().equals("Y")){
                 BizProjectInfoVO bizProjectInfo = new BizProjectInfoVO();
                 bizProjectInfo.setPrjtId(list.get(i).getPrjtId());
-                bizProjectInfo.setSeq(list.get(i).getSeq());
+                bizProjectInfo.setPrjtSeq(list.get(i).getSeq());
                 bizProjectInfo.setRprtYn("Y");
                 bizProjectInfo.setStartDate(bizProjectInfoVO.getStartDate());
                 bizProjectInfo.setEndDate(bizProjectInfoVO.getEndDate());
 
-                reportList = bizResultDAO.selectBizPrjtRprtBkdnList(bizProjectInfo);
+                reportList = bizResultDAO.selectBizWorkReportList(bizProjectInfo);
 
                 list.get(i).setBizProjectReportList(reportList);
             }
@@ -379,7 +379,7 @@ public class BizResultService {
         BizProjectInfoVO bizProjectInfoVO = requestPayload.getDto();
 
         bizProjectInfoVO = bizResultDAO.selectBizPrjtInfo(bizProjectInfoVO);
-        bizProjectInfoVO.setBizProjectReportList(bizResultDAO.selectBizPrjtRprtBkdnList(bizProjectInfoVO));
+        bizProjectInfoVO.setBizProjectReportList(bizResultDAO.selectBizWorkReportList(bizProjectInfoVO));
 
         return bizProjectInfoVO;
     }
@@ -406,11 +406,12 @@ public class BizResultService {
             //사업보고내역 등록
             for(BizProjectReportVO bizProjectReportVO : bizProjectInfoVO.getBizProjectReportList()){
                 bizProjectReportVO.setPrjtId(bizProjectInfoVO.getPrjtId());
-                bizProjectReportVO.setSeq(seq);
+                bizProjectReportVO.setPrjtSeq(seq);
+                bizProjectReportVO.setSeq(bizResultDAO.selectBizWorkReportMaxSeq());
                 bizProjectReportVO.setBsnsPrgsStatCd(bizProjectInfoVO.getBsnsPrgsStatCd());
                 bizProjectReportVO.setChgEmpId(bizProjectInfoVO.getChgEmpId());
 
-                bizResultDAO.insertBizPrjtRprtBkdnInfo(bizProjectReportVO);
+                bizResultDAO.insertBizWorkReportInfo(bizProjectReportVO);
             }
 
         }catch (Exception e){
@@ -435,7 +436,7 @@ public class BizResultService {
 
             // 사업보고내역 수정
             for(BizProjectReportVO bizProjectReportVO : bizProjectInfoVO.getBizPrjtRprtDelList()){
-                bizResultDAO.deleteBizPrjtRprtBkdnInfo(bizProjectReportVO);
+                bizResultDAO.deleteBizWorkReportInfo(bizProjectReportVO);
             }
 
             for(BizProjectReportVO bizProjectReportVO : bizProjectInfoVO.getBizProjectReportList()){
@@ -446,10 +447,14 @@ public class BizResultService {
                 }
                 if(bizProjectReportVO.getPrjtId() == null){
                     bizProjectReportVO.setPrjtId(bizProjectInfoVO.getPrjtId());
-                    bizProjectReportVO.setSeq(bizProjectInfoVO.getSeq());
-                    bizResultDAO.insertBizPrjtRprtBkdnInfo(bizProjectReportVO);
+                    bizProjectReportVO.setPrjtSeq(bizProjectInfoVO.getPrjtSeq());
+                    bizProjectReportVO.setSeq(bizResultDAO.selectBizWorkReportMaxSeq());
+                    bizProjectReportVO.setDeptId(bizProjectInfoVO.getBsnsDeptId());
+                    bizProjectReportVO.setRprtTypeCd("WK");
+                    bizProjectReportVO.setChgEmpId(accountVO.getEmpId());
+                    bizResultDAO.insertBizWorkReportInfo(bizProjectReportVO);
                 }else{
-                    bizResultDAO.updateBizPrjtRprtBkdnInfo(bizProjectReportVO);
+                    bizResultDAO.updateBizWorkReportInfo(bizProjectReportVO);
                 }
 
             }
@@ -471,9 +476,9 @@ public class BizResultService {
         BizProjectReportVO bizProjectReportVO = new BizProjectReportVO();
 
         bizProjectReportVO.setPrjtId(bizProjectInfoVO.getPrjtId());
-        bizProjectReportVO.setSeq(bizProjectInfoVO.getSeq() );
+        bizProjectReportVO.setPrjtSeq(bizProjectInfoVO.getSeq() );
 
-        bizResultDAO.deleteBizPrjtRprtBkdnInfo(bizProjectReportVO);
+        bizResultDAO.deleteBizWorkReportInfo(bizProjectReportVO);
 
         bizResultDAO.deleteBizPrjtInfo(bizProjectInfoVO);
 
@@ -521,6 +526,97 @@ public class BizResultService {
         }
 
         return list;
+    }
+
+
+    //사업업무보고 목록 조회
+    @Transactional
+    public List<BizProjectReportVO> selectBizWorkReportList(Payload<BizProjectInfoVO> requestPayload) throws Exception {
+        log.info("Call Service : " + this.getClass().getName() + ".selectBizWorkReportList");
+        BizProjectInfoVO bizProjectInfoVO = requestPayload.getDto();
+
+        try{
+            List<BizProjectReportVO> list = bizResultDAO.selectBizWorkReportList(bizProjectInfoVO);
+
+            return list;
+        }catch (Exception e){
+            throw new NotNullException(e.getMessage(), bizProjectInfoVO);
+        }
+    }
+
+    //사업업무보고 상세 조회
+    @Transactional
+    public BizProjectReportVO selectBizWorkReportInfo(Payload<BizProjectReportVO> requestPayload) throws Exception {
+        log.info("Call Service : " + this.getClass().getName() + ".selectBizWorkReportInfo");
+        BizProjectReportVO bizProjectReportVO = requestPayload.getDto();
+
+        try{
+            bizProjectReportVO = bizResultDAO.selectBizWorkReportInfo(bizProjectReportVO);
+
+            return bizProjectReportVO;
+        }catch (Exception e){
+            throw new NotNullException(e.getMessage(), bizProjectReportVO);
+        }
+    }
+
+    //사업업무보고 등록
+    @Transactional
+    public BizProjectReportVO insertBizWorkReportInfo(Payload<BizProjectReportVO> requestPayload) throws Exception {
+        log.info("Call Service : " + this.getClass().getName() + ".insertBizWorkReportInfo");
+        BizProjectReportVO bizProjectReportVO = requestPayload.getDto();
+        AccountVO accountVO = requestPayload.getAccountVO();
+
+        try{
+            //같은 날 같은 부서의 등로된 거 있으면 등록 불가능
+            if(bizResultDAO.selectBizWorkReportCount(bizProjectReportVO) > 0){
+                throw new UpdateDeniedException("동일한 정보의 업무보고가 존재하여 저장이 불가합니다.", bizProjectReportVO);
+            }else{
+                bizProjectReportVO.setChgEmpId(accountVO.getEmpId());
+                bizProjectReportVO.setSeq(bizResultDAO.selectBizWorkReportMaxSeq());
+                bizResultDAO.insertBizWorkReportInfo(bizProjectReportVO);
+            }
+
+            return bizProjectReportVO;
+        }catch (Exception e){
+            throw new UpdateDeniedException(e.getMessage(), bizProjectReportVO);
+        }
+    }
+
+    //사업업무보고 수정
+    @Transactional
+    public BizProjectReportVO updateBizWorkReportInfo(Payload<BizProjectReportVO> requestPayload) throws Exception {
+        log.info("Call Service : " + this.getClass().getName() + ".updateBizWorkReportInfo");
+        BizProjectReportVO bizProjectReportVO = requestPayload.getDto();
+        AccountVO accountVO = requestPayload.getAccountVO();
+
+        try{
+            //같은 날 같은 부서의 등로된 거 있으면 등록 불가능
+            if(bizResultDAO.selectBizWorkReportCount(bizProjectReportVO) > 0){
+                throw new UpdateDeniedException("동일한 정보의 업무보고가 존재하여 저장이 불가합니다.", bizProjectReportVO);
+            }else{
+                bizProjectReportVO.setChgEmpId(accountVO.getEmpId());
+                bizResultDAO.updateBizWorkReportInfo(bizProjectReportVO);
+            }
+
+            return bizProjectReportVO;
+        }catch (Exception e){
+            throw new UpdateDeniedException(e.getMessage(), bizProjectReportVO);
+        }
+    }
+
+    //사업업무보고 삭제
+    @Transactional
+    public BizProjectReportVO deleteBizWorkReportInfo(Payload<BizProjectReportVO> requestPayload) throws Exception {
+        log.info("Call Service : " + this.getClass().getName() + ".deleteBizWorkReportInfo");
+        BizProjectReportVO bizProjectReportVO = requestPayload.getDto();
+
+        try{
+            bizResultDAO.deleteBizWorkReportInfo(bizProjectReportVO);
+
+            return bizProjectReportVO;
+        }catch (Exception e){
+            throw new NotNullException(e.getMessage(), bizProjectReportVO);
+        }
     }
 
 }

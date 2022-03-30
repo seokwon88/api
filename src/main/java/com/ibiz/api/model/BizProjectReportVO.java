@@ -1,6 +1,5 @@
 package com.ibiz.api.model;
 
-import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 
 public class BizProjectReportVO {
@@ -8,7 +7,6 @@ public class BizProjectReportVO {
     /**
      * 프로젝트ID
      */
-    @NotNull
     private String prjtId;
 
     /**
@@ -19,7 +17,11 @@ public class BizProjectReportVO {
     /**
      * SEQ
      */
-    @Digits(integer=3,fraction=0)
+    private Integer prjtSeq;
+
+    /**
+     * SEQ
+     */
     private Integer seq;
 
     /**
@@ -47,13 +49,47 @@ public class BizProjectReportVO {
     /**
      * 사업진행상태코드
      */
-    @NotNull
     private String bsnsPrgsStatCd;
 
     /**
      * 사업진행상태코드명
      */
     private String bsnsPrgsStatCdNm;
+
+    /**
+     * 보고유형코드
+     */
+    private String rprtTypeCd;
+
+    /**
+     * 보고유형코드명
+     */
+    private String rprtTypeCdNm;
+
+    /**
+     * 부서ID
+     */
+    private String deptId;
+
+    /**
+     * 부서명
+     */
+    private String deptNm;
+
+    /**
+     * 등록사원ID
+     */
+    private String regEmpId;
+
+    /**
+     * 등록사원명
+     */
+    private String regEmpNm;
+
+    /**
+     * 등록일시
+     */
+    private String regDt;
 
     /**
      * 변경사원ID
@@ -70,6 +106,21 @@ public class BizProjectReportVO {
      */
     private String chgDt;
 
+    /**
+     * 전체 수
+     */
+    private Integer totalCnt;
+
+    /**
+     * 페이징 크기
+     */
+    private String pageSize;
+
+    /**
+     * 페이지번호
+     */
+    private String pageNumber;
+
     public String getPrjtId() {
         return prjtId;
     }
@@ -84,6 +135,14 @@ public class BizProjectReportVO {
 
     public void setPrjtNm(String prjtNm) {
         this.prjtNm = prjtNm;
+    }
+
+    public Integer getPrjtSeq() {
+        return prjtSeq;
+    }
+
+    public void setPrjtSeq(Integer prjtSeq) {
+        this.prjtSeq = prjtSeq;
     }
 
     public Integer getSeq() {
@@ -142,6 +201,62 @@ public class BizProjectReportVO {
         this.bsnsPrgsStatCdNm = bsnsPrgsStatCdNm;
     }
 
+    public String getRprtTypeCd() {
+        return rprtTypeCd;
+    }
+
+    public void setRprtTypeCd(String rprtTypeCd) {
+        this.rprtTypeCd = rprtTypeCd;
+    }
+
+    public String getRprtTypeCdNm() {
+        return rprtTypeCdNm;
+    }
+
+    public void setRprtTypeCdNm(String rprtTypeCdNm) {
+        this.rprtTypeCdNm = rprtTypeCdNm;
+    }
+
+    public String getDeptId() {
+        return deptId;
+    }
+
+    public void setDeptId(String deptId) {
+        this.deptId = deptId;
+    }
+
+    public String getDeptNm() {
+        return deptNm;
+    }
+
+    public void setDeptNm(String deptNm) {
+        this.deptNm = deptNm;
+    }
+
+    public String getRegEmpId() {
+        return regEmpId;
+    }
+
+    public void setRegEmpId(String regEmpId) {
+        this.regEmpId = regEmpId;
+    }
+
+    public String getRegEmpNm() {
+        return regEmpNm;
+    }
+
+    public void setRegEmpNm(String regEmpNm) {
+        this.regEmpNm = regEmpNm;
+    }
+
+    public String getRegDt() {
+        return regDt;
+    }
+
+    public void setRegDt(String regDt) {
+        this.regDt = regDt;
+    }
+
     public String getChgEmpId() {
         return chgEmpId;
     }
@@ -166,4 +281,27 @@ public class BizProjectReportVO {
         this.chgDt = chgDt;
     }
 
+    public Integer getTotalCnt() {
+        return totalCnt;
+    }
+
+    public void setTotalCnt(Integer totalCnt) {
+        this.totalCnt = totalCnt;
+    }
+
+    public String getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(String pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public String getPageNumber() {
+        return pageNumber;
+    }
+
+    public void setPageNumber(String pageNumber) {
+        this.pageNumber = pageNumber;
+    }
 }

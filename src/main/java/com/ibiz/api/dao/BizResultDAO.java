@@ -113,6 +113,15 @@ public class BizResultDAO {
     public List<SalesReportVO> selectSalesRealReportDetailByPrjtList(BusinessResultSearchVO businessResultSearchVO) {
         return mybatis.selectList( "BizResultMapper.selectSalesRealReportDetailByPrjtList", businessResultSearchVO);
     }
+    // 사업프로젝트 보고내역 개수 조회
+    public Integer selectBizWorkReportCount(BizProjectReportVO bizProjectReportVO) {
+        return mybatis.selectOne( "BizResultMapper.selectBizWorkReportCount", bizProjectReportVO);
+    }
+
+    //사업프로젝트 MAX SEQ
+    public Integer selectBizWorkReportMaxSeq() throws Exception {
+        return mybatis.selectOne( "BizResultMapper.selectBizWorkReportMaxSeq");
+    }
 
 
 
@@ -150,8 +159,13 @@ public class BizResultDAO {
     }
 
     //사업프로젝트 보고내역 리스트 조회
-    public List<BizProjectReportVO> selectBizPrjtRprtBkdnList(BizProjectInfoVO bizProjectInfoVO) throws Exception {
-        return mybatis.selectList( "BizResultMapper.selectBizPrjtRprtBkdnList", bizProjectInfoVO);
+    public List<BizProjectReportVO> selectBizWorkReportList(BizProjectInfoVO bizProjectInfoVO) throws Exception {
+        return mybatis.selectList( "BizResultMapper.selectBizWorkReportList", bizProjectInfoVO);
+    }
+
+    //사업프로젝트 보고내역 리스트 조회
+    public BizProjectReportVO selectBizWorkReportInfo(BizProjectReportVO bizProjectReportVO) throws Exception {
+        return mybatis.selectOne( "BizResultMapper.selectBizWorkReportInfo", bizProjectReportVO);
     }
 
     //사업프로젝트 기본 상세 조회
@@ -170,8 +184,8 @@ public class BizResultDAO {
     }
 
     //사업프로젝트 보고내역 등록
-    public void insertBizPrjtRprtBkdnInfo(BizProjectReportVO bizProjectReportVO) throws Exception {
-        mybatis.insert( "BizResultMapper.insertBizPrjtRprtBkdnInfo", bizProjectReportVO);
+    public void insertBizWorkReportInfo(BizProjectReportVO bizProjectReportVO) throws Exception {
+        mybatis.insert( "BizResultMapper.insertBizWorkReportInfo", bizProjectReportVO);
     }
 
     //사업프로젝트 기본 수정
@@ -180,8 +194,8 @@ public class BizResultDAO {
     }
 
     //사업프로젝트 보고내역 수정
-    public void updateBizPrjtRprtBkdnInfo(BizProjectReportVO bizProjectReportVO) throws Exception {
-        mybatis.update( "BizResultMapper.updateBizPrjtRprtBkdnInfo", bizProjectReportVO);
+    public void updateBizWorkReportInfo(BizProjectReportVO bizProjectReportVO) throws Exception {
+        mybatis.update( "BizResultMapper.updateBizWorkReportInfo", bizProjectReportVO);
     }
 
     //사업프로젝트 기본 삭제
@@ -190,8 +204,8 @@ public class BizResultDAO {
     }
 
     //사업프로젝트 보고내역 삭제
-    public void deleteBizPrjtRprtBkdnInfo(BizProjectReportVO bizProjectReportVO) throws Exception {
-        mybatis.delete("BizResultMapper.deleteBizPrjtRprtBkdnInfo", bizProjectReportVO);
+    public void deleteBizWorkReportInfo(BizProjectReportVO bizProjectReportVO) throws Exception {
+        mybatis.delete("BizResultMapper.deleteBizWorkReportInfo", bizProjectReportVO);
     }
 
 }

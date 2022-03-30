@@ -3061,7 +3061,7 @@
                             CHG_EMP_ID, IBIZ_EMP_NM(CHG_EMP_ID) AS CHG_EMP_NM, CHG_DT, E.SORT_SEQC
                         FROM BPRJ000T A
                         LEFT JOIN (SELECT PRJT_ID, LAST_CUST_ID, PRJT_TYPE_CD, BEXC_START_DATE, BEXC_END_DATE, SLS_DEPT_ID, SLS_EMP_ID, PRJT_STAT_CD FROM APRJ000T) B ON A.PRJT_ID = B.PRJT_ID
-                        LEFT JOIN (SELECT PRJT_ID, SEQ, BSNS_RPRT_START_DATE, BSNS_RPRT_END_DATE, RPRT_YN, BSNS_PRGS_STAT_CD FROM BPRJ010T) D ON A.PRJT_ID = D.PRJT_ID AND A.SEQ = D.SEQ
+                        LEFT JOIN (SELECT PRJT_ID, PRJT_SEQ, BSNS_RPRT_START_DATE, BSNS_RPRT_END_DATE, RPRT_YN, BSNS_PRGS_STAT_CD FROM BPRJ010T) D ON A.PRJT_ID = D.PRJT_ID AND A.SEQ = D.PRJT_SEQ
                         LEFT JOIN (SELECT COM_CD, COM_CD_NM, SORT_SEQC FROM ACOM010T WHERE COM_GRP_CD = (SELECT COM_GRP_CD FROM ACOM020T WHERE CLMN_NM = 'BSNS_PRGS_STAT_CD' )) E ON A.BSNS_PRGS_STAT_CD = E.COM_CD
                         WHERE 1= 1
                             <if test="prjtId != null and prjtId != ''">
@@ -3136,37 +3136,70 @@
 
 
     <!-- 사업프로젝트 보고내역 리스트 조회 -->
-    <select id="selectBizPrjtRprtBkdnList"
+    <select id="selectBizWorkReportList"
             parameterType="com.ibiz.api.model.BizProjectInfoVO"
             resultType="com.ibiz.api.model.BizProjectReportVO">
-        SELECT PRJT_ID, SEQ, BSNS_RPRT_START_DATE, BSNS_RPRT_END_DATE, RPRT_YN, RPRT_CONT,
-            BSNS_PRGS_STAT_CD, IBIZ_COM_CD_NM('BSNS_PRGS_STAT_CD', BSNS_PRGS_STAT_CD) AS BSNS_PRGS_STAT_CD_NM,
-            CHG_EMP_ID, IBIZ_EMP_NM(CHG_EMP_ID) AS CHG_EMP_NM, CHG_DT
-        FROM BPRJ010T
-        WHERE 1= 1
-        <if test="rprtYn != null and rprtYn != ''">
-            AND RPRT_YN = #{rprtYn}
+        SELECT *
+        FROM ( SELECT COUNT(1) OVER() AS TOTAL_CNT, ROWNUM AS ROWNUMBER, Z.*
+                FROM ( SELECT PRJT_ID, SEQ, BSNS_RPRT_START_DATE, BSNS_RPRT_END_DATE, RPRT_YN, RPRT_CONT,
+                            BSNS_PRGS_STAT_CD, IBIZ_COM_CD_NM('BSNS_PRGS_STAT_CD', BSNS_PRGS_STAT_CD) AS BSNS_PRGS_STAT_CD_NM,
+                            RPRT_TYPE_CD, IBIZ_COM_CD_NM('RPRT_TYPE_CD', RPRT_TYPE_CD) AS RPRT_TYPE_CD_NM,
+                            DEPT_ID, IBIZ_DEPT_NM(DEPT_ID) AS DEPT_NM,
+                            REG_EMP_ID, IBIZ_EMP_NM(REG_EMP_ID) AS REG_EMP_NM, REG_DT,
+                            CHG_EMP_ID, IBIZ_EMP_NM(CHG_EMP_ID) AS CHG_EMP_NM, CHG_DT
+                        FROM BPRJ010T
+                        WHERE 1= 1
+                        <if test="rprtYn != null and rprtYn != ''">
+                            AND RPRT_YN = #{rprtYn}
+                        </if>
+                        <if test="rprtTypeCd != null and rprtTypeCd != ''">
+                            AND RPRT_TYPE_CD = #{rprtTypeCd}
+                        </if>
+                        <if test="startDate != null and startDate != ''">
+                            <![CDATA[
+                                    AND ( BSNS_RPRT_START_DATE >= #{startDate} OR BSNS_RPRT_END_DATE >= #{startDate} )
+                                ]]>
+                        </if>
+                        <if test="endDate != null and endDate != ''">
+                            <![CDATA[
+                                    AND ( BSNS_RPRT_START_DATE <= #{endDate} OR BSNS_RPRT_END_DATE <= #{endDate} )
+                                ]]>
+                        </if>
+                        <if test="bsnsDeptId != null and bsnsDeptId != ''">
+                            AND DEPT_ID IN ( SELECT DEPT_ID FROM HMST100T
+                                                START WITH DEPT_ID = #{bsnsDeptId}
+                                                CONNECT BY PRIOR DEPT_ID = HGRK_DEPT_ID )
+                        </if>
+                        <if test="prjtId != null and prjtId != ''">
+                            AND UPPER(PRJT_ID) = UPPER(#{prjtId})
+                        </if>
+                        <if test="prjtSeq != null and prjtSeq != ''">
+                            AND PRJT_SEQ = #{prjtSeq}
+                        </if>
+                        <if test="seq != null and seq != ''">
+                            AND SEQ = #{seq}
+                        </if>
+                        <choose>
+                            <when test="pageSize != null and pageSize != '' and pageNumber != null and pageNumber != ''">
+                                ORDER BY BSNS_RPRT_END_DATE DESC, CHG_DT DESC, DEPT_ID ASC, RPRT_TYPE_CD ASC
+                            </when>
+                            <otherwise>
+                                ORDER BY BSNS_RPRT_START_DATE
+                            </otherwise>
+                        </choose>
+            ) Z
+        ) WHERE 1 = 1
+        <if test="pageSize != null and pageSize != '' and pageNumber != null and pageNumber != ''">
+            AND ROWNUMBER BETWEEN #{pageSize} * (#{pageNumber} - 1) + 1
+            AND #{pageSize} * (#{pageNumber} - 1) + #{pageSize}
         </if>
-        <if test="startDate != null and startDate != ''">
-            <![CDATA[
-                    AND ( BSNS_RPRT_START_DATE >= #{startDate} OR BSNS_RPRT_END_DATE >= #{startDate} )
-                ]]>
-        </if>
-        <if test="endDate != null and endDate != ''">
-            <![CDATA[
-                    AND ( BSNS_RPRT_START_DATE <= #{endDate} OR BSNS_RPRT_END_DATE <= #{endDate} )
-                ]]>
-        </if>
-            AND UPPER(PRJT_ID) = UPPER(#{prjtId})
-            AND SEQ = #{seq}
-        ORDER BY BSNS_RPRT_START_DATE
     </select>
 
     <!-- 사업프로젝트 기본 상세 조회 -->
     <select id="selectBizPrjtInfo"
             parameterType="com.ibiz.api.model.BizProjectInfoVO"
             resultType="com.ibiz.api.model.BizProjectInfoVO">
-        SELECT DISTINCT PRJT_ID, IBIZ_PRJT_NM(PRJT_ID) AS PRJT_NM, SEQ,
+        SELECT DISTINCT PRJT_ID, IBIZ_PRJT_NM(PRJT_ID) AS PRJT_NM, SEQ AS PRJT_SEQ,
             BSNS_DEPT_ID, IBIZ_DEPT_NM(BSNS_DEPT_ID) AS BSNS_DEPT_NM,
             BSNS_EMP_ID, IBIZ_EMP_NM(BSNS_EMP_ID) AS BSNS_EMP_NM,
             BEXC_START_DATE, BEXC_END_DATE,
@@ -3176,7 +3209,7 @@
         FROM BPRJ000T
         WHERE 1= 1
         AND UPPER(PRJT_ID) = UPPER(#{prjtId})
-        AND SEQ = #{seq}
+        AND SEQ = #{prjtSeq}
     </select>
 
 
@@ -3733,6 +3766,42 @@
 
     </select>
 
+
+    <!-- 사업프로젝트 보고내역 리스트 조회 -->
+    <select id="selectBizWorkReportInfo"
+            parameterType="com.ibiz.api.model.BizProjectReportVO"
+            resultType="com.ibiz.api.model.BizProjectReportVO">
+        SELECT PRJT_ID, SEQ, BSNS_RPRT_START_DATE, BSNS_RPRT_END_DATE, RPRT_YN, RPRT_CONT,
+            BSNS_PRGS_STAT_CD, IBIZ_COM_CD_NM('BSNS_PRGS_STAT_CD', BSNS_PRGS_STAT_CD) AS BSNS_PRGS_STAT_CD_NM,
+            RPRT_TYPE_CD, IBIZ_COM_CD_NM('RPRT_TYPE_CD', RPRT_TYPE_CD) AS RPRT_TYPE_CD_NM,
+            DEPT_ID, IBIZ_DEPT_NM(DEPT_ID) AS DEPT_NM,
+            REG_EMP_ID, IBIZ_EMP_NM(REG_EMP_ID) AS REG_EMP_NM, REG_DT,
+            CHG_EMP_ID, IBIZ_EMP_NM(CHG_EMP_ID) AS CHG_EMP_NM, CHG_DT
+        FROM BPRJ010T
+        WHERE 1= 1
+            AND SEQ = #{seq}
+    </select>
+
+    <!-- 사업업무보고내역 개수 조회 -->
+    <select id="selectBizWorkReportCount"
+            parameterType="com.ibiz.api.model.BizProjectReportVO"
+            resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM BPRJ010T
+        WHERE DEPT_ID = #{deptId}
+            AND RPRT_TYPE_CD = #{rprtTypeCd}
+            AND BSNS_RPRT_START_DATE = #{bsnsRprtStartDate}
+            AND BSNS_RPRT_END_DATE = #{bsnsRprtEndDate}
+        <if test='seq != null and seq != "" '>
+            AND SEQ != #{seq}
+        </if>
+    </select>
+
+    <!-- 사업업무보고내역 max(seq) 조회 -->
+    <select id="selectBizWorkReportMaxSeq"
+            resultType="java.lang.Integer">
+        SELECT MAX(SEQ)+1 FROM BPRJ010T
+    </select>
     <!--
 
         INSERT
@@ -3796,28 +3865,37 @@
     </insert>
 
     <!-- 사업프로젝트 보고내역 등록 -->
-    <insert id="insertBizPrjtRprtBkdnInfo"
+    <insert id="insertBizWorkReportInfo"
             parameterType="com.ibiz.api.model.BizProjectReportVO">
         INSERT
         INTO BPRJ010T (
             PRJT_ID,
+            PRJT_SEQ,
             SEQ,
             BSNS_RPRT_START_DATE,
             BSNS_RPRT_END_DATE,
             RPRT_YN,
             RPRT_CONT,
             BSNS_PRGS_STAT_CD,
+            RPRT_TYPE_CD,
+            DEPT_ID,
+            REG_EMP_ID,
+            REG_DT,
             CHG_EMP_ID,
             CHG_DT
-        )
-         VALUES (
+        ) VALUES (
             #{prjtId},
-            #{seq},
+            #{prjtSeq},
+            (SELECT MAX(SEQ)+1 FROM BPRJ010T),
             #{bsnsRprtStartDate},
             #{bsnsRprtEndDate},
             #{rprtYn},
             #{rprtCont},
             #{bsnsPrgsStatCd},
+            #{rprtTypeCd},
+            #{deptId},
+            #{chgEmpId},
+            SYSDATE,
             #{chgEmpId},
             SYSDATE
          )
@@ -3861,22 +3939,30 @@
     </update>
 
     <!-- 사업프로젝트 보고내역 수정 -->
-    <update id="updateBizPrjtRprtBkdnInfo"
+    <update id="updateBizWorkReportInfo"
             parameterType="com.ibiz.api.model.BizProjectReportVO">
         UPDATE BPRJ010T
-        SET RPRT_YN = #{rprtYn},
+        SET
+        <if test="rprtYn != null and rprtYn != ''">
+            RPRT_YN = #{rprtYn},
+        </if>
         <if test="rprtCont != null and rprtCont != ''">
             RPRT_CONT = #{rprtCont},
         </if>
         <if test="bsnsPrgsStatCd != null and bsnsPrgsStatCd != ''">
             BSNS_PRGS_STAT_CD = #{bsnsPrgsStatCd},
         </if>
+        <if test="rprtTypeCd != null and rprtTypeCd != ''">
+            RPRT_TYPE_CD = #{rprtTypeCd},
+        </if>
+        <if test="deptId != null and deptId != ''">
+            DEPT_ID = #{deptId},
+        </if>
+            BSNS_RPRT_START_DATE = #{bsnsRprtStartDate},
+            BSNS_RPRT_END_DATE = #{bsnsRprtEndDate},
             CHG_EMP_ID = #{chgEmpId},
             CHG_DT = SYSDATE
-        WHERE
-            PRJT_ID = #{prjtId}
-            AND SEQ = #{seq}
-            AND BSNS_RPRT_START_DATE = #{bsnsRprtStartDate}
+        WHERE SEQ = #{seq}
     </update>
 
     <!--
@@ -3905,11 +3991,19 @@
     </delete>
 
     <!-- 사업프로젝트 보고내역 삭제 -->
-    <delete id="deleteBizPrjtRprtBkdnInfo"
+    <delete id="deleteBizWorkReportInfo"
             parameterType="com.ibiz.api.model.BizProjectReportVO">
         DELETE FROM BPRJ010T
-        WHERE PRJT_ID = #{prjtId}
+        WHERE 1 = 1
+        <if test='prjtId != null and prjtId != "" '>
+            AND PRJT_ID = #{prjtId}
+        </if>
+        <if test='prjtSeq != null and prjtSeq != "" '>
+            AND PRJT_SEQ = #{prjtSeq}
+        </if>
+        <if test='seq != null and seq != "" '>
             AND SEQ = #{seq}
+        </if>
         <if test='bsnsRprtStartDate != null and bsnsRprtStartDate != "" '>
             AND BSNS_RPRT_START_DATE = #{bsnsRprtStartDate}
         </if>
